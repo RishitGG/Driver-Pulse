@@ -1,0 +1,4 @@
+driver_id,elapsed_hours,current_velocity,velocity_delta,trips_completed,trip_rate,hour_of_day,is_morning_rush,is_lunch_rush,velocity_last_1,velocity_last_2,velocity_last_3,rolling_velocity_3,rolling_velocity_5,goal_pressure
+DRV_BAD1,7.0,120,-30,10,1.4,21,0,0,140,150,160,150,155,300
+DRV_BAD2,6.5,140,-20,9,1.3,20,0,0,160,170,180,170,175,250
+DRV_BAD3,7.5,110,-40,8,1.1,22,0,0,130,140,150,140,145,350

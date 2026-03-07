@@ -1,0 +1,18 @@
+{
+  "gravity_axis": "z",
+  "gravity_sign": 1.0,
+  "accel_scale": 1.0009271792091956,
+  "accel_x_offset": 0.0,
+  "accel_y_offset": 0.0,
+  "accel_z_offset": 9.8,
+  "sampling_rate_hz": 10.0,
+  "mic_gain_db": -1.759355550530671,
+  "ambient_floor_db": 53.75935555053067,
+  "road_noise_floor_db": 61.75935555053067,
+  "vibration_baseline_mag": 0.9059324569983278,
+  "vibration_baseline_std": 0.2651597699918569,
+  "phase1_complete": true,
+  "phase2_complete": true,
+  "calibration_confidence": 1.0,
+  "has_gyroscope": true
+}

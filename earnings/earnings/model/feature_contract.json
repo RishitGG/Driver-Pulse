@@ -1,0 +1,18 @@
+{
+  "features": [
+    "avg_earnings_per_hour",
+    "experience_months",
+    "rating",
+    "target_earnings",
+    "remaining_earnings",
+    "remaining_hours",
+    "required_velocity",
+    "trips_completed",
+    "trip_rate",
+    "hour_of_day",
+    "is_morning_rush",
+    "is_lunch_rush",
+    "is_evening_rush",
+    "current_velocity"
+  ]
+}
