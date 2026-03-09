@@ -1,0 +1,4 @@
+trip_id,timestamp,motion_max,motion_mean,motion_p95,brake_intensity,lateral_max,speed_mean,speed_at_brake,speed_drop,audio_db_max,audio_db_mean,audio_db_p90,audio_db_std,cadence_var_mean,argument_frac,loud_frac
+trip-001,08:15:00,1.2,0.6,1.1,0.8,0.5,35,35,5,68,62,67,4,0.1,0.15
+trip-002,09:30:00,5.1,1.8,4.8,4.9,2.1,40,40,25,94,82,91,8,0.72,0.95
+

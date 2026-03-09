@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [goals, setGoals] = useState(null)
   const [selectedDay, setSelectedDay] = useState('today')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   const today = '2026-03-08'
   const yesterday = '2026-03-07'
@@ -24,6 +25,7 @@ export default function Dashboard() {
   const loadData = async () => {
     setLoading(true)
     try {
+      setError('')
       const [dash, tripRes, goalsRes] = await Promise.all([
         api.getDashboard(),
         api.getTrips({ date: selectedDay === 'today' ? today : yesterday }),
@@ -34,6 +36,7 @@ export default function Dashboard() {
       setGoals(goalsRes)
     } catch (err) {
       console.error('Failed to load dashboard:', err)
+      setError('Unable to load latest dashboard data. Please try again in a moment.')
     } finally {
       setLoading(false)
     }
@@ -88,6 +91,12 @@ export default function Dashboard() {
           <SummaryCard icon={AlertTriangle} label="Stress Events" value={dashboard.stress_events} sub={`${dashboard.high_stress_events} high`} color="text-uber-red" />
           <SummaryCard icon={Target} label="Target" value={`${dashboard.pct_target_achieved}%`} sub="achieved" color="text-uber-orange" />
         </div>
+      )}
+
+      {error && (
+        <p className="text-sm text-red-600">
+          {error}
+        </p>
       )}
 
       {/* Timeline + Earnings */}

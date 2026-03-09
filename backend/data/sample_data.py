@@ -477,15 +477,39 @@ def get_goals():
     goals["trips_completed"] = trips_completed
     goals["current_velocity"] = current_velocity
 
-    # Keep dependent values fresh (even if target was set earlier).
-    remaining_earnings = max(0, float(goals.get("daily_target") or 0) - current_earnings)
-    remaining_hours = max(0.1, float(goals.get("target_hours") or 0) - current_hours)
+    _recompute_goal_derivatives(goals)
+    _GOALS = goals
+    return goals
+
+
+def set_goal_target(target: float):
+    global _GOALS
+    goals = get_goals()
+    goals["daily_target"] = float(target)
+
+    _recompute_goal_derivatives(goals)
+
+    _GOALS = goals
+    return _GOALS
+
+
+def _recompute_goal_derivatives(goals: Dict[str, Any]) -> None:
+    """
+    Keep all goal-derived fields (remaining earnings/hours, required velocity,
+    probability and forecast status) in one place so they stay consistent
+    between get_goals() and set_goal_target().
+    """
+    remaining_earnings = max(0, float(goals.get("daily_target") or 0) - float(goals.get("current_earnings") or 0))
+    remaining_hours = max(0.1, float(goals.get("target_hours") or 0) - float(goals.get("current_hours") or 0))
     goals["required_velocity"] = round(remaining_earnings / remaining_hours, 0) if goals.get("daily_target") else 0
     goals["remaining_earnings"] = round(remaining_earnings, 2)
-    goals["remaining_hours"] = round(max(0.0, float(goals.get("target_hours") or 0) - current_hours), 2)
+    goals["remaining_hours"] = round(
+        max(0.0, float(goals.get("target_hours") or 0) - float(goals.get("current_hours") or 0)),
+        2,
+    )
+    current_velocity = float(goals.get("current_velocity") or 0)
     goals["hours_to_target"] = round(remaining_earnings / current_velocity, 2) if current_velocity > 0 else None
 
-    # Recompute forecast probability + status based on current pace vs required pace.
     velocity_ratio = goals["current_velocity"] / max(goals["required_velocity"], 1)
     time_ratio = goals["current_hours"] / max(goals["target_hours"], 0.1)
 
@@ -498,7 +522,6 @@ def get_goals():
     else:
         prob = 0.25
 
-    # Adjust based on time progress (less time left, harder to catch up).
     if time_ratio > 0.8:
         prob *= 0.8
 
@@ -510,50 +533,3 @@ def get_goals():
         goals["forecast_status"] = "on_track"
     else:
         goals["forecast_status"] = "at_risk"
-
-    _GOALS = goals
-    return goals
-
-
-def set_goal_target(target: float):
-    global _GOALS
-    goals = get_goals()
-    goals["daily_target"] = float(target)
-    
-    # Recalculate dependent values
-    remaining_earnings = max(0, goals["daily_target"] - goals["current_earnings"])
-    remaining_hours = max(0.1, goals["target_hours"] - goals["current_hours"])
-    goals["required_velocity"] = round(remaining_earnings / remaining_hours, 0)
-    goals["remaining_earnings"] = round(remaining_earnings, 2)
-    goals["remaining_hours"] = round(max(0.0, goals["target_hours"] - goals["current_hours"]), 2)
-    goals["hours_to_target"] = round(remaining_earnings / goals["current_velocity"], 2) if goals["current_velocity"] > 0 else None
-    
-    # Simple probability calculation based on current velocity vs required
-    velocity_ratio = goals["current_velocity"] / max(goals["required_velocity"], 1)
-    time_ratio = goals["current_hours"] / goals["target_hours"]
-    
-    if velocity_ratio >= 1.2:
-        prob = 0.95
-    elif velocity_ratio >= 1.0:
-        prob = 0.75
-    elif velocity_ratio >= 0.8:
-        prob = 0.55
-    else:
-        prob = 0.25
-    
-    # Adjust based on time progress
-    if time_ratio > 0.8:
-        prob *= 0.8  # Less time left, harder to catch up
-    
-    goals["goal_probability"] = round(min(0.99, max(0.01, prob)), 2)
-    
-    # Update forecast status
-    if goals["current_velocity"] >= goals["required_velocity"] * 1.1:
-        goals["forecast_status"] = "ahead"
-    elif goals["current_velocity"] >= goals["required_velocity"] * 0.9:
-        goals["forecast_status"] = "on_track"
-    else:
-        goals["forecast_status"] = "at_risk"
-    
-    _GOALS = goals
-    return _GOALS

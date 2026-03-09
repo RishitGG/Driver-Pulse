@@ -15,6 +15,8 @@ Real-time driver wellness & earnings intelligence platform for ride-hailing driv
 - **Explainability** — Per-event feature contributions, confidence badges
 - **Feedback** — Thumbs up/down on detected events
 
+To log **multiple trips at once**, go to the `Trips` tab and use **Import CSV**.
+
 ---
 
 ## Architecture
@@ -23,7 +25,7 @@ Real-time driver wellness & earnings intelligence platform for ride-hailing driv
 Driver-Pulse/
 ├── backend/                  # FastAPI server
 │   ├── main.py               # API endpoints
-│   └── data/                 # Sample data + batch inference
+│   └── data/                 # Sample data, goals, trips import, batch inference
 ├── frontend/                 # React + Vite + Tailwind
 │   └── src/
 │       ├── pages/            # Dashboard, Trips, TripDetail, Trends, Goals, Predict, BatchUpload
@@ -31,6 +33,18 @@ Driver-Pulse/
 ├── drivepulse_stress_model/  # Stress ML pipeline
 ├── earnings/                 # Earnings ML pipeline
 └── requirements.txt
+```
+
+At a high level, the React frontend talks to a single FastAPI backend (`/api/*`), which serves demo data from an in-memory store and calls local ML helpers for stress and earnings predictions.
+
+```mermaid
+flowchart LR
+  browser[Browser_ReactApp] --> api[FastAPI_Backend]
+  api --> tripsStore[InMemory_Trips_+_Goals]
+  api --> stressBatch[Stress_Batch_Processor]
+  api --> earningsBatch[Earnings_Batch_Processor]
+  stressBatch --> stressModel[Stress_Model_Files]
+  earningsBatch --> earningsModel[Earnings_Model_Files]
 ```
 
 ---
@@ -65,3 +79,25 @@ Open **http://localhost:5173** in your browser.
 | Frontend | React 18, Vite, Tailwind CSS, Recharts, Leaflet |
 | Backend | FastAPI, Uvicorn |
 | ML | scikit-learn, NumPy, Pandas |
+
+---
+
+## Data Flow
+
+- **Trips & goals**: Manual entry or CSV import hit `/api/trips` or `/api/trips/import-csv`, which update an in-memory trips list. Goals (`/api/goals`) and dashboard (`/api/dashboard`) recompute current earnings, hours, and forecast from those trips.
+- **Batch stress & earnings**: Batch CSV uploads are processed by backend helpers that engineer features, call local models, and return per-row predictions plus summaries as JSON.
+
+---
+
+## Scalability & Modularity
+
+- **Backend**: FastAPI routes in `backend/main.py` delegate to small modules in `backend/data/` for trips, goals, imports, and batch processing, so swapping the in-memory store for a database or separate ML service is a local change.
+- **Frontend**: The React app uses a single API client layer (`frontend/src/api/client.js`) plus page/component separation, making it easy to plug in global state, auth, or feature flags without rewriting screens.
+- **Batch endpoints**: Batch CSV processing is stateless per request, so multiple backend instances can handle uploads in parallel behind a load balancer.
+
+---
+
+## Testing & Validation Notes
+
+- **Frontend sanity checks** — lightweight helpers in `frontend/src/utils/sanityChecks.js` validate money inputs, time ranges, and clamp goal targets.
+- **Example test files** — illustrative, non-wired tests live in `frontend/src/__tests__/` (e.g. `EarningsProgress.test.jsx`, `TripsAddTrip.test.jsx`) to show how key components and behaviours could be validated in a full test setup.

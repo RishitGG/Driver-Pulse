@@ -10,6 +10,8 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 
+from utils.logging import log_info, log_warn
+
 from data.sample_data import (
     get_trips, get_profile, get_goals, set_goal_target,
     build_dashboard, build_weekly_metrics, build_monthly_metrics,
@@ -83,6 +85,7 @@ class TripCreatePayload(BaseModel):
 
 @app.get("/api/health")
 def health():
+    log_info("health check")
     return {"status": "ok", "timestamp": datetime.now().isoformat()}
 
 

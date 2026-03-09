@@ -1,12 +1,23 @@
 export default function EarningsProgress({ goals }) {
   if (!goals) return null
-  const pct = Math.min(100, Math.round((goals.current_earnings / goals.daily_target) * 100))
+
+  const currentEarnings = Number(goals.current_earnings || 0)
+  const dailyTarget = Number(goals.daily_target || 0)
+  const safeTarget = dailyTarget > 0 ? dailyTarget : 0
+  const pct = safeTarget > 0
+    ? Math.min(100, Math.round((currentEarnings / safeTarget) * 100))
+    : 0
 
   const statusColor = {
     ahead: 'text-uber-green',
     on_track: 'text-uber-blue',
     at_risk: 'text-uber-red',
   }[goals.forecast_status] || 'text-uber-gray-500'
+
+  const prettyStatus =
+    typeof goals.forecast_status === 'string'
+      ? goals.forecast_status.replace('_', ' ')
+      : 'on track'
 
   return (
     <div className="bg-white rounded-xl p-5 shadow-sm border border-uber-gray-100">
@@ -18,8 +29,8 @@ export default function EarningsProgress({ goals }) {
       </div>
 
       <div className="flex items-end gap-2 mb-3">
-        <span className="text-3xl font-bold">₹{goals.current_earnings.toLocaleString()}</span>
-        <span className="text-uber-gray-400 text-sm mb-1">/ ₹{goals.daily_target.toLocaleString()}</span>
+        <span className="text-3xl font-bold">₹{currentEarnings.toLocaleString()}</span>
+        <span className="text-uber-gray-400 text-sm mb-1">/ ₹{safeTarget.toLocaleString()}</span>
       </div>
 
       {/* Progress bar */}
@@ -31,7 +42,7 @@ export default function EarningsProgress({ goals }) {
       </div>
       <div className="flex justify-between text-xs text-uber-gray-400">
         <span>{pct}% achieved</span>
-        <span>₹{(goals.daily_target - goals.current_earnings).toLocaleString()} remaining</span>
+        <span>₹{Math.max(0, safeTarget - currentEarnings).toLocaleString()} remaining</span>
       </div>
 
       {/* Extra stats */}
@@ -45,7 +56,12 @@ export default function EarningsProgress({ goals }) {
           <p className="text-[10px] text-uber-gray-400">Required ₹/hr</p>
         </div>
         <div className="text-center">
-          <p className="text-lg font-bold">{Math.round(goals.goal_probability * 100)}%</p>
+          <p className="text-lg font-bold">
+            {Number.isFinite(goals.goal_probability)
+              ? Math.round(goals.goal_probability * 100)
+              : 0}
+            %
+          </p>
           <p className="text-[10px] text-uber-gray-400">Probability</p>
         </div>
       </div>
@@ -54,7 +70,7 @@ export default function EarningsProgress({ goals }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 pt-4 border-t border-uber-gray-100">
         <div className="text-center">
           <p className="text-xs text-uber-gray-500 font-medium mb-1">Remaining</p>
-          <p className="text-lg font-bold text-uber-orange">₹{Math.max(0, goals.daily_target - goals.current_earnings).toLocaleString()}</p>
+          <p className="text-lg font-bold text-uber-orange">₹{Math.max(0, safeTarget - currentEarnings).toLocaleString()}</p>
           <p className="text-[10px] text-uber-gray-400 mt-1">to reach target</p>
         </div>
         <div className="text-center">
@@ -69,12 +85,16 @@ export default function EarningsProgress({ goals }) {
         </div>
         <div className="text-center">
           <p className="text-xs text-uber-gray-500 font-medium mb-1">Status</p>
-          <p className={`text-lg font-bold ${
-            goals.forecast_status === 'ahead' ? 'text-uber-green' :
-            goals.forecast_status === 'on_track' ? 'text-uber-blue' :
-            'text-uber-red'
-          }`}>
-            {goals.forecast_status?.replace('_', ' ').charAt(0).toUpperCase() + goals.forecast_status?.replace('_', ' ').slice(1)}
+          <p
+            className={`text-lg font-bold ${
+              goals.forecast_status === 'ahead'
+                ? 'text-uber-green'
+                : goals.forecast_status === 'on_track'
+                ? 'text-uber-blue'
+                : 'text-uber-red'
+            }`}
+          >
+            {prettyStatus.charAt(0).toUpperCase() + prettyStatus.slice(1)}
           </p>
           <p className="text-[10px] text-uber-gray-400 mt-1">today's pace</p>
         </div>

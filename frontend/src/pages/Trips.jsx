@@ -3,6 +3,7 @@ import { api } from '../api/client'
 import TripListItem from '../components/TripListItem'
 import FilterChips from '../components/FilterChips'
 import { Calendar, SlidersHorizontal, Plus, Upload, Download, X } from 'lucide-react'
+import { isValidMoney, isValidTimeRange } from '../utils/sanityChecks'
 
 export default function Trips() {
   const [trips, setTrips] = useState([])
@@ -68,6 +69,30 @@ export default function Trips() {
   const submitNewTrip = async (e) => {
     e.preventDefault()
     setCreateError('')
+    // Basic client-side validation mirroring backend rules
+    if (!newTrip.date) {
+      setCreateError('Date is required')
+      return
+    }
+    if (!isValidTimeRange(newTrip.start_time, newTrip.end_time)) {
+      setCreateError('End time must be after start time')
+      return
+    }
+    if (!isValidMoney(newTrip.distance_km)) {
+      setCreateError('Please enter a valid distance')
+      return
+    }
+    if (!isValidMoney(newTrip.fare)) {
+      setCreateError('Please enter a valid fare')
+      return
+    }
+    if (newTrip.stress_score !== '' && newTrip.stress_score !== null && newTrip.stress_score !== undefined) {
+      const s = Number(newTrip.stress_score)
+      if (!Number.isFinite(s) || s < 0 || s > 10) {
+        setCreateError('Stress score must be a number between 0 and 10')
+        return
+      }
+    }
     setCreating(true)
     try {
       const payload = {
@@ -93,6 +118,16 @@ export default function Trips() {
 
   const handleImportTripsCsv = async (file) => {
     if (!file) return
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      setImportError('Please upload a .csv file')
+      return
+    }
+    // 1 MB soft limit – avoids accidental huge files
+    const maxSizeBytes = 1 * 1024 * 1024
+    if (file.size > maxSizeBytes) {
+      setImportError('CSV is too large (max 1MB)')
+      return
+    }
     setImportError('')
     setImportSummary(null)
     setImporting(true)

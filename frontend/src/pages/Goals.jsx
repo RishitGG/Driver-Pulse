@@ -3,6 +3,7 @@ import { api } from '../api/client'
 import EarningsProgress from '../components/EarningsProgress'
 import StressTips from '../components/StressTips'
 import { Target, Save, CheckCircle, TrendingUp, Clock, DollarSign } from 'lucide-react'
+import { clampDailyTarget, isValidMoney } from '../utils/sanityChecks'
 
 export default function Goals() {
   const [goals, setGoals] = useState(null)
@@ -10,6 +11,7 @@ export default function Goals() {
   const [targetInput, setTargetInput] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     api.getGoals()
@@ -22,14 +24,20 @@ export default function Goals() {
   }, [])
 
   const handleSave = async () => {
+    setError('')
+    const clamped = clampDailyTarget(targetInput)
+    if (!isValidMoney(clamped) || clamped <= 0) {
+      setError('Please enter a positive daily target')
+      return
+    }
     setSaving(true)
     try {
-      const updated = await api.setGoal(Number(targetInput))
+      const updated = await api.setGoal(Number(clamped))
       setGoals(updated)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
     } catch {
-      alert('Failed to save goal')
+      setError('Failed to save goal')
     } finally {
       setSaving(false)
     }
@@ -81,6 +89,12 @@ export default function Goals() {
             )}
           </button>
         </div>
+
+        {error && (
+          <p className="text-xs text-red-600 mb-2">
+            {error}
+          </p>
+        )}
 
         <p className="text-xs text-uber-gray-400 mb-4">
           Set your daily earnings target. Your progress will be tracked in real-time on the dashboard.

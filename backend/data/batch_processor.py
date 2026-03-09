@@ -13,6 +13,8 @@ import pandas as pd
 from pathlib import Path
 from typing import Optional
 
+from .config import BATCH_ROW_SOFT_LIMIT
+
 ROOT = Path(__file__).resolve().parent.parent.parent  # project root (Driver-Pulse/)
 
 # ── Stress model ──────────────────────────────────────────────
@@ -277,6 +279,12 @@ def process_stress_csv(csv_content: str) -> dict:
     if not rows:
         return {"error": "CSV is empty", "results": [], "summary": {}}
 
+    row_count = len(rows)
+    row_limit_warning = None
+    if BATCH_ROW_SOFT_LIMIT and row_count > BATCH_ROW_SOFT_LIMIT:
+        row_limit_warning = (
+            f"Processed {row_count} rows; consider chunking to {BATCH_ROW_SOFT_LIMIT} rows per upload for large workloads."
+        )
     results = []
     severity_counts = {"low": 0, "medium": 0, "high": 0}
     situation_counts = {}
@@ -314,21 +322,25 @@ def process_stress_csv(csv_content: str) -> dict:
     notify_count = sum(1 for r in results if r["should_notify"])
     safety_count = sum(1 for r in results if r["is_safety_critical"])
 
+    summary = {
+        "total_windows": total,
+        "severity_counts": severity_counts,
+        "situation_counts": situation_counts,
+        "avg_confidence": avg_confidence,
+        "notifications_triggered": notify_count,
+        "safety_critical_count": safety_count,
+        "stress_score": round(
+            (severity_counts.get("high", 0) * 5 + severity_counts.get("medium", 0) * 3)
+            / max(total, 1),
+            2,
+        ),
+    }
+    if row_limit_warning:
+        summary["row_limit_warning"] = row_limit_warning
+
     return {
         "results": results,
-        "summary": {
-            "total_windows": total,
-            "severity_counts": severity_counts,
-            "situation_counts": situation_counts,
-            "avg_confidence": avg_confidence,
-            "notifications_triggered": notify_count,
-            "safety_critical_count": safety_count,
-            "stress_score": round(
-                (severity_counts.get("high", 0) * 5 + severity_counts.get("medium", 0) * 3)
-                / max(total, 1),
-                2,
-            ),
-        },
+        "summary": summary,
     }
 
 
@@ -340,6 +352,13 @@ def process_earnings_csv(csv_content: str) -> dict:
 
     if df.empty:
         return {"error": "CSV is empty", "results": [], "summary": {}}
+
+    row_count = len(df)
+    row_limit_warning = None
+    if BATCH_ROW_SOFT_LIMIT and row_count > BATCH_ROW_SOFT_LIMIT:
+        row_limit_warning = (
+            f"Processed {row_count} rows; consider chunking to {BATCH_ROW_SOFT_LIMIT} rows per upload for large workloads."
+        )
 
     # Fill defaults for missing columns
     for col, default in [
@@ -383,15 +402,19 @@ def process_earnings_csv(csv_content: str) -> dict:
     for r in results:
         forecast_counts[r.get("forecast_status", "on_track")] += 1
 
+    summary = {
+        "total_entries": total,
+        "avg_predicted_velocity": avg_velocity,
+        "forecast_counts": forecast_counts,
+        "best_velocity": max((r["predicted_velocity"] for r in results if r["predicted_velocity"]), default=0),
+        "worst_velocity": min((r["predicted_velocity"] for r in results if r["predicted_velocity"]), default=0),
+    }
+    if row_limit_warning:
+        summary["row_limit_warning"] = row_limit_warning
+
     return {
         "results": results,
-        "summary": {
-            "total_entries": total,
-            "avg_predicted_velocity": avg_velocity,
-            "forecast_counts": forecast_counts,
-            "best_velocity": max((r["predicted_velocity"] for r in results if r["predicted_velocity"]), default=0),
-            "worst_velocity": min((r["predicted_velocity"] for r in results if r["predicted_velocity"]), default=0),
-        },
+        "summary": summary,
     }
 
 

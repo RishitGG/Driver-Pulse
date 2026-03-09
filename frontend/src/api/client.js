@@ -1,11 +1,17 @@
 const BASE = '/api';
 
+// Single place to plug in auth headers, retries, error normalisation, etc.
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
     headers: { 'Content-Type': 'application/json', ...options.headers },
     ...options,
   });
-  if (!res.ok) throw new Error(`API ${res.status}: ${res.statusText}`);
+  if (!res.ok) {
+    const message = `API ${res.status}: ${res.statusText}`;
+    const error = new Error(message);
+    error.status = res.status;
+    throw error;
+  }
   return res.json();
 }
 
