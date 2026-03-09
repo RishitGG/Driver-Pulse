@@ -10,10 +10,11 @@ Real-time driver wellness & earnings intelligence platform for ride-hailing driv
 - **Trip Detail** — Map playback, sensor charts, event detection with explainability
 - **Trends** — Weekly/monthly earnings, stress, and velocity charts
 - **Goals** — Set and track daily earnings targets
-- **Manual Predict** — Enter sensor/earnings values → instant ML prediction
-- **Batch Upload** — Upload CSV → run inference on multiple trips at once
+- **Predict** — Enter sensor/earnings values → instant ML prediction *(judge-facing)*
+- **Batch Upload** — Upload CSV → run inference on multiple trips at once *(judge-facing)*
 - **Explainability** — Per-event feature contributions, confidence badges
 - **Feedback** — Thumbs up/down on detected events
+- **Auth** — Login / register with demo accounts or new profile
 
 To log **multiple trips at once**, go to the `Trips` tab and use **Import CSV**.
 
@@ -23,19 +24,50 @@ To log **multiple trips at once**, go to the `Trips` tab and use **Import CSV**.
 
 ```
 Driver-Pulse/
-├── backend/                  # FastAPI server
-│   ├── main.py               # API endpoints
-│   └── data/                 # Sample data, goals, trips import, batch inference
-├── frontend/                 # React + Vite + Tailwind
+├── backend/                       # FastAPI REST API (25 endpoints)
+│   ├── main.py                    # Routes, middleware, Pydantic models
+│   ├── data/
+│   │   ├── sample_data.py         # Synthetic trip/route/event generator
+│   │   ├── batch_processor.py     # Loads ML models, runs batch inference
+│   │   ├── trips_import.py        # CSV trip import parser
+│   │   ├── users.py               # In-memory auth store
+│   │   └── config.py              # Batch limits & constants
+│   └── utils/
+│       └── logging.py             # Timestamped structured logging
+│
+├── frontend/                      # React 18 + Vite + Tailwind SPA
 │   └── src/
-│       ├── pages/            # Dashboard, Trips, TripDetail, Trends, Goals, Predict, BatchUpload
-│       └── components/       # Sidebar, TripMap, SignalCharts, ExplainModal, etc.
-├── drivepulse_stress_model/  # Stress ML pipeline
-├── earnings/                 # Earnings ML pipeline
-└── requirements.txt
+│       ├── pages/                 # 8 pages: Home, Dashboard, Trips, TripDetail,
+│       │                          #   Trends, Goals, Predict, BatchUpload
+│       ├── components/            # 16 reusable components
+│       ├── api/client.js          # Centralised API client
+│       └── utils/sanityChecks.js  # Input validation helpers
+│
+├── drivepulse_stress_model/       # Stress Detection ML pipeline
+│   ├── run.py                     # CLI entry (--generate --calibrate --train --demo)
+│   ├── src/
+│   │   ├── generate_data.py       # Synthetic sensor window generator (3,150 samples)
+│   │   ├── train.py               # RF classifier training + evaluation
+│   │   ├── inference.py           # InferenceEngine with rule-based fallback
+│   │   └── hal.py                 # Hardware Abstraction Layer (device calibration)
+│   ├── model/                     # Trained artifacts (rf_model.pkl, baselines, contract)
+│   └── calibration/               # Device calibration profile
+│
+├── earnings/earnings/             # Earnings Forecasting ML pipeline
+│   ├── run.py                     # Sequential pipeline entry
+│   ├── src/
+│   │   ├── build_dataset.py       # Merges drivers + goals + velocity + trips
+│   │   ├── features.py            # 14-feature engineering (lags, rolling avg, rush flags)
+│   │   ├── augment.py             # 5× Gaussian noise augmentation
+│   │   ├── train.py               # RF regressor training + evaluation
+│   │   └── inference.py           # Batch velocity prediction
+│   ├── model/                     # Trained artifacts (rf_model.pkl, contract)
+│   └── data/                      # Source CSVs (drivers, goals, velocity, trips)
+│
+├── streamlit_app.py               # Standalone Streamlit demo (3 tabs)
+├── tests/data/                    # Example CSVs for batch & import testing
+└── requirements.txt               # Root Python dependencies
 ```
-
-At a high level, the React frontend talks to a single FastAPI backend (`/api/*`), which serves demo data from an in-memory store and calls local ML helpers for stress and earnings predictions.
 
 ```mermaid
 flowchart LR
