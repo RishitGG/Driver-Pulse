@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { api } from '../api/client'
 import EarningsProgress from '../components/EarningsProgress'
 import StressTips from '../components/StressTips'
-import { Target, Save, CheckCircle } from 'lucide-react'
+import { Target, Save, CheckCircle, TrendingUp, Clock, DollarSign } from 'lucide-react'
 
 export default function Goals() {
   const [goals, setGoals] = useState(null)
@@ -54,7 +54,7 @@ export default function Goals() {
           <h3 className="text-sm font-semibold text-uber-gray-700">Daily Earnings Target</h3>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-5">
           <div className="relative flex-1">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-uber-gray-400 text-sm">₹</span>
             <input
@@ -82,7 +82,7 @@ export default function Goals() {
           </button>
         </div>
 
-        <p className="text-xs text-uber-gray-400 mt-2">
+        <p className="text-xs text-uber-gray-400 mb-4">
           Set your daily earnings target. Your progress will be tracked in real-time on the dashboard.
         </p>
       </div>
@@ -91,7 +91,7 @@ export default function Goals() {
       <EarningsProgress goals={goals} />
 
       {/* Goal milestones */}
-      {goals && (
+      {/* {goals && (
         <div className="bg-white rounded-xl p-6 border border-uber-gray-100 shadow-sm">
           <h3 className="text-sm font-semibold text-uber-gray-700 mb-4">Today&apos;s Progress</h3>
           <div className="space-y-4">
@@ -118,7 +118,7 @@ export default function Goals() {
             })}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Stress tips */}
       <StressTips />

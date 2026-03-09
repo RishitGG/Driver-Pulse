@@ -49,6 +49,36 @@ export default function EarningsProgress({ goals }) {
           <p className="text-[10px] text-uber-gray-400">Probability</p>
         </div>
       </div>
+
+      {/* Details grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 pt-4 border-t border-uber-gray-100">
+        <div className="text-center">
+          <p className="text-xs text-uber-gray-500 font-medium mb-1">Remaining</p>
+          <p className="text-lg font-bold text-uber-orange">₹{Math.max(0, goals.daily_target - goals.current_earnings).toLocaleString()}</p>
+          <p className="text-[10px] text-uber-gray-400 mt-1">to reach target</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs text-uber-gray-500 font-medium mb-1">Time Worked</p>
+          <p className="text-lg font-bold">{goals.current_hours}h</p>
+          <p className="text-[10px] text-uber-gray-400 mt-1">of {goals.target_hours}h target</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs text-uber-gray-500 font-medium mb-1">Trips Today</p>
+          <p className="text-lg font-bold">{goals.trips_completed}</p>
+          <p className="text-[10px] text-uber-gray-400 mt-1">completed</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs text-uber-gray-500 font-medium mb-1">Status</p>
+          <p className={`text-lg font-bold ${
+            goals.forecast_status === 'ahead' ? 'text-uber-green' :
+            goals.forecast_status === 'on_track' ? 'text-uber-blue' :
+            'text-uber-red'
+          }`}>
+            {goals.forecast_status?.replace('_', ' ').charAt(0).toUpperCase() + goals.forecast_status?.replace('_', ' ').slice(1)}
+          </p>
+          <p className="text-[10px] text-uber-gray-400 mt-1">today's pace</p>
+        </div>
+      </div>
     </div>
   )
 }
