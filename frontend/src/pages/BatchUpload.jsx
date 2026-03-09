@@ -123,7 +123,7 @@ export default function BatchUpload() {
           </div>
           <p className="text-xs text-uber-gray-500 mb-4">
             {mode === 'stress'
-              ? 'Each row = one 30-second sensor window. Requires 30 feature columns (motion, audio, speed aggregates). Add optional trip_id and timestamp columns for identification.'
+              ? 'Each row = one 30-second sensor window. Requires 15 feature columns (motion, audio, speed aggregates). Add optional trip_id and timestamp columns for identification.'
               : 'Each row = one earnings velocity log entry. Requires driver_id, timestamp, cumulative_earnings, elapsed_hours, current_velocity, target_velocity, velocity_delta, trips_completed, target_earnings.'
             }
           </p>
@@ -131,7 +131,7 @@ export default function BatchUpload() {
             <p className="text-[10px] text-uber-gray-500 font-semibold uppercase tracking-wider mb-1">Required columns</p>
             <div className="flex flex-wrap gap-1">
               {(mode === 'stress'
-                ? ['motion_max', 'motion_mean', 'motion_p95', 'brake_intensity', 'audio_db_max', 'audio_db_p90', 'speed_mean', '...+23 more']
+                ? ['motion_max', 'motion_mean', 'motion_p95', 'brake_intensity', 'audio_db_max', 'audio_db_p90', 'speed_mean', '...+8 more']
                 : ['driver_id', 'timestamp', 'cumulative_earnings', 'elapsed_hours', 'current_velocity', 'target_velocity', 'trips_completed', 'target_earnings']
               ).map(col => (
                 <span key={col} className="text-[10px] bg-white px-2 py-0.5 rounded border border-uber-gray-200 font-mono">

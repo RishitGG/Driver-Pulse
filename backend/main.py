@@ -20,6 +20,9 @@ from data.batch_processor import (
     stress_csv_template, earnings_csv_template,
     predict_stress_row, predict_earnings_row,
 )
+from data.users import (
+    login_user, register_user, get_user_profile, list_all_users,
+)
 
 app = FastAPI(title="DrivePulse API", version="1.0.0")
 
@@ -45,11 +48,69 @@ class GoalPayload(BaseModel):
     daily_target: float
 
 
+class LoginPayload(BaseModel):
+    username: str
+    password: str
+
+
+class RegisterPayload(BaseModel):
+    username: str
+    password: str
+    name: str
+    email: str
+    phone: str
+    city: str
+    vehicle_type: str
+    vehicle_number: str
+    shift_preference: str = "morning"
+    avg_hours_per_day: float = 7.0
+    avg_earnings_per_hour: float = 180
+    experience_months: int = 0
+
+
 # ── Routes ────────────────────────────────────────────────────────────────
 
 @app.get("/api/health")
 def health():
     return {"status": "ok", "timestamp": datetime.now().isoformat()}
+
+
+# ── Authentication ───────────────────────────────────────────────────────
+
+@app.post("/api/auth/login")
+def login(payload: LoginPayload):
+    """Authenticate a driver and return their profile."""
+    user = login_user(payload.username, payload.password)
+    if not user:
+        raise HTTPException(401, "Invalid username or password")
+    return user
+
+
+@app.post("/api/auth/register")
+def register(payload: RegisterPayload):
+    """Register a new driver account."""
+    driver_data = {
+        "name": payload.name,
+        "email": payload.email,
+        "phone": payload.phone,
+        "city": payload.city,
+        "vehicle_type": payload.vehicle_type,
+        "vehicle_number": payload.vehicle_number,
+        "shift_preference": payload.shift_preference,
+        "avg_hours_per_day": payload.avg_hours_per_day,
+        "avg_earnings_per_hour": payload.avg_earnings_per_hour,
+        "experience_months": payload.experience_months,
+    }
+    result = register_user(payload.username, payload.password, driver_data)
+    if not result:
+        raise HTTPException(400, "Username already exists")
+    return result
+
+
+@app.get("/api/auth/users")
+def list_users():
+    """List all available demo users."""
+    return list_all_users()
 
 
 @app.get("/api/profile")
@@ -258,6 +319,22 @@ def earnings_template():
 def predict_stress(payload: dict):
     """Submit a single row of sensor features → get stress prediction."""
     try:
+        # Add constant features
+        payload.setdefault("motion_std", 0.3)
+        payload.setdefault("z_dev_max", 0.5)
+        payload.setdefault("spikes_above3", 0)
+        payload.setdefault("spikes_above5", 0)
+        payload.setdefault("audio_class_max", 2.0)
+        payload.setdefault("audio_class_mean", 1.0)
+        payload.setdefault("sustained_max", 10.0)
+        payload.setdefault("sustained_sum", 50.0)
+        payload.setdefault("cadence_var_max", 0.6)
+        payload.setdefault("audio_leads_motion", 0.0)
+        payload.setdefault("audio_onset_sec", 0.0)
+        payload.setdefault("brake_t_sec", 0.0)
+        payload.setdefault("is_low_speed", 0)
+        payload.setdefault("both_elevated", 0)
+        payload.setdefault("audio_only", 0)
         result = predict_stress_row(payload)
         return result
     except Exception as e:
@@ -281,33 +358,18 @@ def stress_features():
         {"name": "motion_max", "label": "Motion Max (g)", "default": 1.5, "group": "Motion"},
         {"name": "motion_mean", "label": "Motion Mean (g)", "default": 0.8, "group": "Motion"},
         {"name": "motion_p95", "label": "Motion P95 (g)", "default": 1.2, "group": "Motion"},
-        {"name": "motion_std", "label": "Motion Std (g)", "default": 0.3, "group": "Motion"},
         {"name": "brake_intensity", "label": "Brake Intensity", "default": 0.5, "group": "Motion"},
         {"name": "lateral_max", "label": "Lateral Max (g)", "default": 0.8, "group": "Motion"},
-        {"name": "z_dev_max", "label": "Z Deviation Max", "default": 0.5, "group": "Motion"},
         {"name": "speed_mean", "label": "Speed Mean (km/h)", "default": 30.0, "group": "Speed"},
         {"name": "speed_at_brake", "label": "Speed at Brake (km/h)", "default": 25.0, "group": "Speed"},
         {"name": "speed_drop", "label": "Speed Drop (km/h)", "default": 5.0, "group": "Speed"},
-        {"name": "spikes_above3", "label": "Spikes > 3g", "default": 0, "group": "Motion"},
-        {"name": "spikes_above5", "label": "Spikes > 5g", "default": 0, "group": "Motion"},
         {"name": "audio_db_max", "label": "Audio dB Max", "default": 65.0, "group": "Audio"},
         {"name": "audio_db_mean", "label": "Audio dB Mean", "default": 55.0, "group": "Audio"},
         {"name": "audio_db_p90", "label": "Audio dB P90", "default": 62.0, "group": "Audio"},
         {"name": "audio_db_std", "label": "Audio dB Std", "default": 5.0, "group": "Audio"},
-        {"name": "audio_class_max", "label": "Audio Class Max", "default": 2.0, "group": "Audio"},
-        {"name": "audio_class_mean", "label": "Audio Class Mean", "default": 1.0, "group": "Audio"},
-        {"name": "sustained_max", "label": "Sustained Max", "default": 10.0, "group": "Audio"},
-        {"name": "sustained_sum", "label": "Sustained Sum", "default": 50.0, "group": "Audio"},
         {"name": "cadence_var_mean", "label": "Cadence Var Mean", "default": 0.3, "group": "Voice"},
-        {"name": "cadence_var_max", "label": "Cadence Var Max", "default": 0.6, "group": "Voice"},
         {"name": "argument_frac", "label": "Argument Fraction", "default": 0.0, "group": "Voice"},
         {"name": "loud_frac", "label": "Loud Fraction", "default": 0.1, "group": "Voice"},
-        {"name": "audio_leads_motion", "label": "Audio Leads Motion (s)", "default": 0.0, "group": "Timing"},
-        {"name": "audio_onset_sec", "label": "Audio Onset (s)", "default": 15.0, "group": "Timing"},
-        {"name": "brake_t_sec", "label": "Brake Time (s)", "default": 15.0, "group": "Timing"},
-        {"name": "is_low_speed", "label": "Is Low Speed (0/1)", "default": 0, "group": "Flags"},
-        {"name": "both_elevated", "label": "Both Elevated (0/1)", "default": 0, "group": "Flags"},
-        {"name": "audio_only", "label": "Audio Only (0/1)", "default": 0, "group": "Flags"},
     ]
     return {"features": features, "total": len(features)}
 

@@ -282,6 +282,22 @@ def process_stress_csv(csv_content: str) -> dict:
     situation_counts = {}
 
     for i, row in enumerate(rows):
+        # Add constant features
+        row["motion_std"] = 0.3
+        row["z_dev_max"] = 0.5
+        row["spikes_above3"] = 0
+        row["spikes_above5"] = 0
+        row["audio_class_max"] = 2.0
+        row["audio_class_mean"] = 1.0
+        row["sustained_max"] = 10.0
+        row["sustained_sum"] = 50.0
+        row["cadence_var_max"] = 0.6
+        row["audio_leads_motion"] = 0.0
+        row["audio_onset_sec"] = 0.0
+        row["brake_t_sec"] = 0.0
+        row["is_low_speed"] = 0
+        row["both_elevated"] = 0
+        row["audio_only"] = 0
         pred = predict_stress_row(row)
         pred["row_index"] = i
         # Carry through any extra columns (trip_id, timestamp, etc.)
@@ -384,20 +400,14 @@ def process_earnings_csv(csv_content: str) -> dict:
 def stress_csv_template() -> str:
     """Return a CSV template string with headers + 2 sample rows."""
     feats = [
-        "motion_max", "motion_mean", "motion_p95", "motion_std",
-        "brake_intensity", "lateral_max", "z_dev_max",
+        "motion_max", "motion_mean", "motion_p95", "brake_intensity", "lateral_max",
         "speed_mean", "speed_at_brake", "speed_drop",
-        "spikes_above3", "spikes_above5",
         "audio_db_max", "audio_db_mean", "audio_db_p90", "audio_db_std",
-        "audio_class_max", "audio_class_mean", "sustained_max", "sustained_sum",
-        "cadence_var_mean", "cadence_var_max",
-        "argument_frac", "loud_frac",
-        "audio_leads_motion", "audio_onset_sec", "brake_t_sec",
-        "is_low_speed", "both_elevated", "audio_only",
+        "cadence_var_mean", "argument_frac", "loud_frac",
     ]
     header = "trip_id,timestamp," + ",".join(feats)
-    row1 = "trip-001,08:15:00,1.2,0.6,1.1,0.3,0.8,0.5,0.2,35,35,5,0,0,68,62,67,4,2,1.2,0,0,0.1,0.15,0.0,0.05,0,15,15,0,0,0"
-    row2 = "trip-002,09:30:00,5.1,1.8,4.8,1.4,4.9,2.1,0.4,40,40,25,4,2,94,82,91,8,5,3.8,45,180,0.72,0.95,0.55,0.82,-1.5,12,14,0,1,0"
+    row1 = "trip-001,08:15:00,1.2,0.6,1.1,0.8,0.5,35,35,5,68,62,67,4,0.1,0.15"
+    row2 = "trip-002,09:30:00,5.1,1.8,4.8,4.9,2.1,40,40,25,94,82,91,8,0.72,0.95"
     return header + "\n" + row1 + "\n" + row2 + "\n"
 
 

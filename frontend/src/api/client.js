@@ -10,6 +10,21 @@ async function request(path, options = {}) {
 }
 
 export const api = {
+  // Authentication
+  login: (username, password) =>
+    request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    }),
+  
+  register: (userData) =>
+    request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    }),
+
+  listUsers: () => request('/auth/users'),
+
   // Dashboard
   getDashboard: () => request('/dashboard'),
   getProfile: () => request('/profile'),

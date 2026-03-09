@@ -414,5 +414,38 @@ def set_goal_target(target: float):
     global _GOALS
     goals = get_goals()
     goals["daily_target"] = target
+    
+    # Recalculate dependent values
+    remaining_earnings = max(0, target - goals["current_earnings"])
+    remaining_hours = max(0.1, goals["target_hours"] - goals["current_hours"])
+    goals["required_velocity"] = round(remaining_earnings / remaining_hours, 0)
+    
+    # Simple probability calculation based on current velocity vs required
+    velocity_ratio = goals["current_velocity"] / max(goals["required_velocity"], 1)
+    time_ratio = goals["current_hours"] / goals["target_hours"]
+    
+    if velocity_ratio >= 1.2:
+        prob = 0.95
+    elif velocity_ratio >= 1.0:
+        prob = 0.75
+    elif velocity_ratio >= 0.8:
+        prob = 0.55
+    else:
+        prob = 0.25
+    
+    # Adjust based on time progress
+    if time_ratio > 0.8:
+        prob *= 0.8  # Less time left, harder to catch up
+    
+    goals["goal_probability"] = round(min(0.99, max(0.01, prob)), 2)
+    
+    # Update forecast status
+    if goals["current_velocity"] >= goals["required_velocity"] * 1.1:
+        goals["forecast_status"] = "ahead"
+    elif goals["current_velocity"] >= goals["required_velocity"] * 0.9:
+        goals["forecast_status"] = "on_track"
+    else:
+        goals["forecast_status"] = "at_risk"
+    
     _GOALS = goals
     return _GOALS
