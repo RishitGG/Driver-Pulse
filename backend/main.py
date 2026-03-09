@@ -14,12 +14,14 @@ from data.sample_data import (
     get_trips, get_profile, get_goals, set_goal_target,
     build_dashboard, build_weekly_metrics, build_monthly_metrics,
     STRESS_TIPS, SITUATIONS,
+    create_user_trip, add_trip,
 )
 from data.batch_processor import (
     process_stress_csv, process_earnings_csv,
     stress_csv_template, earnings_csv_template,
     predict_stress_row, predict_earnings_row,
 )
+from data.trips_import import import_trips_csv, trips_csv_template
 from data.users import (
     login_user, register_user, get_user_profile, list_all_users,
 )
@@ -66,6 +68,15 @@ class RegisterPayload(BaseModel):
     avg_hours_per_day: float = 7.0
     avg_earnings_per_hour: float = 180
     experience_months: int = 0
+
+
+class TripCreatePayload(BaseModel):
+    date: str  # YYYY-MM-DD
+    start_time: str  # "HH:MM" (local) or ISO datetime
+    end_time: str  # "HH:MM" (local) or ISO datetime
+    distance_km: float
+    fare: float
+    stress_score: Optional[float] = None  # 0-10 (optional)
 
 
 # ── Routes ────────────────────────────────────────────────────────────────
@@ -128,6 +139,67 @@ def dashboard():
 
 
 # ── Trips ─────────────────────────────────────────────────────────────────
+
+@app.get("/api/trips/template", response_class=PlainTextResponse)
+def trips_template():
+    """Download a CSV template for trips import."""
+    return PlainTextResponse(
+        content=trips_csv_template(),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=trips_template.csv"},
+    )
+
+
+@app.post("/api/trips")
+def create_trip(payload: TripCreatePayload):
+    """Create a single trip (manual entry) and persist in the in-memory store."""
+    try:
+        date = payload.date
+
+        def _to_iso(dt_or_hhmm: str) -> datetime:
+            s = (dt_or_hhmm or "").strip()
+            # Accept ISO datetime if provided
+            if "T" in s:
+                return datetime.fromisoformat(s)
+            # Accept HH:MM, combine with date
+            hh, mm = s.split(":")
+            return datetime.fromisoformat(f"{date}T{int(hh):02d}:{int(mm):02d}:00")
+
+        start_dt = _to_iso(payload.start_time)
+        end_dt = _to_iso(payload.end_time)
+        if end_dt <= start_dt:
+            raise HTTPException(400, "end_time must be after start_time")
+
+        duration_min = int(round((end_dt - start_dt).total_seconds() / 60))
+        if duration_min <= 0:
+            raise HTTPException(400, "Trip duration must be at least 1 minute")
+
+        stress_score = payload.stress_score
+        if stress_score is None:
+            stress_score = 0.0
+        try:
+            stress_score = float(stress_score)
+        except Exception:
+            raise HTTPException(400, "stress_score must be a number between 0 and 10")
+        if stress_score < 0 or stress_score > 10:
+            raise HTTPException(400, "stress_score must be between 0 and 10")
+
+        trip = create_user_trip(
+            date=date,
+            start_time_iso=start_dt.isoformat(),
+            end_time_iso=end_dt.isoformat(),
+            duration_min=duration_min,
+            distance_km=payload.distance_km,
+            fare=payload.fare,
+            stress_score=stress_score,
+        )
+        add_trip(trip)
+        return trip
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(400, str(e))
+
 
 @app.get("/api/trips")
 def list_trips(
@@ -311,6 +383,20 @@ def earnings_template():
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=earnings_template.csv"},
     )
+
+
+# ── Trips CSV Import (creates trips) ───────────────────────────────────────
+
+@app.post("/api/trips/import-csv")
+async def import_trips(file: UploadFile = File(...)):
+    """Upload a Trips CSV and persist rows as trips (in-memory)."""
+    content = (await file.read()).decode("utf-8")
+    if not content.strip():
+        raise HTTPException(400, "Empty file")
+    result = import_trips_csv(content)
+    if "error" in result and result["error"]:
+        raise HTTPException(400, result["error"])
+    return result
 
 
 # ── Single-row manual prediction ──────────────────────────────────────────

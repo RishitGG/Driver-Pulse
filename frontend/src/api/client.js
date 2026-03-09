@@ -40,6 +40,18 @@ export const api = {
   },
   getTrip: (id) => request(`/trips/${id}`),
   getSampleTrip: () => request('/sample-trip'),
+  createTrip: (payload) =>
+    request('/trips', { method: 'POST', body: JSON.stringify(payload) }),
+  importTripsCsv: async (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await fetch(`${BASE}/trips/import-csv`, { method: 'POST', body: formData })
+    if (!res.ok) {
+      const text = await res.text()
+      throw new Error(text || `Import failed (${res.status})`)
+    }
+    return res.json()
+  },
 
   // Events
   getTripEvents: (tripId) => request(`/trips/${tripId}/events`),

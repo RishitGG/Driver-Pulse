@@ -11,6 +11,11 @@ from typing import List, Dict, Any
 
 random.seed(42)
 
+# Canonical "today" used across demo endpoints.
+# (The frontend defaults to this date as well.)
+TODAY = datetime(2026, 3, 8)
+TODAY_STR = TODAY.strftime("%Y-%m-%d")
+
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -277,8 +282,7 @@ def generate_goals() -> Dict:
 
 def build_dashboard(trips: List[Dict], goals: Dict) -> Dict:
     """Build dashboard summary from trips and goals."""
-    today_str = datetime(2026, 3, 8).strftime("%Y-%m-%d")
-    today_trips = [t for t in trips if t["date"] == today_str]
+    today_trips = [t for t in trips if t["date"] == TODAY_STR]
 
     total_earnings = sum(t["fare"] for t in today_trips)
     total_hours = round(sum(t["duration_min"] for t in today_trips) / 60, 1)
@@ -287,7 +291,7 @@ def build_dashboard(trips: List[Dict], goals: Dict) -> Dict:
     pct_target = round(min(100, (total_earnings / goals["daily_target"]) * 100), 1) if goals["daily_target"] else 0
 
     return {
-        "date": today_str,
+        "date": TODAY_STR,
         "total_trips": len(today_trips),
         "total_hours": total_hours,
         "total_earnings": total_earnings,
@@ -301,7 +305,7 @@ def build_dashboard(trips: List[Dict], goals: Dict) -> Dict:
 
 def build_weekly_metrics(trips: List[Dict]) -> Dict:
     """Build aggregated metrics for trends page."""
-    today = datetime(2026, 3, 8)
+    today = TODAY
     days = []
     for i in range(6, -1, -1):
         day = today - timedelta(days=i)
@@ -350,7 +354,7 @@ def build_weekly_metrics(trips: List[Dict]) -> Dict:
 
 def build_monthly_metrics() -> Dict:
     """Build 30-day metric trend."""
-    today = datetime(2026, 3, 8)
+    today = TODAY
     days = []
     for i in range(29, -1, -1):
         day = today - timedelta(days=i)
@@ -396,6 +400,58 @@ def get_trips():
     return _TRIPS
 
 
+def create_user_trip(
+    *,
+    date: str,
+    start_time_iso: str,
+    end_time_iso: str,
+    duration_min: int,
+    distance_km: float,
+    fare: float,
+    stress_score: float = 0.0,
+):
+    """Create a minimal, UI-compatible trip for manual entry/import flows."""
+    # Keep detail page working by providing empty events + synthetic route/signals.
+    events = []
+    route_anchors = ROUTE_ANCHORS[0]
+    route = _interp_route(route_anchors, n_points=max(30, duration_min))
+    signals = _gen_signals(duration_min, events)
+
+    stress_score = float(stress_score or 0.0)
+    # Derive stress_level for existing UI (dots/filters).
+    if stress_score <= 3:
+        stress_level = "low"
+    elif stress_score <= 6:
+        stress_level = "medium"
+    else:
+        stress_level = "high"
+
+    return {
+        "id": f"user-{str(uuid.uuid4())[:8]}",
+        "date": date,
+        "start_time": start_time_iso,
+        "end_time": end_time_iso,
+        "duration_min": int(duration_min),
+        "distance_km": float(distance_km),
+        "fare": float(fare),
+        "surge_multiplier": 1.0,
+        "stress_score": round(min(10.0, max(0.0, stress_score)), 1),
+        "stress_level": stress_level,
+        "events_count": 0,
+        "events": events,
+        "route": route,
+        "pickup": route[0] if route else None,
+        "dropoff": route[-1] if route else None,
+        "signals": signals,
+    }
+
+
+def add_trip(trip: Dict[str, Any]) -> Dict[str, Any]:
+    trips = get_trips()
+    trips.insert(0, trip)
+    return trip
+
+
 def get_profile():
     global _PROFILE
     if _PROFILE is None:
@@ -407,18 +463,70 @@ def get_goals():
     global _GOALS
     if _GOALS is None:
         _GOALS = generate_goals()
-    return _GOALS
+    # Always derive "current" metrics from trips so UI stays consistent after add/import.
+    goals = _GOALS
+    trips = get_trips()
+    today_trips = [t for t in trips if t.get("date") == TODAY_STR]
+    current_earnings = round(sum(float(t.get("fare", 0) or 0) for t in today_trips), 2)
+    current_hours = round(sum(float(t.get("duration_min", 0) or 0) for t in today_trips) / 60, 2)
+    trips_completed = len(today_trips)
+    current_velocity = round(current_earnings / current_hours, 0) if current_hours > 0 else 0
+
+    goals["current_earnings"] = current_earnings
+    goals["current_hours"] = current_hours
+    goals["trips_completed"] = trips_completed
+    goals["current_velocity"] = current_velocity
+
+    # Keep dependent values fresh (even if target was set earlier).
+    remaining_earnings = max(0, float(goals.get("daily_target") or 0) - current_earnings)
+    remaining_hours = max(0.1, float(goals.get("target_hours") or 0) - current_hours)
+    goals["required_velocity"] = round(remaining_earnings / remaining_hours, 0) if goals.get("daily_target") else 0
+    goals["remaining_earnings"] = round(remaining_earnings, 2)
+    goals["remaining_hours"] = round(max(0.0, float(goals.get("target_hours") or 0) - current_hours), 2)
+    goals["hours_to_target"] = round(remaining_earnings / current_velocity, 2) if current_velocity > 0 else None
+
+    # Recompute forecast probability + status based on current pace vs required pace.
+    velocity_ratio = goals["current_velocity"] / max(goals["required_velocity"], 1)
+    time_ratio = goals["current_hours"] / max(goals["target_hours"], 0.1)
+
+    if velocity_ratio >= 1.2:
+        prob = 0.95
+    elif velocity_ratio >= 1.0:
+        prob = 0.75
+    elif velocity_ratio >= 0.8:
+        prob = 0.55
+    else:
+        prob = 0.25
+
+    # Adjust based on time progress (less time left, harder to catch up).
+    if time_ratio > 0.8:
+        prob *= 0.8
+
+    goals["goal_probability"] = round(min(0.99, max(0.01, prob)), 2)
+
+    if goals["current_velocity"] >= goals["required_velocity"] * 1.1:
+        goals["forecast_status"] = "ahead"
+    elif goals["current_velocity"] >= goals["required_velocity"] * 0.9:
+        goals["forecast_status"] = "on_track"
+    else:
+        goals["forecast_status"] = "at_risk"
+
+    _GOALS = goals
+    return goals
 
 
 def set_goal_target(target: float):
     global _GOALS
     goals = get_goals()
-    goals["daily_target"] = target
+    goals["daily_target"] = float(target)
     
     # Recalculate dependent values
-    remaining_earnings = max(0, target - goals["current_earnings"])
+    remaining_earnings = max(0, goals["daily_target"] - goals["current_earnings"])
     remaining_hours = max(0.1, goals["target_hours"] - goals["current_hours"])
     goals["required_velocity"] = round(remaining_earnings / remaining_hours, 0)
+    goals["remaining_earnings"] = round(remaining_earnings, 2)
+    goals["remaining_hours"] = round(max(0.0, goals["target_hours"] - goals["current_hours"]), 2)
+    goals["hours_to_target"] = round(remaining_earnings / goals["current_velocity"], 2) if goals["current_velocity"] > 0 else None
     
     # Simple probability calculation based on current velocity vs required
     velocity_ratio = goals["current_velocity"] / max(goals["required_velocity"], 1)
