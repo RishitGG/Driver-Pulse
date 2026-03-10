@@ -87,7 +87,7 @@ flowchart LR
 - Python 3.9+
 - Node.js 18+
 
-### Install & Run
+### Install & Run (local dev)
 
 ```bash
 # Install Python dependencies
@@ -101,6 +101,24 @@ cd frontend && npm install && npm run dev
 ```
 
 Open **http://localhost:5173** in your browser.
+
+---
+
+### Run with Docker
+
+With [Docker Desktop](https://www.docker.com/products/docker-desktop/) running:
+
+```bash
+# From the repo root
+docker compose up --build
+```
+
+Then open:
+
+- Frontend: `http://localhost:5173`
+- Backend (direct): `http://localhost:8000/api/health`
+
+The frontend talks to the backend via `/api/*`, which is proxied by Nginx inside the `frontend` container to the `backend` container.
 
 ---
 
