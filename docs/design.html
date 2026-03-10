@@ -71,6 +71,7 @@
   <a href="#stress">Stress Detection</a>
   <a href="#earnings">Earnings Velocity</a>
   <a href="#execution">Execution Strategy</a>
+  <a href="#judge-experience">Judge Experience & Docker</a>
 </div></nav>
 
 <main class="w">
@@ -273,6 +274,44 @@
     <tr><td>In-memory store over DB</td><td>Zero setup, instant startup</td><td>No persistence across restarts</td></tr>
     <tr><td>Synthetic sensor data</td><td>Full control over class balance</td><td>May not generalise to real sensors</td></tr>
   </table></div>
+</section>
+
+<!-- ═══ 5. JUDGE EXPERIENCE & DOCKER ═══ -->
+<section id="judge-experience">
+  <h2><span class="num">05</span> Judge Experience & Docker</h2>
+  <p class="sub">How we designed the repo and Docker setup so judges can run DrivePulse in a few minutes.</p>
+
+  <h3>Zero-setup runtime</h3>
+  <p>To avoid asking judges to install Python, Node, or ML libraries locally, we ship a fully containerised stack:</p>
+  <ul>
+    <li><strong>Backend:</strong> <code>Dockerfile.backend</code> builds a Python 3.11 image, installs all ML and FastAPI dependencies from the repo's <code>requirements.txt</code> files, and starts <code>uvicorn main:app</code> from <code>backend/</code>.</li>
+    <li><strong>Frontend:</strong> <code>Dockerfile.frontend</code> builds the React + Vite SPA, then serves it via Nginx, which also proxies <code>/api/*</code> to the backend service.</li>
+    <li><strong>Compose:</strong> <code>docker-compose.yml</code> at the root orchestrates both services and exposes:
+      <ul>
+        <li><code>http://localhost:5173</code> → Nginx + React SPA</li>
+        <li><code>http://localhost:8000/api/health</code> → backend health check</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>Judge run instructions</h3>
+  <p>We repeat the exact steps (as required by the hackathon) in the root <code>README.md</code> and docs:</p>
+  <ol>
+    <li>Install Docker Desktop and ensure it is running.</li>
+    <li><code>git clone ... && cd Driver-Pulse</code></li>
+    <li>From the repo root run: <code>docker compose up --build</code></li>
+    <li>Visit <code>http://localhost:5173</code> to use the app; optional backend health at <code>http://localhost:8000/api/health</code>.</li>
+  </ol>
+
+  <div class="callout blue">
+    <strong>Judge login:</strong> we provide a pre-configured demo account so judges land in a realistic dashboard immediately.<br/>
+    Username: <code>judge@uber.com</code> · Password: <code>hackathon2026</code>.
+  </div>
+
+  <div class="callout">
+    This approach satisfies the hackathon's Docker criterion: a working Dockerfile and <code>docker-compose.yml</code>
+    at the repo root, with a single <code>docker compose up --build</code> command to start the entire application.
+  </div>
 </section>
 
 </main>

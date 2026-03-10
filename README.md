@@ -86,6 +86,7 @@ flowchart LR
 ### Prerequisites
 - Python 3.9+
 - Node.js 18+
+ - Docker Desktop (for judge-friendly containerisation)
 
 ### Install & Run (local dev)
 
@@ -109,7 +110,7 @@ Open **http://localhost:5173** in your browser.
 With [Docker Desktop](https://www.docker.com/products/docker-desktop/) running:
 
 ```bash
-# From the repo root
+# From the repo root (Driver-Pulse/)
 docker compose up --build
 ```
 
@@ -119,6 +120,11 @@ Then open:
 - Backend (direct): `http://localhost:8000/api/health`
 
 The frontend talks to the backend via `/api/*`, which is proxied by Nginx inside the `frontend` container to the `backend` container.
+
+**Judge login (demo account):**
+
+- Username: `judge@uber.com`
+- Password: `hackathon2026`
 
 ---
 

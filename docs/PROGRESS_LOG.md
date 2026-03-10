@@ -17,7 +17,7 @@ A chronological log of our problem-solving process and major iterations.
 
 **Mar 9:** Documentation: wrote design doc (HTML), architecture diagram (SVG), and progress log. Re-checked all features, tested flows, and made final edits based on feedback. Prepared for deployment.
 
-**Mar 10:** Deployment and submission: deployed backend and frontend, final bugfixes, submitted project.
+**Mar 10:** Deployment and submission: added Dockerised deployment (FastAPI + React via Nginx, `docker-compose.yml` at repo root), verified end-to-end flows in containers, and documented judge login plus Docker run instructions in all README/docs before final submission.
 
 ---
 

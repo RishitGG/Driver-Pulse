@@ -64,6 +64,7 @@
 <nav><div class="inner">
   <a href="#diagram">Architecture Diagram</a>
   <a href="#explanation">Architecture Explanation</a>
+  <a href="#deployment">Deployment & Docker</a>
 </div></nav>
 
 <main class="w">
@@ -276,6 +277,46 @@
     <tr><td>In-memory store over DB</td><td>Zero setup for judges</td><td>No persistence across restarts</td></tr>
     <tr><td>Feedback collected, not looped</td><td>Simpler system</td><td>Model doesn't self-improve (yet)</td></tr>
   </table></div>
+
+</section>
+
+<!-- ═══ 3. DEPLOYMENT & DOCKER ═══ -->
+<section id="deployment">
+  <h2><span class="num">03</span> Deployment & Docker</h2>
+  <p class="sub">How a judge runs the full system in minutes.</p>
+
+  <div class="callout blue">
+    <strong>Hackathon requirement:</strong> Include a working Dockerfile and <code>docker-compose.yml</code>
+    so a judge can run the entire stack with a single command. DrivePulse ships two services
+    (FastAPI backend + React frontend) wired together behind Nginx.
+  </div>
+
+  <h3>Containers</h3>
+  <ul>
+    <li><strong>Backend container:</strong> Python 3.11 + FastAPI. Runs <code>uvicorn main:app</code> inside the <code>backend/</code> folder so imports like <code>from utils...</code> and <code>from data...</code> match local dev. Exposes <code>8000</code> with all <code>/api/*</code> routes.</li>
+    <li><strong>Frontend container:</strong> Builds the React SPA with Node + Vite, then serves the static <code>dist/</code> bundle via Nginx on port <code>80</code>. Nginx proxies any request to <code>/api/</code> to the backend service.</li>
+    <li><strong>Compose orchestration:</strong> <code>docker-compose.yml</code> in the repo root builds both images, creates a shared network, and publishes:
+      <ul>
+        <li><code>http://localhost:5173</code> → frontend (Nginx)</li>
+        <li><code>http://localhost:8000</code> → backend (FastAPI, e.g. <code>/api/health</code>)</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>Judge Runbook</h3>
+  <ol>
+    <li><strong>Prerequisite:</strong> Install Docker Desktop and ensure it is running.</li>
+    <li><strong>Clone repo:</strong> <code>git clone ... && cd Driver-Pulse</code></li>
+    <li><strong>One command:</strong>
+      <code>docker compose up --build</code> from the repo root (<code>Driver-Pulse/</code>).</li>
+    <li><strong>Open app:</strong> visit <code>http://localhost:5173</code> in the browser
+      (no manual dependency installation required).</li>
+  </ol>
+
+  <div class="callout">
+    <strong>Judge credentials:</strong> we provide a pre-populated demo account.<br/>
+    Username: <code>judge@uber.com</code> · Password: <code>hackathon2026</code>.
+  </div>
 
 </section>
 
