@@ -1,0 +1,32 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy dependency manifests
+COPY requirements.txt .
+COPY backend/requirements.txt backend/requirements.txt
+COPY earnings/earnings/requirements.txt earnings/earnings/requirements.txt
+COPY drivepulse_stress_model/requirements.txt drivepulse_stress_model/requirements.txt
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir -r backend/requirements.txt \
+    && pip install --no-cache-dir -r earnings/earnings/requirements.txt \
+    && pip install --no-cache-dir -r drivepulse_stress_model/requirements.txt
+
+# Copy source code
+COPY backend/ backend/
+COPY earnings/ earnings/
+COPY drivepulse_stress_model/ drivepulse_stress_model/
+
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 8000
+
+# Match local dev layout: run from /app/backend so imports like `from utils...`
+# and `from data...` resolve the same as `cd backend && python main.py`
+WORKDIR /app/backend
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+

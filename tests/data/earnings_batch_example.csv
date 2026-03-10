@@ -1,0 +1,5 @@
+driver_id,timestamp,cumulative_earnings,elapsed_hours,current_velocity,target_velocity,velocity_delta,trips_completed,target_earnings
+driver-001,08:00:00,0,0.5,0,200,0,0,1800
+driver-001,09:00:00,185,1.5,185,200,-15,2,1800
+driver-001,10:00:00,420,2.5,210,200,10,4,1800
+
