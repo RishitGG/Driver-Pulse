@@ -1,5 +1,5 @@
 // Use full backend URL from env, or fallback to /api for local dev
-const BASE = import.meta.env.VITE_API_BASE || '/api';
+const BASE = '/api';
 
 // Single place to plug in auth headers, retries, error normalisation, etc.
 async function request(path, options = {}) {
