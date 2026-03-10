@@ -1,4 +1,13 @@
-# 🚗 DrivePulse
+# Driver Pulse: Team ACE
+
+- **Demo Video:** https://youtu.be/PL-XsfVfLA0?feature=shared 
+- **Live Application:** https://driver-pulse-gamma.vercel.app/ 
+
+- **Judge Login Credentials:**  
+  Username: judge@uber.com  
+  Password: hackathon2026  
+
+- **Note to Judges:** The backend is hosted on Render and may take around 60 seconds to wake up on the first request.
 
 Real-time driver wellness & earnings intelligence platform for ride-hailing drivers. Uses on-device sensor data (accelerometer, gyroscope, microphone) with ML models to detect stressful driving situations and forecast earnings velocity.
 
