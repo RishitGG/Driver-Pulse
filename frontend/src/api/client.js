@@ -1,4 +1,6 @@
-const BASE = '/api';
+// Default to relative /api for local dev and Docker.
+// In hosted environments (Vercel/Netlify), set VITE_API_BASE to your backend URL.
+const BASE = import.meta.env.VITE_API_BASE || '/api';
 
 // Single place to plug in auth headers, retries, error normalisation, etc.
 async function request(path, options = {}) {
