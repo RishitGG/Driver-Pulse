@@ -10,21 +10,22 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 
-from utils.logging import log_info, log_warn
+# Standardized Absolute Imports for Vercel Monorepo
+from backend.utils.logging import log_info, log_warn
 
-from data.sample_data import (
+from backend.data.sample_data import (
     get_trips, get_profile, get_goals, set_goal_target,
     build_dashboard, build_weekly_metrics, build_monthly_metrics,
     STRESS_TIPS, SITUATIONS,
     create_user_trip, add_trip,
 )
-from data.batch_processor import (
+from backend.data.batch_processor import (
     process_stress_csv, process_earnings_csv,
     stress_csv_template, earnings_csv_template,
     predict_stress_row, predict_earnings_row,
 )
-from data.trips_import import import_trips_csv, trips_csv_template
-from data.users import (
+from backend.data.trips_import import import_trips_csv, trips_csv_template
+from backend.data.users import (
     login_user, register_user, get_user_profile, list_all_users,
 )
 
