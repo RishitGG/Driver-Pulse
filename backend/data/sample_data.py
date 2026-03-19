@@ -256,8 +256,8 @@ def generate_trips(today: datetime = None) -> List[Dict]:
 def generate_driver_profile() -> Dict:
     return {
         "id": "driver-001",
-        "name": "Ravi Kumar",
-        "city": "Bangalore",
+        "name": "Alex Kumar",
+        "city": "Mumbai",
         "rating": 4.82,
         "experience_months": 18,
         "avg_hours_per_day": 10,
@@ -463,21 +463,24 @@ def get_goals():
     global _GOALS
     if _GOALS is None:
         _GOALS = generate_goals()
-    # Always derive "current" metrics from trips so UI stays consistent after add/import.
+    
+    # We use the existing goals object which contains the saved 'daily_target'
     goals = _GOALS
     trips = get_trips()
+    
+    # Always calculate "Today's" actuals from the trip list
     today_trips = [t for t in trips if t.get("date") == TODAY_STR]
     current_earnings = round(sum(float(t.get("fare", 0) or 0) for t in today_trips), 2)
     current_hours = round(sum(float(t.get("duration_min", 0) or 0) for t in today_trips) / 60, 2)
-    trips_completed = len(today_trips)
-    current_velocity = round(current_earnings / current_hours, 0) if current_hours > 0 else 0
-
+    
     goals["current_earnings"] = current_earnings
     goals["current_hours"] = current_hours
-    goals["trips_completed"] = trips_completed
-    goals["current_velocity"] = current_velocity
+    goals["trips_completed"] = len(today_trips)
+    goals["current_velocity"] = round(current_earnings / current_hours, 0) if current_hours > 0 else 0
 
+    # This handles the "Remaining" and "Ahead/Behind" logic automatically
     _recompute_goal_derivatives(goals)
+    
     _GOALS = goals
     return goals
 
@@ -533,3 +536,37 @@ def _recompute_goal_derivatives(goals: Dict[str, Any]) -> None:
         goals["forecast_status"] = "on_track"
     else:
         goals["forecast_status"] = "at_risk"
+
+
+def get_driver_preferences():
+    """Returns the driver's personal favorites and habits."""
+    return {
+        "food_preferences": ["McDonald's", "Starbucks", "Chai Point"],
+        "break_habits": "Prefers 15-min breaks after 4 hours of driving",
+        "favorite_zones": ["Indiranagar", "Koramangala"]
+    }
+
+def get_market_insights():
+    """Returns real-time high-surge zones and hot spots."""
+    return {
+        "high_surge_zones": [
+            {"name": "Kempegowda International Airport", "surge": "2.5x", "demand": "Critical"},
+            {"name": "Whitefield", "surge": "1.8x", "demand": "High"}
+        ],
+        "nearby_favorites": [
+            {"name": "McDonald's", "distance": "2.1km", "direction": "North-East", "estimated_wait": "5 min"}
+        ]
+    }
+
+
+def get_driver_preferences():
+    return {
+        "food_preferences": ["McDonald's"],
+        "favorite_zones": ["Airport", "Indiranagar"]
+    }
+
+def get_market_insights():
+    return {
+        "high_surge_zones": [{"name": "Airport", "surge": "2.5x"}],
+        "nearby_favorites": [{"name": "McDonald's", "distance": "2.1km"}]
+    }

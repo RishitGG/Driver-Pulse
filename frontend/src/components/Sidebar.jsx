@@ -80,10 +80,7 @@ export default function Sidebar({ user, onLogout }) {
         </button>
       </div>
 
-      {/* Footer */}
-      <div className="px-6 py-3 border-t border-uber-gray-800 text-xs text-uber-gray-500 text-center">
-        DrivePulse v1.0 &middot; 2026
-      </div>
+      
     </aside>
   )
 }
