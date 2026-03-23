@@ -2,9 +2,6 @@
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "framework": "vite",
-  "env": {
-    "VITE_API_BASE": "@vite-api-base"
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
