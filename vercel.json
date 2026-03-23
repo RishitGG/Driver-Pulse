@@ -1,15 +1,24 @@
 {
-  "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/dist",
-  "framework": "vite",
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/api/(.*)",
-      "destination": "/backend/main.py"
+      "src": "backend/main.py",
+      "use": "@vercel/python"
     },
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "backend/main.py"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "frontend/index.html"
     }
   ]
 }

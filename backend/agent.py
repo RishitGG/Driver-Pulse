@@ -1,9 +1,11 @@
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
+# Add get_profile to your imports
 from backend.data.sample_data import (
     get_trips, 
     get_goals, 
+    get_profile, # <--- Added this
     get_driver_preferences,
     get_market_insights
 )
@@ -12,21 +14,17 @@ from datetime import datetime
 load_dotenv()
 
 def get_navigation_assistant(**kwargs):
-    """
-    TOOL: Dynamically constructs a route based on the driver's current city
-    to ensure the demo works for any location.
-    """
+    profile = get_profile() # <--- Fetch real profile data
     goals = get_goals()
-    prefs = get_driver_preferences()
     market = get_market_insights()
     
-    # Pull the city from the profile (e.g., Mumbai, Bangalore)
-    city = prefs.get("city", "Mumbai")
-    favorite_stop = prefs.get("food_preferences", ["McDonald's"])[0]
+    city = profile.get("city", "Mumbai")
+    # Pull name from the same place the dashboard does
+    driver_name = profile.get("name", "Driver") 
+    favorite_stop = profile.get("food_preferences", ["McDonald's"])[0]
     surge_zone = market.get("high_surge_zones", [{"name": "Airport"}])[0]["name"]
     
-    # Construct search strings that include the city to avoid location jumping
-    origin = "My+Location"
+    origin = "Bandra+West+Mumbai"
     waypoint = f"{favorite_stop}+{city}".replace(" ", "+")
     destination = f"{surge_zone}+{city}".replace(" ", "+")
     
@@ -38,7 +36,7 @@ def get_navigation_assistant(**kwargs):
             "today_earned": goals.get("current_earnings"),
         },
         "driver_info": {
-            "name": "Alex",
+            "name": driver_name, # <--- Now dynamic
             "city": city,
             "favorite": favorite_stop
         },
@@ -52,26 +50,31 @@ def run_co_pilot(user_prompt: str):
     if not api_key:
         return "Co-pilot Error: API Key missing."
 
+    # 1. Fetch the driver name from the data layer BEFORE starting the chat
+    current_profile = get_profile()
+    driver_name = current_profile.get("name", "Driver")
+
     genai.configure(api_key=api_key)
     
+    # This must be indented to stay inside the function
     model = genai.GenerativeModel(
         model_name='models/gemini-flash-latest', 
         tools=[get_navigation_assistant],
         system_instruction=(
-            "You are the DrivePulse AI Co-pilot. Your name for the driver is Alex."
+            f"You are the DrivePulse AI Co-pilot. You are assisting {driver_name}."
             "\n\nSTRICT OPERATING PROCEDURES:\n"
-            "1. PERSONALIZATION: When food or breaks are mentioned, call get_navigation_assistant. "
-            "Mention the driver's favorite (McDonald's) and the city (e.g. Mumbai) from the tool."
-            "\n2. REACTIVE NAVIGATION: Do NOT show the [Start Navigation] link immediately. "
-            "First, suggest the stop and ask: 'Would you like me to set up the route?'"
-            "\n3. LINK FORMATTING: Only provide the [Start Navigation](URL) link if they say yes. "
-            "Use that exact Markdown format so the frontend can turn it into a button."
-            "\n4. FINANCIAL MATH: For monthly goals, multiply the today_target by 30. "
-            "Example: If today_target is 1800, the monthly goal is 54,000. Do not use other numbers."
-            "\n5. TONE: Be a supportive co-pilot. Brief, smart, and always use ₹."
+            "1. IDENTITY: Your name is 'DrivePulse Co-pilot'. Never call yourself Alex. "
+            "Address the driver as 'Alex' or 'Partner' when appropriate."
+            "\n2. GOALS: Mention the daily earnings target (₹1,800) only if Alex asks about "
+            "money, performance, or 'how am I doing?'. Don't bring it up unprompted."
+            "\n3. NAVIGATION: Use the get_navigation_assistant tool for food/break requests. "
+            "Suggest Mumbai-based spots and ask before providing the navigation link."
+            "\n4. LINK FORMATTING: Use the [Start Navigation](URL) format only when Alex says yes."
+            "\n5. TONE: Professional, efficient, and supportive. Use ₹ for all currency."
         )
     )
     
+    # This must also be indented
     try:
         chat = model.start_chat(enable_automatic_function_calling=True)
         response = chat.send_message(user_prompt)
