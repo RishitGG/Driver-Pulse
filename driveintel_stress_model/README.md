@@ -1,4 +1,4 @@
-# DrivePulse — Stress Detection Model
+# DriveIntel — Stress Detection Model
 
 Edge-computed driver stress detection. No audio recorded. No cloud inference.
 Classifies 30-second sensor windows into 7 situation types.
@@ -11,7 +11,7 @@ Classifies 30-second sensor windows into 7 situation types.
 
 ```bash
 # 1. Clone or unzip the project
-cd drivepulse_stress_model
+cd driveintel_stress_model
 
 # 2. Create a virtual environment (recommended)
 python -m venv venv
@@ -100,7 +100,7 @@ The synthetic test set is a clean lower bound, not a production estimate.
 ## Project structure
 
 ```
-drivepulse_stress_model/
+driveintel_stress_model/
 │
 ├── run.py                    ← entry point
 ├── requirements.txt

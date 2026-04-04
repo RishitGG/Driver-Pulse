@@ -34,7 +34,7 @@ const AICopilot = () => {
   const [messages, setMessages] = useState([
     { 
       role: 'ai', 
-      text: "Hey! I'm your DrivePulse Co-pilot. How can I help you today?" 
+      text: "Hey! I'm your DriveIntel Safety Assistant. How can I help you stay safe today?" 
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,7 +82,7 @@ const AICopilot = () => {
           <div className="bg-blue-600 p-4 text-white flex justify-between items-center shadow-md">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <h3 className="font-bold tracking-wide">DrivePulse Co-pilot</h3>
+              <h3 className="font-bold tracking-wide">DriveIntel Safety Assistant</h3>
             </div>
             <button onClick={() => setIsOpen(false)} className="hover:bg-blue-500 p-1 rounded transition">
               <X size={20} />

@@ -1,43 +1,45 @@
-# Driver Pulse: Team ACE
+# DriveIntel: Driver Safety & Behavior Analytics
 
 - **Demo Video:** https://youtu.be/PL-XsfVfLA0?feature=shared 
-- **Live Application:** https://driver-pulse-gamma.vercel.app/ 
+- **Live Application:** https://driveintel-alpha.vercel.app/ 
 
-- **Judge Login Credentials:**  
-  Username: judge@uber.com  
-  Password: hackathon2026  
+- **Demo Login Credentials:**  
+  Username: demo@driveintel.com  
+  Password: demo2026  
 
-- **Note to Judges:** The backend is hosted on Render and may take around 60 seconds to wake up on the first request.
+- **Note:** This is a prototype platform. Backend features behavior detection and safety analysis.
 
-Real-time driver wellness & earnings intelligence platform for ride-hailing drivers. Uses on-device sensor data (accelerometer, gyroscope, microphone) with ML models to detect stressful driving situations and forecast earnings velocity.
+Real-time driver safety & behavior analytics platform for ride-hailing drivers. Uses on-device sensor data (accelerometer, gyroscope, microphone) with ML models to detect stressful driving situations, analyze driver behaviors, and provide personalized safety insights.
 
 ---
 
 ## Features
 
-- **Dashboard** — Daily trips, earnings, stress score, timeline
-- **Trip Detail** — Map playback, sensor charts, event detection with explainability
-- **Trends** — Weekly/monthly earnings, stress, and velocity charts
-- **Goals** — Set and track daily earnings targets
-- **Predict** — Enter sensor/earnings values → instant ML prediction *(judge-facing)*
-- **Batch Upload** — Upload CSV → run inference on multiple trips at once *(judge-facing)*
+- **Dashboard** — Daily trip overview, safety score, stress event timeline, behavior insights
+- **Trip Detail** — Map playback, sensor charts, stress event detection with explainability
+- **Trends** — Weekly/monthly driver behavior patterns, stress event analytics
+- **Safety Goals** — Set and track safety improvements (e.g., reduce high-stress events)
+- **Predict** — Enter sensor values → instant stress prediction *(analyst-facing)*
+- **Batch Upload** — Upload CSV → run inference on multiple trips at once *(analyst-facing)*
 - **Explainability** — Per-event feature contributions, confidence badges
-- **Feedback** — Thumbs up/down on detected events
+- **Feedback** — Thumbs up/down on detected events for model improvement
 - **Auth** — Login / register with demo accounts or new profile
+- **AI Safety Assistant** — DriveIntel Co-pilot for personalized safety tips & guidance
 
-To log **multiple trips at once**, go to the `Trips` tab and use **Import CSV**.
+To analyze **multiple trips at once**, go to the `Trips` tab and use **Import CSV**.
 
 ---
 
 ## Architecture
 
 ```
-Driver-Pulse/
+DriveIntel/
 ├── backend/                       # FastAPI REST API (25 endpoints)
 │   ├── main.py                    # Routes, middleware, Pydantic models
+│   ├── agent.py                   # AI Safety Assistant integration
 │   ├── data/
-│   │   ├── sample_data.py         # Synthetic trip/route/event generator
-│   │   ├── batch_processor.py     # Loads ML models, runs batch inference
+│   │   ├── sample_data.py         # Synthetic trip/event generator
+│   │   ├── batch_processor.py     # Loads stress models, runs batch inference
 │   │   ├── trips_import.py        # CSV trip import parser
 │   │   ├── users.py               # In-memory auth store
 │   │   └── config.py              # Batch limits & constants
@@ -47,12 +49,12 @@ Driver-Pulse/
 ├── frontend/                      # React 18 + Vite + Tailwind SPA
 │   └── src/
 │       ├── pages/                 # 8 pages: Home, Dashboard, Trips, TripDetail,
-│       │                          #   Trends, Goals, Predict, BatchUpload
+│       │                          #   Trends, Safety Goals, Predict, BatchUpload
 │       ├── components/            # 16 reusable components
 │       ├── api/client.js          # Centralised API client
 │       └── utils/sanityChecks.js  # Input validation helpers
 │
-├── drivepulse_stress_model/       # Stress Detection ML pipeline
+├── driveintel_stress_model/       # Stress Detection ML pipeline
 │   ├── run.py                     # CLI entry (--generate --calibrate --train --demo)
 │   ├── src/
 │   │   ├── generate_data.py       # Synthetic sensor window generator (3,150 samples)
@@ -62,18 +64,11 @@ Driver-Pulse/
 │   ├── model/                     # Trained artifacts (rf_model.pkl, baselines, contract)
 │   └── calibration/               # Device calibration profile
 │
-├── earnings/earnings/             # Earnings Forecasting ML pipeline
-│   ├── run.py                     # Sequential pipeline entry
-│   ├── src/
-│   │   ├── build_dataset.py       # Merges drivers + goals + velocity + trips
-│   │   ├── features.py            # 14-feature engineering (lags, rolling avg, rush flags)
-│   │   ├── augment.py             # 5× Gaussian noise augmentation
-│   │   ├── train.py               # RF regressor training + evaluation
-│   │   └── inference.py           # Batch velocity prediction
-│   ├── model/                     # Trained artifacts (rf_model.pkl, contract)
-│   └── data/                      # Source CSVs (drivers, goals, velocity, trips)
+├── earnings/earnings/             # [DEPRECATED] Earnings Forecasting ML pipeline
+│   ├── README.md                  # See legacy documentation
+│   └── ...
 │
-├── streamlit_app.py               # Standalone Streamlit demo (3 tabs)
+├── streamlit_app.py               # Standalone Streamlit demo (stress detection focus)
 ├── tests/data/                    # Example CSVs for batch & import testing
 └── requirements.txt               # Root Python dependencies
 ```
@@ -83,9 +78,8 @@ flowchart LR
   browser[Browser_ReactApp] --> api[FastAPI_Backend]
   api --> tripsStore[InMemory_Trips_+_Goals]
   api --> stressBatch[Stress_Batch_Processor]
-  api --> earningsBatch[Earnings_Batch_Processor]
   stressBatch --> stressModel[Stress_Model_Files]
-  earningsBatch --> earningsModel[Earnings_Model_Files]
+  api --> assistant[AI_Safety_Assistant]
 ```
 
 ---
@@ -119,7 +113,7 @@ Open **http://localhost:5173** in your browser.
 With [Docker Desktop](https://www.docker.com/products/docker-desktop/) running:
 
 ```bash
-# From the repo root (Driver-Pulse/)
+# From the repo root (DriveIntel/)
 docker compose up --build
 ```
 
@@ -130,10 +124,10 @@ Then open:
 
 The frontend talks to the backend via `/api/*`, which is proxied by Nginx inside the `frontend` container to the `backend` container.
 
-**Judge login (demo account):**
+**Demo login (sample account):**
 
-- Username: `judge@uber.com`
-- Password: `hackathon2026`
+- Username: `demo@driveintel.com`
+- Password: `demo2026`
 
 ---
 
@@ -142,15 +136,16 @@ The frontend talks to the backend via `/api/*`, which is proxied by Nginx inside
 | Layer | Tech |
 |-------|------|
 | Frontend | React 18, Vite, Tailwind CSS, Recharts, Leaflet |
-| Backend | FastAPI, Uvicorn |
+| Backend | FastAPI, Uvicorn, Pydantic |
 | ML | scikit-learn, NumPy, Pandas |
+| Deployment | Vercel (frontend), Render (backend) |
 
 ---
 
 ## Data Flow
 
-- **Trips & goals**: Manual entry or CSV import hit `/api/trips` or `/api/trips/import-csv`, which update an in-memory trips list. Goals (`/api/goals`) and dashboard (`/api/dashboard`) recompute current earnings, hours, and forecast from those trips.
-- **Batch stress & earnings**: Batch CSV uploads are processed by backend helpers that engineer features, call local models, and return per-row predictions plus summaries as JSON.
+- **Trips & goals**: Manual entry or CSV import hit `/api/trips` or `/api/trips/import-csv`, which update an in-memory trips list. Goals (`/api/goals`) and dashboard (`/api/dashboard`) recompute current metrics, stress events, and safety scores from those trips.
+- **Batch stress inference**: Batch CSV uploads are processed by backend helpers that engineer features, call the local stress model, and return per-row predictions and summaries as JSON.
 
 ---
 
@@ -159,10 +154,39 @@ The frontend talks to the backend via `/api/*`, which is proxied by Nginx inside
 - **Backend**: FastAPI routes in `backend/main.py` delegate to small modules in `backend/data/` for trips, goals, imports, and batch processing, so swapping the in-memory store for a database or separate ML service is a local change.
 - **Frontend**: The React app uses a single API client layer (`frontend/src/api/client.js`) plus page/component separation, making it easy to plug in global state, auth, or feature flags without rewriting screens.
 - **Batch endpoints**: Batch CSV processing is stateless per request, so multiple backend instances can handle uploads in parallel behind a load balancer.
+- **AI Safety Assistant**: Integrates Google's Gemini API for intelligent, personalized driver guidance within the safety framework.
 
 ---
 
 ## Testing & Validation Notes
 
-- **Frontend sanity checks** — lightweight helpers in `frontend/src/utils/sanityChecks.js` validate money inputs, time ranges, and clamp goal targets.
-- **Example test files** — illustrative, non-wired tests live in `frontend/src/__tests__/` (e.g. `EarningsProgress.test.jsx`, `TripsAddTrip.test.jsx`) to show how key components and behaviours could be validated in a full test setup.
+- **Frontend sanity checks** — lightweight helpers in `frontend/src/utils/sanityChecks.js` validate time ranges and inputs.
+- **Example test files** — illustrative tests live in `frontend/src/__tests__/` (e.g., `TripsAddTrip.test.jsx`) to show how key components and behaviors could be validated in a full test setup.
+
+---
+
+## Future Roadmap (Prototype Phase)
+
+### Coming Soon:
+- 🚨 **High-Risk Route Detection** — AI-powered analysis of historical accident data to identify dangerous road segments and warn drivers in advance.
+- 📊 **Real-time Driver Coaching** — In-trip feedback on driving behavior with immediate tips for improvement.
+- 🔔 **Smart Alerts** — Predictive notifications about risky traffic conditions ahead.
+- 🌍 **Multi-city Expansion** — Support for more cities beyond Mumbai, with localized behavior analytics.
+
+---
+
+## Contributing
+
+This is a prototype platform built for the Uber Hackathon. Contributions are welcome. Please fork, create a feature branch, and submit a pull request.
+
+---
+
+## License
+
+MIT License. See LICENSE file for details.
+
+---
+
+## Support
+
+For issues or questions, please file an issue on GitHub or contact the development team.

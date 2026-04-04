@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    container_name: drivepulse-backend
+    container_name: driveintel-backend
     ports:
       - "8000:8000"
 
@@ -13,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-    container_name: drivepulse-frontend
+    container_name: driveintel-frontend
     ports:
       - "5173:80"
     depends_on:

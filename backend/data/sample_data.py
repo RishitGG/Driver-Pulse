@@ -1,5 +1,5 @@
 """
-DrivePulse Backend — Sample data generator.
+DriveIntel Backend — Sample data generator.
 Produces realistic trips, events, signals, and driver metrics.
 """
 

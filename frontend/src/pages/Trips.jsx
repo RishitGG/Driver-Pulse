@@ -29,8 +29,6 @@ export default function Trips() {
   const importInputRef = useRef(null)
   const [filters, setFilters] = useState({
     stress: '',
-    earnings_min: '',
-    earnings_max: '',
     duration_min: '',
     duration_max: '',
     time_of_day: '',
@@ -51,8 +49,6 @@ export default function Trips() {
       const params = { date }
       if (preset) params.preset = preset
       if (filters.stress) params.stress = filters.stress
-      if (filters.earnings_min) params.earnings_min = filters.earnings_min
-      if (filters.earnings_max) params.earnings_max = filters.earnings_max
       if (filters.duration_min) params.duration_min = filters.duration_min
       if (filters.duration_max) params.duration_max = filters.duration_max
       if (filters.time_of_day) params.time_of_day = filters.time_of_day
@@ -299,26 +295,6 @@ export default function Trips() {
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
               </select>
-            </div>
-            <div>
-              <label className="text-xs text-uber-gray-500 mb-1 block">Min Earnings (₹)</label>
-              <input
-                type="number"
-                value={filters.earnings_min}
-                onChange={(e) => setFilters(f => ({ ...f, earnings_min: e.target.value }))}
-                className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
-                placeholder="0"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-uber-gray-500 mb-1 block">Max Earnings (₹)</label>
-              <input
-                type="number"
-                value={filters.earnings_max}
-                onChange={(e) => setFilters(f => ({ ...f, earnings_max: e.target.value }))}
-                className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
-                placeholder="∞"
-              />
             </div>
             <div>
               <label className="text-xs text-uber-gray-500 mb-1 block">Max Duration (min)</label>

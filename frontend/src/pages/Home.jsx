@@ -109,8 +109,9 @@ export default function Home({ onLoginSuccess }) {
       <div className="w-full max-w-5xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-uber-black mb-2">DrivePulse</h1>
-          <p className="text-lg text-uber-gray-600">Smart Stress Detection & Earnings Tracking</p>
+          <h1 className="text-4xl font-bold text-uber-black mb-2">DriveIntel</h1>
+          <p className="text-sm text-uber-gray-500">Driver Safety & Behavior Analytics</p>
+          <p className="text-lg text-uber-gray-600">Driver Safety Detection & Behavior Analysis</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

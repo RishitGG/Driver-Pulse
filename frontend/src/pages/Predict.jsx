@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  Activity, DollarSign, Send, RotateCcw, AlertTriangle, CheckCircle,
+  Activity, Send, RotateCcw, AlertTriangle, CheckCircle,
   ChevronDown, ChevronUp, Zap, Info, Loader2,
 } from 'lucide-react'
 import {
@@ -97,13 +97,28 @@ export default function Predict() {
     <div className="p-6 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-uber-gray-800">Manual Prediction</h1>
+        <h1 className="text-2xl font-bold text-uber-gray-800">Safety Prediction</h1>
         <p className="text-sm text-uber-gray-500 mt-1">
-          Type in sensor or earnings values directly to get a single prediction
+          Detect stress situations and analyze driver behavior from sensor data
         </p>
       </div>
 
-      {/* Mode toggle */}
+      {/* High-Risk Route Placeholder */}
+      <div className="mb-6 bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-4 flex items-start gap-3">
+        <div className="flex-1">
+          <h3 className="font-semibold text-orange-900 flex items-center gap-2 mb-1">
+            🚨 High-Risk Route Detection (Coming Soon)
+          </h3>
+          <p className="text-sm text-orange-800">
+            Discover historically accident-prone road segments in your area and receive advance warnings before driving through high-risk zones.
+          </p>
+        </div>
+        <button className="px-4 py-2 rounded-lg bg-white text-orange-700 font-medium text-sm hover:bg-orange-50 transition-colors whitespace-nowrap">
+          Learn More
+        </button>
+      </div>
+
+      {/* Mode toggle - Stress only */}
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setMode('stress')}
@@ -114,16 +129,6 @@ export default function Predict() {
           }`}
         >
           <Activity size={16} /> Stress Detection
-        </button>
-        <button
-          onClick={() => setMode('earnings')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
-            mode === 'earnings'
-              ? 'bg-uber-black text-white shadow-lg'
-              : 'bg-uber-gray-100 text-uber-gray-600 hover:bg-uber-gray-200'
-          }`}
-        >
-          <DollarSign size={16} /> Earnings Forecast
         </button>
       </div>
 
@@ -213,10 +218,7 @@ export default function Predict() {
             <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
               <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
               <p className="text-xs text-blue-700">
-                {mode === 'stress'
-                  ? 'These are 30-second window features from accelerometer, gyroscope, and microphone sensors. Defaults represent a calm driving scenario.'
-                  : 'Enter your current shift stats. The model predicts your earnings velocity (₹/hr) and whether you\'re on track to hit your target.'
-                }
+                These are 30-second window features from accelerometer, gyroscope, and microphone sensors. Defaults represent a calm driving scenario.
               </p>
             </div>
           </div>
@@ -242,8 +244,7 @@ export default function Predict() {
               </div>
             )}
 
-            {result && mode === 'stress' && <StressResult result={result} />}
-            {result && mode === 'earnings' && <EarningsResult result={result} />}
+            {result && <StressResult result={result} />}
           </div>
         </div>
       )}

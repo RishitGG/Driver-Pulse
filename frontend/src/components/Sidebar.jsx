@@ -16,7 +16,7 @@ export default function Sidebar({ user, onLogout }) {
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-uber-gray-800">
         <Activity className="w-7 h-7 text-uber-green" />
-        <span className="text-xl font-bold tracking-tight">DrivePulse</span>
+        <span className="text-xl font-bold tracking-tight">DriveIntel</span>
       </div>
 
       {/* User Profile */}

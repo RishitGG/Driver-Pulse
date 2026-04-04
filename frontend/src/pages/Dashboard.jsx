@@ -3,9 +3,8 @@ import { api } from '../api/client'
 import SummaryCard from '../components/SummaryCard'
 import TodayTimeline from '../components/TodayTimeline'
 import SampleTripCard from '../components/SampleTripCard'
-import EarningsProgress from '../components/EarningsProgress'
 import StressTips from '../components/StressTips'
-import { Car, Clock, DollarSign, AlertTriangle, Target, Activity } from 'lucide-react'
+import { Zap, Clock, Shield, AlertTriangle, TrendingUp, Activity } from 'lucide-react'
 
 export default function Dashboard() {
   const [dashboard, setDashboard] = useState(null)
@@ -85,11 +84,11 @@ export default function Dashboard() {
       {/* Summary Cards */}
       {dashboard && (
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          <SummaryCard icon={Car} label="Total Trips" value={dashboard.total_trips} color="text-uber-blue" />
+          <SummaryCard icon={Zap} label="Total Trips" value={dashboard.total_trips} color="text-uber-blue" />
           <SummaryCard icon={Clock} label="Total Hours" value={`${dashboard.total_hours}h`} color="text-uber-gray-600" />
-          <SummaryCard icon={DollarSign} label="Earnings" value={`₹${dashboard.total_earnings?.toLocaleString()}`} color="text-uber-green" />
+          <SummaryCard icon={Shield} label="Safety Score" value={`${Math.max(0, 100 - (dashboard.stress_events || 0) * 5)}%`} color="text-uber-green" />
           <SummaryCard icon={AlertTriangle} label="Stress Events" value={dashboard.stress_events} sub={`${dashboard.high_stress_events} high`} color="text-uber-red" />
-          <SummaryCard icon={Target} label="Target" value={`${dashboard.pct_target_achieved}%`} sub="achieved" color="text-uber-orange" />
+          <SummaryCard icon={TrendingUp} label="Behavior" value={dashboard.pct_target_achieved ? `${dashboard.pct_target_achieved}% Smooth` : 'Good'} sub="on course" color="text-uber-orange" />
         </div>
       )}
 
@@ -99,10 +98,35 @@ export default function Dashboard() {
         </p>
       )}
 
-      {/* Timeline + Earnings */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <TodayTimeline trips={trips} />
-        <EarningsProgress goals={goals} />
+      {/* Timeline + Behavior Insights */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <TodayTimeline trips={trips} />
+        </div>
+        {/* Quick Behavior Summary */}
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-uber-gray-100">
+          <h3 className="text-sm font-semibold text-uber-gray-700 mb-4 flex items-center gap-2">
+            <Shield className="w-4 h-4 text-uber-green" />
+            Behavior Summary
+          </h3>
+          <div className="space-y-3 text-sm">
+            <div className="flex items-center justify-between p-2 bg-uber-gray-50 rounded">
+              <span className="text-uber-gray-600">Smooth trips</span>
+              <span className="font-bold">{Math.max(0, (dashboard?.total_trips || 0) - (dashboard?.stress_events || 0))}</span>
+            </div>
+            <div className="flex items-center justify-between p-2 bg-uber-gray-50 rounded">
+              <span className="text-uber-gray-600">Stress events</span>
+              <span className="font-bold text-uber-orange">{dashboard?.stress_events || 0}</span>
+            </div>
+            <div className="flex items-center justify-between p-2 bg-uber-gray-50 rounded">
+              <span className="text-uber-gray-600">High stress</span>
+              <span className="font-bold text-uber-red">{dashboard?.high_stress_events || 0}</span>
+            </div>
+            <button className="w-full mt-2 px-3 py-2 bg-uber-blue text-white text-sm rounded-lg hover:bg-uber-blue/80 transition-colors">
+              View Safety Goals →
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Stress Tips */}

@@ -20,5 +20,8 @@
       "source": "/((?!api/).*)",
       "destination": "frontend/index.html"
     }
-  ]
+  ],
+  "env": {
+    "VERCEL_URL": "driveintel-alpha.vercel.app"
+  }
 }

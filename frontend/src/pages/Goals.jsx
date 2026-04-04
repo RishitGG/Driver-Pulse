@@ -1,47 +1,79 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api/client'
-import EarningsProgress from '../components/EarningsProgress'
 import StressTips from '../components/StressTips'
-import { Target, Save, CheckCircle, TrendingUp, Clock, DollarSign } from 'lucide-react'
-import { clampDailyTarget, isValidMoney } from '../utils/sanityChecks'
+import { Shield, CheckCircle2, Circle, AlertCircle, TrendingUp, Lightbulb } from 'lucide-react'
 
 export default function Goals() {
   const [goals, setGoals] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [targetInput, setTargetInput] = useState('')
-  const [saving, setSaving] = useState(false)
+  const [safetyGoals, setSafetyGoals] = useState({
+    reduce_stress_events: false,
+    smooth_acceleration: false,
+    avoid_peak_hours: false,
+    defensive_driving: false,
+    improve_focus: false,
+  })
   const [saved, setSaved] = useState(false)
-  const [error, setError] = useState('')
 
   useEffect(() => {
     api.getGoals()
       .then(g => {
         setGoals(g)
-        setTargetInput(g.daily_target)
+        // Load persisted goals if available
+        const persisted = localStorage.getItem('safetyGoals')
+        if (persisted) {
+          setSafetyGoals(JSON.parse(persisted))
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
-  const handleSave = async () => {
-    setError('')
-    const clamped = clampDailyTarget(targetInput)
-    if (!isValidMoney(clamped) || clamped <= 0) {
-      setError('Please enter a positive daily target')
-      return
-    }
-    setSaving(true)
-    try {
-      const updated = await api.setGoal(Number(clamped))
-      setGoals(updated)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2000)
-    } catch {
-      setError('Failed to save goal')
-    } finally {
-      setSaving(false)
-    }
+  const handleGoalToggle = (key) => {
+    const updated = { ...safetyGoals, [key]: !safetyGoals[key] }
+    setSafetyGoals(updated)
+    localStorage.setItem('safetyGoals', JSON.stringify(updated))
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
   }
+
+  const goalsList = [
+    {
+      key: 'reduce_stress_events',
+      title: 'Reduce High-Stress Events',
+      description: 'Aim to reduce aggressive driving incidents by 50%',
+      icon: AlertCircle,
+      color: 'text-uber-red'
+    },
+    {
+      key: 'smooth_acceleration',
+      title: 'Practice Smooth Acceleration',
+      description: 'Focus on gradual acceleration and braking patterns',
+      icon: TrendingUp,
+      color: 'text-uber-orange'
+    },
+    {
+      key: 'avoid_peak_hours',
+      title: 'Avoid Peak Traffic Hours',
+      description: 'Drive during off-peak times when possible',
+      icon: Shield,
+      color: 'text-uber-green'
+    },
+    {
+      key: 'defensive_driving',
+      title: 'Practice Defensive Driving',
+      description: 'Anticipate hazards and maintain safe distances',
+      icon: Shield,
+      color: 'text-uber-blue'
+    },
+    {
+      key: 'improve_focus',
+      title: 'Minimize Distractions',
+      description: 'Keep phone usage low and stay focused on the road',
+      icon: Lightbulb,
+      color: 'text-uber-purple'
+    },
+  ]
 
   if (loading) {
     return (
@@ -53,86 +85,78 @@ export default function Goals() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Personalization & Goals</h1>
-
-      {/* Set target */}
-      <div className="bg-white rounded-xl p-6 border border-uber-gray-100 shadow-sm">
-        <div className="flex items-center gap-2 mb-4">
-          <Target className="w-5 h-5 text-uber-blue" />
-          <h3 className="text-sm font-semibold text-uber-gray-700">Daily Earnings Target</h3>
-        </div>
-
-        <div className="flex items-center gap-3 mb-5">
-          <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-uber-gray-400 text-sm">₹</span>
-            <input
-              type="number"
-              value={targetInput}
-              onChange={(e) => setTargetInput(e.target.value)}
-              className="w-full pl-8 pr-4 py-3 border border-uber-gray-200 rounded-lg text-lg font-semibold outline-none focus:border-uber-blue transition"
-              placeholder="1800"
-            />
-          </div>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className={`flex items-center gap-2 px-5 py-3 rounded-lg font-medium transition-colors
-              ${saved
-                ? 'bg-uber-green text-white'
-                : 'bg-uber-black text-white hover:bg-uber-gray-800'
-              } disabled:opacity-50`}
-          >
-            {saved ? (
-              <><CheckCircle className="w-4 h-4" /> Saved!</>
-            ) : (
-              <><Save className="w-4 h-4" /> {saving ? 'Saving...' : 'Save Target'}</>
-            )}
-          </button>
-        </div>
-
-        {error && (
-          <p className="text-xs text-red-600 mb-2">
-            {error}
-          </p>
-        )}
-
-        <p className="text-xs text-uber-gray-400 mb-4">
-          Set your daily earnings target. Your progress will be tracked in real-time on the dashboard.
-        </p>
+      <div>
+        <h1 className="text-2xl font-bold">Safety Goals & Improvements</h1>
+        <p className="text-sm text-uber-gray-500 mt-1">Track your progress toward becoming a safer driver</p>
       </div>
 
-      {/* Current progress */}
-      <EarningsProgress goals={goals} />
+      {/* Safety Goals */}
+      <div className="bg-white rounded-xl p-6 border border-uber-gray-100 shadow-sm">
+        <div className="flex items-center gap-2 mb-6">
+          <Shield className="w-5 h-5 text-uber-green" />
+          <h3 className="text-sm font-semibold text-uber-gray-700">Your Safety Goals</h3>
+        </div>
 
-      {/* Goal milestones */}
-      {/* {goals && (
-        <div className="bg-white rounded-xl p-6 border border-uber-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-uber-gray-700 mb-4">Today&apos;s Progress</h3>
-          <div className="space-y-4">
-            {[25, 50, 75, 100].map(pct => {
-              const amount = Math.round(goals.daily_target * pct / 100)
-              const reached = goals.current_earnings >= amount
-              return (
-                <div key={pct} className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                    reached ? 'bg-uber-green text-white' : 'bg-uber-gray-100 text-uber-gray-400'
-                  }`}>
-                    {reached ? '✓' : `${pct}%`}
+        <div className="space-y-3">
+          {goalsList.map((goal) => {
+            const Icon = goal.icon
+            const isChecked = safetyGoals[goal.key]
+            return (
+              <button
+                key={goal.key}
+                onClick={() => handleGoalToggle(goal.key)}
+                className="w-full text-left p-4 border border-uber-gray-200 rounded-lg hover:bg-uber-gray-50 transition-colors"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="mt-1">
+                    {isChecked ? (
+                      <CheckCircle2 className="w-5 h-5 text-uber-green" />
+                    ) : (
+                      <Circle className="w-5 h-5 text-uber-gray-300" />
+                    )}
                   </div>
                   <div className="flex-1">
-                    <p className={`text-sm font-medium ${reached ? 'text-uber-gray-700' : 'text-uber-gray-400'}`}>
-                      ₹{amount.toLocaleString()} milestone
+                    <p className={`font-medium text-sm ${isChecked ? 'text-uber-gray-900' : 'text-uber-gray-700'}`}>
+                      {goal.title}
+                    </p>
+                    <p className="text-xs text-uber-gray-500 mt-1">
+                      {goal.description}
                     </p>
                   </div>
-                  <span className={`text-xs ${reached ? 'text-uber-green font-semibold' : 'text-uber-gray-300'}`}>
-                    {reached ? 'Reached' : 'Pending'}
-                  </span>
+                  <Icon className={`w-4 h-4 flex-shrink-0 ${goal.color}`} />
                 </div>
-              )
-            })}
+              </button>
+            )
+          })}
+        </div>
+
+        {saved && (
+          <div className="mt-4 p-3 bg-uber-green/10 text-uber-green text-sm rounded-lg flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4" />
+            Goals saved!
+          </div>
+        )}
+      </div>
+
+      {/* Progress Summary */}
+      {goals && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-gradient-to-br from-uber-green/10 to-uber-blue/10 rounded-xl p-4 border border-uber-green/20">
+            <p className="text-xs text-uber-gray-600 font-medium">Safety Score</p>
+            <p className="text-2xl font-bold text-uber-green mt-1">
+              {Math.max(0, 100 - (goals.stress_events || 0) * 5)}%
+            </p>
+            <p className="text-xs text-uber-gray-500 mt-2">Based on stress events this week</p>
+          </div>
+          <div className="bg-gradient-to-br from-uber-blue/10 to-uber-purple/10 rounded-xl p-4 border border-uber-blue/20">
+            <p className="text-xs text-uber-gray-600 font-medium">Active Goals</p>
+            <p className="text-2xl font-bold text-uber-blue mt-1">
+              {Object.values(safetyGoals).filter(Boolean).length} / {Object.keys(safetyGoals).length}
+            </p>
+            <p className="text-xs text-uber-gray-500 mt-2">You're working on these improvements</p>
           </div>
         </div>
-      )} */}
+      )}
 
       {/* Stress tips */}
       <StressTips />
