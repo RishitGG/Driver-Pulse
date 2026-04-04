@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 
 const stressColors = {
-  low: 'bg-uber-green/20 border-uber-green',
-  medium: 'bg-uber-yellow/20 border-uber-yellow',
-  high: 'bg-uber-red/20 border-uber-red',
+  low: 'bg-emerald-500/20 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.3)]',
+  medium: 'bg-amber-500/20 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.3)]',
+  high: 'bg-rose-500/20 border-rose-500/40 shadow-[0_0_10px_rgba(244,63,94,0.3)]',
 }
 
 export default function TodayTimeline({ trips }) {
@@ -15,12 +15,12 @@ export default function TodayTimeline({ trips }) {
   const span = Math.max(maxH - minH, 1)
 
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-uber-gray-100">
-      <h3 className="text-sm font-semibold text-uber-gray-700 mb-4">Today Timeline</h3>
+    <div className="bg-slate-800/40 backdrop-blur-md rounded-2xl p-6 shadow-lg shadow-black/20 border border-white/5">
+      <h3 className="text-[15px] font-bold text-slate-200 mb-5">Today Timeline</h3>
 
       {/* Hour labels */}
       <div className="relative h-20">
-        <div className="absolute inset-x-0 top-0 flex justify-between text-[10px] text-uber-gray-400 px-1">
+        <div className="absolute inset-x-0 top-0 flex justify-between text-[11px] font-medium text-slate-500 px-1">
           {Array.from({ length: span + 1 }, (_, i) => {
             const h = minH + i
             return <span key={h}>{h % 12 || 12}{h < 12 ? 'a' : 'p'}</span>
@@ -28,7 +28,7 @@ export default function TodayTimeline({ trips }) {
         </div>
 
         {/* Track */}
-        <div className="absolute inset-x-0 top-6 h-10 bg-uber-gray-100 rounded-lg">
+        <div className="absolute inset-x-0 top-6 h-10 bg-slate-900/50 rounded-xl border border-white/5">
           {trips.map((t) => {
             const startH = new Date(t.start_time).getHours() + new Date(t.start_time).getMinutes() / 60
             const endH = new Date(t.end_time).getHours() + new Date(t.end_time).getMinutes() / 60
@@ -40,9 +40,9 @@ export default function TodayTimeline({ trips }) {
                 key={t.id}
                 onClick={() => navigate(`/trips/${t.id}`)}
                 title={`${t.id} — ₹${t.fare} — ${t.stress_level} stress`}
-                className={`absolute top-1 h-8 rounded-md border-2 cursor-pointer
-                  transition-transform hover:scale-105 hover:z-10
-                  ${stressColors[t.stress_level] || 'bg-uber-gray-200 border-uber-gray-300'}`}
+                className={`absolute top-1 h-8 rounded-lg border cursor-pointer
+                  transition-all duration-300 hover:scale-y-110 hover:brightness-125 hover:z-10 hover:shadow-lg
+                  ${stressColors[t.stress_level] || 'bg-slate-700/50 border-slate-600'}`}
                 style={{ left: `${left}%`, width: `${width}%` }}
               />
             )
@@ -50,10 +50,10 @@ export default function TodayTimeline({ trips }) {
         </div>
       </div>
 
-      <div className="flex gap-4 mt-2 text-[10px] text-uber-gray-400">
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-uber-green/30 border border-uber-green" /> Low</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-uber-yellow/30 border border-uber-yellow" /> Medium</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-uber-red/30 border border-uber-red" /> High</span>
+      <div className="flex gap-5 mt-4 text-[11px] font-medium text-slate-400">
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-md bg-emerald-500/20 border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]" /> Low</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-md bg-amber-500/20 border border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)]" /> Medium</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-md bg-rose-500/20 border border-rose-500/40 shadow-[0_0_8px_rgba(244,63,94,0.2)]" /> High</span>
       </div>
     </div>
   )

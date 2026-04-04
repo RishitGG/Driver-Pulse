@@ -169,28 +169,28 @@ export default function Trips() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Trip History</h1>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-white border border-uber-gray-200 rounded-lg px-3 py-1.5">
-            <Calendar className="w-4 h-4 text-uber-gray-400" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <h1 className="text-3xl font-bold text-white tracking-tight drop-shadow-md">Trip History</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 focus-within:border-indigo-500 transition-colors shadow-inner">
+            <Calendar className="w-4 h-4 text-slate-400" />
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="text-sm outline-none bg-transparent"
+              className="text-[14px] font-medium text-slate-200 outline-none bg-transparent"
             />
           </div>
           <a
             href="/api/trips/template"
-            className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg border border-uber-gray-200 text-sm hover:border-uber-gray-400 transition"
+            className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-slate-800/40 text-[14px] font-medium text-slate-300 hover:border-slate-500 hover:bg-slate-700/50 hover:text-white transition-all shadow-sm"
           >
             <Download className="w-4 h-4" /> Template
           </a>
           <button
             onClick={() => importInputRef.current?.click()}
             disabled={importing}
-            className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg border border-uber-gray-200 text-sm hover:border-uber-gray-400 transition disabled:opacity-50"
+            className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-slate-800/40 text-[14px] font-medium text-slate-300 hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-white transition-all shadow-sm disabled:opacity-50"
           >
             <Upload className="w-4 h-4" /> {importing ? 'Importing…' : 'Import CSV'}
           </button>
@@ -203,17 +203,17 @@ export default function Trips() {
           />
           <button
             onClick={() => { setShowAddTrip(true); setCreateError('') }}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-uber-black text-white text-sm font-medium hover:bg-uber-gray-800 transition"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[14px] font-bold hover:from-emerald-400 hover:to-teal-400 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] transform hover:-translate-y-0.5"
           >
             <Plus className="w-4 h-4" /> Add trip
           </button>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`p-2 rounded-lg border transition-colors ${
-              showFilters ? 'bg-uber-black text-white border-uber-black' : 'border-uber-gray-200 hover:border-uber-gray-400'
+            className={`p-2.5 rounded-xl border transition-all duration-300 shadow-sm ${
+              showFilters ? 'bg-indigo-500 text-white border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.5)]' : 'bg-slate-800/40 border-white/10 text-slate-300 hover:border-indigo-400/50 hover:bg-indigo-500/10'
             }`}
           >
-            <SlidersHorizontal className="w-4 h-4" />
+            <SlidersHorizontal className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -253,15 +253,15 @@ export default function Trips() {
 
       {/* Advanced filters panel */}
       {showFilters && (
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-uber-gray-100 space-y-4">
-          <p className="text-sm font-semibold text-uber-gray-700">Advanced Filters</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/10 space-y-5 animate-in fade-in slide-in-from-top-4 duration-300">
+          <p className="text-[15px] font-bold text-slate-200">Advanced Filters</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             <div>
-              <label className="text-xs text-uber-gray-500 mb-1 block">Stress Level</label>
+              <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">Stress Level</label>
               <select
                 value={filters.stress}
                 onChange={(e) => setFilters(f => ({ ...f, stress: e.target.value }))}
-                className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500 transition-colors"
               >
                 <option value="">Any</option>
                 <option value="low">Low</option>
@@ -270,11 +270,11 @@ export default function Trips() {
               </select>
             </div>
             <div>
-              <label className="text-xs text-uber-gray-500 mb-1 block">Time of Day</label>
+              <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">Time of Day</label>
               <select
                 value={filters.time_of_day}
                 onChange={(e) => setFilters(f => ({ ...f, time_of_day: e.target.value }))}
-                className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500 transition-colors"
               >
                 <option value="">Any</option>
                 <option value="morning">Morning (5-12)</option>
@@ -284,11 +284,11 @@ export default function Trips() {
               </select>
             </div>
             <div>
-              <label className="text-xs text-uber-gray-500 mb-1 block">Confidence Level</label>
+              <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">Confidence Level</label>
               <select
                 value={confidenceFilter}
                 onChange={(e) => setConfidenceFilter(e.target.value)}
-                className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500 transition-colors"
               >
                 <option value="">Any</option>
                 <option value="high">High</option>
@@ -297,26 +297,26 @@ export default function Trips() {
               </select>
             </div>
             <div>
-              <label className="text-xs text-uber-gray-500 mb-1 block">Max Duration (min)</label>
+              <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">Max Duration (min)</label>
               <input
                 type="number"
                 value={filters.duration_max}
                 onChange={(e) => setFilters(f => ({ ...f, duration_max: e.target.value }))}
-                className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-600"
                 placeholder="∞"
               />
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3 pt-2 border-t border-white/5">
             <button
               onClick={applyFilters}
-              className="bg-uber-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-uber-gray-800"
+              className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-500 transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)]"
             >
               Apply Filters
             </button>
             <button
               onClick={() => { clearFilters(); loadTrips() }}
-              className="px-4 py-2 rounded-lg text-sm text-uber-gray-500 hover:bg-uber-gray-100"
+              className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors"
             >
               Clear All
             </button>
@@ -325,19 +325,19 @@ export default function Trips() {
       )}
 
       {/* Results count */}
-      <p className="text-sm text-uber-gray-500">
+      <p className="text-[13px] font-bold tracking-wider uppercase text-slate-500 pl-1">
         {displayTrips.length} trip{displayTrips.length !== 1 ? 's' : ''} found
       </p>
 
       {/* Trip list */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin w-8 h-8 border-2 border-uber-black border-t-transparent rounded-full" />
+          <div className="animate-spin w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full" />
         </div>
       ) : displayTrips.length === 0 ? (
-        <div className="text-center py-12 text-uber-gray-400">
-          <p className="text-lg mb-1">No trips found</p>
-          <p className="text-sm">Try a different date or adjust your filters</p>
+        <div className="text-center py-16 bg-slate-900/30 rounded-3xl border border-white/5 backdrop-blur-sm">
+          <p className="text-xl font-bold text-slate-400 mb-2">No trips found</p>
+          <p className="text-[14px] text-slate-500">Try a different date or adjust your filters</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -349,88 +349,88 @@ export default function Trips() {
 
       {/* Add Trip Modal */}
       {showAddTrip && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-uber-gray-100 overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-uber-gray-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg bg-slate-900 rounded-3xl shadow-2xl border border-white/10 overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-white/10 bg-slate-800/50">
               <div>
-                <p className="text-sm font-semibold text-uber-gray-700">Add trip</p>
-                <p className="text-xs text-uber-gray-400">Manual entry (individual trip)</p>
+                <p className="text-lg font-bold text-white tracking-tight">Add trip</p>
+                <p className="text-[13px] text-slate-400">Manual entry (individual trip)</p>
               </div>
               <button
                 onClick={() => setShowAddTrip(false)}
-                className="p-2 rounded-lg hover:bg-uber-gray-100 transition"
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Close"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={submitNewTrip} className="p-5 space-y-4">
+            <form onSubmit={submitNewTrip} className="p-6 space-y-5">
               {createError && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+                <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 text-[14px] text-rose-400">
                   <strong>Error:</strong> {createError}
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="text-xs text-uber-gray-500 mb-1 block">Date</label>
+                  <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">Date</label>
                   <input
                     type="date"
                     value={newTrip.date}
                     onChange={(e) => setNewTrip(t => ({ ...t, date: e.target.value }))}
-                    className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    className="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-[14px] text-white outline-none focus:border-indigo-500 transition-colors"
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-uber-gray-500 mb-1 block">Start time</label>
+                  <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">Start time</label>
                   <input
                     type="time"
                     value={newTrip.start_time}
                     onChange={(e) => setNewTrip(t => ({ ...t, start_time: e.target.value }))}
-                    className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    className="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-[14px] text-white outline-none focus:border-indigo-500 transition-colors"
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-uber-gray-500 mb-1 block">End time</label>
+                  <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">End time</label>
                   <input
                     type="time"
                     value={newTrip.end_time}
                     onChange={(e) => setNewTrip(t => ({ ...t, end_time: e.target.value }))}
-                    className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    className="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-[14px] text-white outline-none focus:border-indigo-500 transition-colors"
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-uber-gray-500 mb-1 block">Distance (km)</label>
+                  <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">Distance (km)</label>
                   <input
                     type="number"
                     step="0.1"
                     min="0"
                     value={newTrip.distance_km}
                     onChange={(e) => setNewTrip(t => ({ ...t, distance_km: e.target.value }))}
-                    className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    className="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-[14px] text-white outline-none focus:border-indigo-500 transition-colors placeholder-slate-600"
                     placeholder="8.2"
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-uber-gray-500 mb-1 block">Fare (₹)</label>
+                  <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">Fare (₹)</label>
                   <input
                     type="number"
                     step="1"
                     min="0"
                     value={newTrip.fare}
                     onChange={(e) => setNewTrip(t => ({ ...t, fare: e.target.value }))}
-                    className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    className="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-[14px] text-white outline-none focus:border-indigo-500 transition-colors placeholder-slate-600"
                     placeholder="310"
                     required
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="text-xs text-uber-gray-500 mb-1 block">Stress score (optional, 0–10)</label>
+                  <label className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-1.5 block">Stress score (optional, 0–10)</label>
                   <input
                     type="number"
                     min="0"
@@ -438,24 +438,24 @@ export default function Trips() {
                     step="0.1"
                     value={newTrip.stress_score}
                     onChange={(e) => setNewTrip(t => ({ ...t, stress_score: e.target.value }))}
-                    className="w-full border border-uber-gray-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    className="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-[14px] text-white outline-none focus:border-indigo-500 transition-colors placeholder-slate-600"
                     placeholder="0.0"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-1">
+              <div className="flex gap-3 pt-4 border-t border-white/10">
                 <button
                   type="button"
                   onClick={() => setShowAddTrip(false)}
-                  className="flex-1 px-4 py-2 rounded-lg text-sm text-uber-gray-500 hover:bg-uber-gray-100"
+                  className="flex-1 px-4 py-3 rounded-xl text-[14px] font-bold text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-1 bg-uber-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-uber-gray-800 disabled:opacity-50"
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-3 rounded-xl text-[14px] font-bold hover:from-emerald-400 hover:to-teal-400 disabled:opacity-50 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all transform hover:-translate-y-0.5"
                 >
                   {creating ? 'Adding…' : 'Add trip'}
                 </button>

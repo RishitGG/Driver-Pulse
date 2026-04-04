@@ -43,35 +43,35 @@ export default function Goals() {
       title: 'Reduce High-Stress Events',
       description: 'Aim to reduce aggressive driving incidents by 50%',
       icon: AlertCircle,
-      color: 'text-uber-red'
+      color: 'text-amber-400'
     },
     {
       key: 'smooth_acceleration',
       title: 'Practice Smooth Acceleration',
       description: 'Focus on gradual acceleration and braking patterns',
       icon: TrendingUp,
-      color: 'text-uber-orange'
+      color: 'text-indigo-400'
     },
     {
       key: 'avoid_peak_hours',
       title: 'Avoid Peak Traffic Hours',
       description: 'Drive during off-peak times when possible',
       icon: Shield,
-      color: 'text-uber-green'
+      color: 'text-emerald-400'
     },
     {
       key: 'defensive_driving',
       title: 'Practice Defensive Driving',
       description: 'Anticipate hazards and maintain safe distances',
       icon: Shield,
-      color: 'text-uber-blue'
+      color: 'text-blue-400'
     },
     {
       key: 'improve_focus',
       title: 'Minimize Distractions',
       description: 'Keep phone usage low and stay focused on the road',
       icon: Lightbulb,
-      color: 'text-uber-purple'
+      color: 'text-purple-400'
     },
   ]
 
@@ -84,17 +84,17 @@ export default function Goals() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-8 animate-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-2xl font-bold">Safety Goals & Improvements</h1>
-        <p className="text-sm text-uber-gray-500 mt-1">Track your progress toward becoming a safer driver</p>
+        <h1 className="text-3xl font-bold text-white tracking-tight drop-shadow-md">Safety Goals & Improvements</h1>
+        <p className="text-[15px] text-slate-400 mt-1">Track your progress toward becoming a safer driver</p>
       </div>
 
       {/* Safety Goals */}
-      <div className="bg-white rounded-xl p-6 border border-uber-gray-100 shadow-sm">
-        <div className="flex items-center gap-2 mb-6">
-          <Shield className="w-5 h-5 text-uber-green" />
-          <h3 className="text-sm font-semibold text-uber-gray-700">Your Safety Goals</h3>
+      <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <Shield className="w-6 h-6 text-emerald-400" />
+          <h3 className="text-[16px] font-bold text-white tracking-wide">Your Safety Goals</h3>
         </div>
 
         <div className="space-y-3">
@@ -105,25 +105,29 @@ export default function Goals() {
               <button
                 key={goal.key}
                 onClick={() => handleGoalToggle(goal.key)}
-                className="w-full text-left p-4 border border-uber-gray-200 rounded-lg hover:bg-uber-gray-50 transition-colors"
+                className={`w-full text-left p-5 border rounded-2xl transition-all duration-300 flex items-start gap-4 shadow-sm ${
+                  isChecked 
+                  ? 'bg-slate-800/80 border-indigo-500/50 shadow-[0_4px_20px_rgba(99,102,241,0.15)]' 
+                  : 'bg-slate-950/40 border-white/5 hover:bg-slate-800/50 hover:border-white/10'
+                }`}
               >
-                <div className="flex items-start gap-3">
-                  <div className="mt-1">
-                    {isChecked ? (
-                      <CheckCircle2 className="w-5 h-5 text-uber-green" />
-                    ) : (
-                      <Circle className="w-5 h-5 text-uber-gray-300" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className={`font-medium text-sm ${isChecked ? 'text-uber-gray-900' : 'text-uber-gray-700'}`}>
-                      {goal.title}
-                    </p>
-                    <p className="text-xs text-uber-gray-500 mt-1">
-                      {goal.description}
-                    </p>
-                  </div>
-                  <Icon className={`w-4 h-4 flex-shrink-0 ${goal.color}`} />
+                <div className="mt-0.5 transition-transform duration-300">
+                  {isChecked ? (
+                    <CheckCircle2 className="w-6 h-6 text-indigo-400 shadow-[0_0_10px_rgba(99,102,241,0.5)] rounded-full animate-in zoom-in" />
+                  ) : (
+                    <Circle className="w-6 h-6 text-slate-600" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className={`font-bold text-[15px] transition-colors ${isChecked ? 'text-white' : 'text-slate-300'}`}>
+                    {goal.title}
+                  </p>
+                  <p className="text-[13px] text-slate-500 mt-1 leading-relaxed">
+                    {goal.description}
+                  </p>
+                </div>
+                <div className={`p-2 rounded-xl border border-white/5 bg-slate-900 ${isChecked ? 'shadow-inner' : ''}`}>
+                  <Icon className={`w-5 h-5 flex-shrink-0 ${goal.color}`} />
                 </div>
               </button>
             )
@@ -131,29 +135,29 @@ export default function Goals() {
         </div>
 
         {saved && (
-          <div className="mt-4 p-3 bg-uber-green/10 text-uber-green text-sm rounded-lg flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" />
-            Goals saved!
+          <div className="mt-6 p-4 bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg animate-in fade-in slide-in-from-top-2">
+            <CheckCircle2 className="w-5 h-5" />
+            Goals saved successfully!
           </div>
         )}
       </div>
 
       {/* Progress Summary */}
       {goals && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-uber-green/10 to-uber-blue/10 rounded-xl p-4 border border-uber-green/20">
-            <p className="text-xs text-uber-gray-600 font-medium">Safety Score</p>
-            <p className="text-2xl font-bold text-uber-green mt-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 backdrop-blur-xl rounded-3xl p-6 border border-emerald-500/20 shadow-xl">
+            <p className="text-[12px] font-bold tracking-wider uppercase text-emerald-500/80 mb-2">Safety Score</p>
+            <p className="text-4xl font-bold text-emerald-400 drop-shadow-md">
               {Math.max(0, 100 - (goals.stress_events || 0) * 5)}%
             </p>
-            <p className="text-xs text-uber-gray-500 mt-2">Based on stress events this week</p>
+            <p className="text-[13px] text-emerald-200/60 mt-2 font-medium">Based on stress events this week</p>
           </div>
-          <div className="bg-gradient-to-br from-uber-blue/10 to-uber-purple/10 rounded-xl p-4 border border-uber-blue/20">
-            <p className="text-xs text-uber-gray-600 font-medium">Active Goals</p>
-            <p className="text-2xl font-bold text-uber-blue mt-1">
-              {Object.values(safetyGoals).filter(Boolean).length} / {Object.keys(safetyGoals).length}
+          <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl rounded-3xl p-6 border border-indigo-500/20 shadow-xl">
+            <p className="text-[12px] font-bold tracking-wider uppercase text-indigo-400/80 mb-2">Active Goals</p>
+            <p className="text-4xl font-bold text-indigo-400 drop-shadow-md">
+              {Object.values(safetyGoals).filter(Boolean).length} <span className="text-2xl text-indigo-500/50">/ {Object.keys(safetyGoals).length}</span>
             </p>
-            <p className="text-xs text-uber-gray-500 mt-2">You're working on these improvements</p>
+            <p className="text-[13px] text-indigo-200/60 mt-2 font-medium">You're working on these improvements</p>
           </div>
         </div>
       )}

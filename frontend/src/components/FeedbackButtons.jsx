@@ -5,7 +5,7 @@ import { api } from '../api/client'
 const options = [
   { key: 'correct', label: 'Correct', icon: ThumbsUp, color: 'text-uber-green hover:bg-green-50' },
   { key: 'incorrect', label: 'Incorrect', icon: ThumbsDown, color: 'text-uber-red hover:bg-red-50' },
-  { key: 'not_relevant', label: 'Not Relevant', icon: MinusCircle, color: 'text-uber-gray-500 hover:bg-uber-gray-100' },
+  { key: 'not_relevant', label: 'Not Relevant', icon: MinusCircle, color: 'text-slate-500 hover:bg-slate-800' },
 ]
 
 export default function FeedbackButtons({ eventId, current, onFeedback }) {
@@ -28,7 +28,7 @@ export default function FeedbackButtons({ eventId, current, onFeedback }) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[10px] text-uber-gray-400 mr-1">Feedback:</span>
+      <span className="text-[10px] text-slate-500 mr-1 font-bold uppercase tracking-wider">Feedback:</span>
       {options.map(({ key, label, icon: Icon, color }) => (
         <button
           key={key}

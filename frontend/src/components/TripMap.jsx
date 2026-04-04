@@ -192,8 +192,8 @@ export default function TripMap({ route, events, cursorIndex, durationSec }) {
   return (
     <div className="relative w-full h-full min-h-[300px]">
       <div ref={mapRef} className="absolute inset-0 rounded-xl z-0" />
-      <div className="absolute top-2 right-2 z-[500] max-w-[200px] rounded-lg border border-uber-gray-200 bg-white/95 p-2.5 text-[10px] leading-snug text-uber-gray-700 shadow-sm backdrop-blur-sm">
-        <p className="mb-1.5 font-semibold text-uber-gray-800">Risk along route</p>
+      <div className="absolute top-3 right-3 z-[500] max-w-[200px] rounded-xl border border-white/5 bg-slate-900/80 p-3 text-[11px] leading-snug text-slate-300 shadow-xl backdrop-blur-md">
+        <p className="mb-2 font-bold text-white uppercase tracking-wider">Risk along route</p>
         <ul className="space-y-1">
           <li className="flex items-center gap-1.5">
             <span className="h-1 w-4 shrink-0 rounded-full opacity-80" style={{ background: CALM_COLOR }} />
@@ -211,7 +211,7 @@ export default function TripMap({ route, events, cursorIndex, durationSec }) {
             <span className="h-1 w-4 shrink-0 rounded-full" style={{ background: severityColor.high }} />
             High
           </li>
-          <li className="flex items-center gap-1.5 pt-0.5 border-t border-uber-gray-100 mt-1.5">
+          <li className="flex items-center gap-2 pt-1.5 border-t border-white/10 mt-2">
             <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full border-2 border-white bg-[#276EF1] shadow" />
             Playback
           </li>
