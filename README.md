@@ -1,207 +1,152 @@
-# DriveIntel: Driver Safety & Behavior Analytics
+# DriverIntel: Advanced Driver Safety & Behavior Analytics
 
-- **Demo Video:** https://youtu.be/PL-XsfVfLA0?feature=shared 
-- **Live Application:** https://driveintel-alpha.vercel.app/ 
-
-- **Demo Login Credentials:**  
-  Username: demo@driveintel.com  
-  Password: demo2026  
-
-- **Note:** This is a prototype platform. Backend features behavior detection and safety analysis.
-
-Real-time driver safety & behavior analytics platform for ride-hailing drivers. Uses on-device sensor data (accelerometer, gyroscope, microphone) with ML models to detect stressful driving situations, analyze driver behaviors, and provide personalized safety insights.
+<div align="center">
+  <p><strong>A state-of-the-art Web Application designed to improve driver safety, behavior, and efficiency in the ride-hailing industry through Artificial Intelligence.</strong></p>
+</div>
 
 ---
 
-## Features
+## 🚀 Welcome to DriverIntel
 
-- **Dashboard** — Daily trip overview, safety score, stress event timeline, behavior insights
-- **Trip Detail** — **Risk along route**: Leaflet map with severity-colored route segments (from event timestamps), legend, playback cursor, and rich popups (severity, confidence, explain summary); sensor charts and stress event explainability
-- **Trends** — Weekly/monthly driver behavior patterns, stress event analytics
-- **Safety Goals** — Set and track safety improvements (e.g., reduce high-stress events)
-- **Predict** — Enter sensor values → instant stress prediction *(analyst-facing)*; **demo high-risk zones map** (illustrative Leaflet circles over Bangalore — not live incident data)
-- **Batch Upload** — Upload CSV → run inference on multiple trips at once *(analyst-facing)*
-- **Explainability** — Per-event feature contributions, confidence badges
-- **Feedback** — Thumbs up/down on detected events for model improvement
-- **Auth** — Login / register with demo accounts or new profile
-- **AI Safety Assistant** — DriveIntel Co-pilot for personalized safety tips & guidance
+**DriverIntel** is a real-time driver safety & behavior analytics platform built exclusively for ride-hailing drivers. By leveraging on-device sensor data (accelerometer, gyroscope, and microphone) via Machine Learning (ML) models, it detects stressful driving situations, analyzes dangerous behavior patterns, and provides highly personalized safety coaching—all wrapped in a stunning, premium dark-themed glassmorphic user interface.
 
-To analyze **multiple trips at once**, go to the `Trips` tab and use **Import CSV**.
+- **Live Application:** [DriverIntel Alpha Vercel](https://driveintel-alpha.vercel.app/)
+- **Demo Video:** [YouTube Demo](https://youtu.be/PL-XsfVfLA0?feature=shared)
+
+**Demo Credentials:**
+> **Username:** `demo@driveintel.com`
+> **Password:** `demo2026`
 
 ---
 
-## Architecture
+## ✨ Core Features
 
-```
-DriveIntel/
-├── backend/                       # FastAPI REST API (25 endpoints)
-│   ├── main.py                    # Routes, middleware, Pydantic models
-│   ├── agent.py                   # AI Safety Assistant integration
-│   ├── data/
-│   │   ├── sample_data.py         # Synthetic trip/event generator
-│   │   ├── batch_processor.py     # Loads stress models, runs batch inference
-│   │   ├── trips_import.py        # CSV trip import parser
-│   │   ├── users.py               # In-memory auth store
-│   │   └── config.py              # Batch limits & constants
-│   └── utils/
-│       └── logging.py             # Timestamped structured logging
-│
-├── frontend/                      # React 18 + Vite + Tailwind SPA
-│   └── src/
-│       ├── pages/                 # 8 pages: Home, Dashboard, Trips, TripDetail,
-│       │                          #   Trends, Safety Goals, Predict, BatchUpload
-│       ├── components/            # Reusable UI + TripMap (risk-colored route), RiskZonesPreviewMap (demo zones)
-│       ├── api/client.js          # Centralised API client
-│       └── utils/sanityChecks.js  # Input validation helpers
-│
-├── driveintel_stress_model/       # Stress Detection ML pipeline
-│   ├── run.py                     # CLI entry (--generate --calibrate --train --demo)
-│   ├── src/
-│   │   ├── generate_data.py       # Synthetic sensor window generator (3,150 samples)
-│   │   ├── train.py               # RF classifier training + evaluation
-│   │   ├── inference.py           # InferenceEngine with rule-based fallback
-│   │   └── hal.py                 # Hardware Abstraction Layer (device calibration)
-│   ├── model/                     # Trained artifacts (rf_model.pkl, baselines, contract)
-│   └── calibration/               # Device calibration profile
-│
-├── earnings/earnings/             # [DEPRECATED] Earnings Forecasting ML pipeline
-│   ├── README.md                  # See legacy documentation
-│   └── ...
-│
-├── streamlit_app.py               # Standalone Streamlit demo (stress detection focus)
-├── tests/data/                    # Example CSVs for batch & import testing
-└── requirements.txt               # Root Python dependencies
-```
+DriverIntel provides a complete suite of powerful tools designed for both individual drivers and ride-hailing platform analysts:
+
+*   **📊 Dynamic Dashboard** — Get a comprehensive daily trip overview, your overall safety score, a stress event timeline, and high-level behavior insights at a glance.
+*   **🗺️ Interactive Trip Mapping** — **Risk along route:** Leaflet maps with dynamically severity-colored route segments based on live event timestamps. Includes playback cursors and rich popups explaining the severity, model confidence, and safety logic.
+*   **📈 Advanced Trends** — Understand your driving behavior over time with weekly/monthly patterns, fatigue tracking, and stress event analytics.
+*   **🎯 Goal Tracking** — Improve your daily safety by setting, committing to, and tracking behavioral modifications (e.g., reduce harsh braking, defensive driving).
+*   **🔮 Predict & Preview** — Enter raw sensor telemetry for instant stress prediction. Also features a preview Map with high-risk geographical zones.
+*   **📁 Batch Processing** — Built for analysts. Upload a CSV of multi-driver telemetry and run large-scale inference simultaneously for macro-level safety analysis.
+*   **🤖 AI Co-Pilot Assistant** — An integrated, context-aware AI Safety Assistant (powered by Google Gemini) ready to provide interactive, personalized coaching and guidance on demand.
+*   **🔍 Explainable AI (XAI)** — Understand *why* an event was flagged. DriverIntel provides per-event feature contributions (e.g., high lateral acceleration) and model confidence percentages.
+
+---
+
+## 🎨 Premium UI/UX
+
+DriverIntel utilizes a custom **High-Contrast Dark Glassmorphism** design language.
+The entire application was built iteratively to reflect an ultra-modern aesthetic standard using Tailwind CSS:
+
+*   **Vibrant Gradients over Deep Backgrounds** (`slate-950` / `slate-900`)
+*   **Translucent Frosted Glass** layered panels (`backdrop-blur-xl`, `bg-white/5` borders)
+*   **Sleek Micro-animations**, customized chart tooltips, and dynamic states
+*   Zero legacy light-mode elements—providing drivers with maximum visibility, luxury, and eye comfort even during late-night shifts.
+
+---
+
+## 🏗️ Architecture
+
+DriverIntel uses a robust split architecture designed for performance and scale.
 
 ```mermaid
 flowchart LR
-  browser[Browser_ReactApp] --> api[FastAPI_Backend]
-  api --> tripsStore[InMemory_Trips_+_Goals]
-  api --> stressBatch[Stress_Batch_Processor]
-  stressBatch --> stressModel[Stress_Model_Files]
-  api --> assistant[AI_Safety_Assistant]
+    UI[Frontend: React 18, Vite, Tailwind]
+    API[Backend: FastAPI, Uvicorn, Python]
+    DB[(In-Memory Trips / Data Store)]
+    ML[Stress ML Inference Engine]
+    AI[AI Safety Assistant / Gemini]
+
+    UI <==>|JSON via /api/*| API
+    API <--> DB
+    API <--> ML
+    API <--> AI
+```
+
+### Folder Structure
+```text
+DriverIntel/
+├── backend/                       # FastAPI REST API
+│   ├── main.py                    # Core routing and controllers
+│   ├── agent.py                   # LLM Integration (AI Safety Assistant)
+│   └── data/                      # Batch Processing, Import handling, config
+├── frontend/                      # React 18 + Vite + Tailwind SPA
+│   └── src/
+│       ├── pages/                 # Full Page Views (Dashboard, Predict, etc.)
+│       ├── components/            # Reusable UI (Leaflet Maps, Charts, Copilot)
+│       ├── api/                   # Centralized application client
+├── driveintel_stress_model/       # ML Pipeline for Stress Detection
+│   ├── src/                       # Random Forest training, XAI logic
+│   └── model/                     # Artifacts (.pkl)
+└── streamlit_app.py               # Standalone Streamlit rapid diagnostic tool
 ```
 
 ---
 
-## Setup
+## 💻 Tech Stack
+
+| Layer | Technologies |
+|-------|------|
+| **Frontend** | React 18, Vite, Tailwind CSS, Recharts, Leaflet, Lucide Icons |
+| **Backend** | Python 3.9+, FastAPI, Uvicorn, Pydantic |
+| **AI / ML** | Scikit-Learn, Pandas, NumPy, Google Gemini API |
+| **Deploy Target**| Vercel (Frontend Component) & Render (Backend Service) |
+
+---
+
+## 🛠️ Setup & Local Development
 
 ### Prerequisites
 - Python 3.9+
 - Node.js 18+
- - Docker Desktop (for judge-friendly containerisation)
 
-### Install & Run (local dev)
+### 1. Install & Run Directly
 
+Start the backend:
 ```bash
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Start backend (http://localhost:8000)
-cd backend && python main.py
-
-# In a new terminal — start frontend (http://localhost:5173)
-cd frontend && npm install && npm run dev
+cd backend
+pip install -r ../requirements.txt
+python main.py
 ```
+*(Runs on `http://localhost:8000`)*
 
-Open **http://localhost:5173** in your browser.
+Start the frontend:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+*(Runs on `http://localhost:5173`)*
 
----
+Open **http://localhost:5173** to use the application.
 
-### Run with Docker
-
-With [Docker Desktop](https://www.docker.com/products/docker-desktop/) running:
+### 2. Run via Docker Compose
 
 ```bash
-# From the repo root (DriveIntel/)
+# Navigate to repository root
 docker compose up --build
 ```
-
-Then open:
-
-- Frontend: `http://localhost:5173`
-- Backend (direct): `http://localhost:8000/api/health`
-
-The frontend talks to the backend via `/api/*`, which is proxied by Nginx inside the `frontend` container to the `backend` container.
-
-**Demo login (sample account):**
-
-- Username: `demo@driveintel.com`
-- Password: `demo2026`
+Then visit `http://localhost:5173`! All API calls are locally proxied by NGINX inside the container.
 
 ---
 
-## Tech Stack
+## 🔮 Roadmap (Next Steps)
 
-| Layer | Tech |
-|-------|------|
-| Frontend | React 18, Vite, Tailwind CSS, Recharts, Leaflet |
-| Backend | FastAPI, Uvicorn, Pydantic |
-| ML | scikit-learn, NumPy, Pandas |
-| Deployment | Vercel (frontend), Render (backend) |
-
-### Hosted split deploy (Vercel + Render)
-
-**Option A — Vercel rewrites (simplest for the whole app):** proxy `/api/*` to your Render service so every relative `fetch('/api/...')` still works. Example `vercel.json` at the repo root or frontend root:
-
-```json
-{
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "https://YOUR-RENDER-SERVICE.onrender.com/api/:path*" }
-  ]
-}
-```
-
-**Option B — `VITE_API_BASE`:** the shared client in [`frontend/src/api/client.js`](frontend/src/api/client.js) uses `import.meta.env.VITE_API_BASE || '/api'`. Set at build time on Vercel to your backend API prefix, e.g. `https://YOUR-RENDER-SERVICE.onrender.com/api`. Note: any **direct** `fetch('/api/...')` in pages (e.g. auth on Home, features on Predict) still needs rewrites unless you point those at the same base.
+*   [ ] **Predictive High-Risk Routing** — Seamless integration of the *Predict* UI with production historical accident dataset grids for live hazard routing.
+*   [ ] **In-Trip Voice Coaching** — Expand the AI Assistant into an active voice companion that speaks safely contextualized warnings.
+*   [ ] **Telematics Database Integration** — Migrate the in-memory data store to a production-ready PostgreSQL instance with PostGIS for geo-queries.
 
 ---
 
-## Data Flow
+## 🤝 Contributing
 
-- **Trips & goals**: Manual entry or CSV import hit `/api/trips` or `/api/trips/import-csv`, which update an in-memory trips list. Goals (`/api/goals`) and dashboard (`/api/dashboard`) recompute current metrics, stress events, and safety scores from those trips.
-- **Batch stress inference**: Batch CSV uploads are processed by backend helpers that engineer features, call the local stress model, and return per-row predictions and summaries as JSON.
-- **Risk visualization**: Trip detail maps use each event’s `offset_sec` and trip duration to split the polyline into segments: calm stretches vs low/medium/high severity approaching each detected event. Markers reuse backend `location`, `severity`, and `explain.summary` for popups.
+This prototype was built with a vision for safer streets. We highly encourage contributions!
+Feel free to fork the repository, cut a feature branch, and submit a PR for review.
 
----
+## 📄 License
+This project operates under the **MIT License**. Refer to `LICENSE` for exact specifications.
 
-## Scalability & Modularity
-
-- **Backend**: FastAPI routes in `backend/main.py` delegate to small modules in `backend/data/` for trips, goals, imports, and batch processing, so swapping the in-memory store for a database or separate ML service is a local change.
-- **Frontend**: The React app uses a single API client layer (`frontend/src/api/client.js`) plus page/component separation, making it easy to plug in global state, auth, or feature flags without rewriting screens.
-- **Batch endpoints**: Batch CSV processing is stateless per request, so multiple backend instances can handle uploads in parallel behind a load balancer.
-- **AI Safety Assistant**: Integrates Google's Gemini API for intelligent, personalized driver guidance within the safety framework.
-
----
-
-## Testing & Validation Notes
-
-- **Frontend sanity checks** — lightweight helpers in `frontend/src/utils/sanityChecks.js` validate time ranges and inputs.
-- **Example test files** — illustrative tests live in `frontend/src/__tests__/` (e.g., `TripsAddTrip.test.jsx`) to show how key components and behaviors could be validated in a full test setup.
-
----
-
-## Future Roadmap (Prototype Phase)
-
-### Coming Soon:
-- 🚨 **Production high-risk routing** — The **Predict** page includes a **demo** map (illustrative zones only). A future release would connect real historical accident or incident datasets and live routing warnings.
-- 📊 **Real-time Driver Coaching** — In-trip feedback on driving behavior with immediate tips for improvement.
-- 🔔 **Smart Alerts** — Predictive notifications about risky traffic conditions ahead.
-- 🌍 **Multi-city Expansion** — Support for more cities beyond Mumbai, with localized behavior analytics.
-
----
-
-## Contributing
-
-This is a prototype platform built for the Uber Hackathon. Contributions are welcome. Please fork, create a feature branch, and submit a pull request.
-
----
-
-## License
-
-MIT License. See LICENSE file for details.
-
----
-
-## Support
-
-For issues or questions, please file an issue on GitHub or contact the development team.
+<div align="center">
+  <sub>Built for the future of Ride-Hailing.</sub>
+</div>

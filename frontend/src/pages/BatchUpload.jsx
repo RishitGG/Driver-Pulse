@@ -85,17 +85,17 @@ export default function BatchUpload() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">Batch CSV Upload</h1>
-        <p className="text-sm text-uber-gray-500 mt-1">
+        <h1 className="text-3xl font-bold text-white tracking-tight drop-shadow-md">Batch CSV Upload</h1>
+        <p className="text-[15px] text-slate-400 mt-1">
           Upload a CSV file with multiple trip windows to get stress &amp; earnings predictions in bulk — no manual entry needed.
         </p>
       </div>
 
       {/* Mode toggle */}
-      <div className="flex bg-uber-gray-100 rounded-lg p-1 w-fit">
+      <div className="flex bg-slate-900/60 backdrop-blur-md rounded-xl p-1.5 w-fit border border-white/5 shadow-inner">
         {[
           { key: 'stress', label: 'Stress Detection', icon: Activity },
           { key: 'earnings', label: 'Earnings Forecast', icon: DollarSign },
@@ -103,8 +103,8 @@ export default function BatchUpload() {
           <button
             key={key}
             onClick={() => { setMode(key); setResult(null); setError(null); setFile(null) }}
-            className={`flex items-center gap-2 px-5 py-2 rounded-md text-sm font-medium transition-colors ${
-              mode === key ? 'bg-white text-uber-black shadow-sm' : 'text-uber-gray-500 hover:text-uber-gray-700'
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-[14px] font-bold transition-all duration-300 ${
+              mode === key ? 'bg-indigo-600 text-white shadow-md border border-white/10' : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
             <Icon className="w-4 h-4" />
@@ -114,27 +114,27 @@ export default function BatchUpload() {
       </div>
 
       {/* Template + Upload card */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Template download */}
-        <div className="bg-white rounded-xl p-6 border border-uber-gray-100 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <Info className="w-4 h-4 text-uber-blue" />
-            <h3 className="text-sm font-semibold text-uber-gray-700">CSV Format</h3>
+        <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl">
+          <div className="flex items-center gap-3 mb-4">
+            <Info className="w-5 h-5 text-indigo-400" />
+            <h3 className="text-[16px] font-bold text-white tracking-wide">CSV Format</h3>
           </div>
-          <p className="text-xs text-uber-gray-500 mb-4">
+          <p className="text-[13px] text-slate-400 mb-6 leading-relaxed">
             {mode === 'stress'
               ? 'Each row = one 30-second sensor window. Requires 15 feature columns (motion, audio, speed aggregates). Add optional trip_id and timestamp columns for identification.'
               : 'Each row = one earnings velocity log entry. Requires driver_id, timestamp, cumulative_earnings, elapsed_hours, current_velocity, target_velocity, velocity_delta, trips_completed, target_earnings.'
             }
           </p>
-          <div className="bg-uber-gray-50 rounded-lg p-3 mb-4">
-            <p className="text-[10px] text-uber-gray-500 font-semibold uppercase tracking-wider mb-1">Required columns</p>
-            <div className="flex flex-wrap gap-1">
+          <div className="bg-slate-950/50 rounded-xl p-4 mb-6 border border-white/5 shadow-inner">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-3">Required Columns</p>
+            <div className="flex flex-wrap gap-2">
               {(mode === 'stress'
                 ? ['motion_max', 'motion_mean', 'motion_p95', 'brake_intensity', 'audio_db_max', 'audio_db_p90', 'speed_mean', '...+8 more']
                 : ['driver_id', 'timestamp', 'cumulative_earnings', 'elapsed_hours', 'current_velocity', 'target_velocity', 'trips_completed', 'target_earnings']
               ).map(col => (
-                <span key={col} className="text-[10px] bg-white px-2 py-0.5 rounded border border-uber-gray-200 font-mono">
+                <span key={col} className="text-[11px] font-mono bg-indigo-500/10 text-indigo-300 px-2.5 py-1 rounded-md border border-indigo-500/20">
                   {col}
                 </span>
               ))}
@@ -142,7 +142,7 @@ export default function BatchUpload() {
           </div>
           <button
             onClick={() => downloadTemplate(mode)}
-            className="flex items-center gap-2 px-4 py-2 bg-uber-gray-100 hover:bg-uber-gray-200 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 rounded-xl text-[14px] font-bold text-slate-200 transition-colors shadow-sm"
           >
             <Download className="w-4 h-4" />
             Download Template CSV
@@ -150,26 +150,28 @@ export default function BatchUpload() {
         </div>
 
         {/* File upload */}
-        <div className="bg-white rounded-xl p-6 border border-uber-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-uber-gray-700 mb-3">Upload CSV</h3>
+        <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl">
+          <h3 className="text-[16px] font-bold text-white tracking-wide mb-5">Upload Data</h3>
 
           {/* Drop zone */}
           <div
             onClick={() => inputRef.current?.click()}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) setFile(f) }}
-            className="border-2 border-dashed border-uber-gray-200 rounded-xl p-8 text-center cursor-pointer
-              hover:border-uber-blue hover:bg-blue-50/30 transition-colors"
+            className="border-2 border-dashed border-slate-700 rounded-2xl p-10 text-center cursor-pointer
+              hover:border-indigo-500 hover:bg-indigo-500/5 transition-colors group"
           >
-            <Upload className="w-8 h-8 text-uber-gray-300 mx-auto mb-2" />
-            <p className="text-sm text-uber-gray-500">
+            <div className="w-16 h-16 mx-auto bg-slate-800 rounded-2xl flex items-center justify-center mb-4 border border-white/5 group-hover:scale-110 transition-transform shadow-lg">
+              <Upload className="w-8 h-8 text-indigo-400" />
+            </div>
+            <p className="text-[14px] text-slate-400">
               {file ? (
-                <span className="text-uber-blue font-medium">{file.name}</span>
+                <span className="text-emerald-400 font-bold">{file.name}</span>
               ) : (
-                <>Drop CSV here or <span className="text-uber-blue font-medium">click to browse</span></>
+                <>Drag & drop CSV here or <span className="text-indigo-400 font-bold">browse</span></>
               )}
             </p>
-            <p className="text-[10px] text-uber-gray-400 mt-1">Supports .csv files</p>
+            <p className="text-[11px] font-medium text-slate-500 mt-2 tracking-wider">Supports .csv files up to 10MB</p>
             <input
               ref={inputRef}
               type="file"
@@ -180,17 +182,18 @@ export default function BatchUpload() {
           </div>
 
           {file && (
-            <div className="flex items-center justify-between mt-4">
-              <div className="flex items-center gap-2 text-sm">
-                <FileSpreadsheet className="w-4 h-4 text-uber-green" />
-                <span className="font-medium">{file.name}</span>
-                <span className="text-uber-gray-400">({(file.size / 1024).toFixed(1)} KB)</span>
+            <div className="flex items-center justify-between mt-6 bg-slate-950/50 p-4 rounded-xl border border-white/5">
+              <div className="flex items-center gap-3 text-[14px]">
+                <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
+                <span className="font-bold text-white truncate max-w-[150px] sm:max-w-xs">{file.name}</span>
+                <span className="text-slate-500 font-mono text-xs">{(file.size / 1024).toFixed(1)} KB</span>
               </div>
               <button
                 onClick={() => { setFile(null); setResult(null); setError(null) }}
-                className="text-xs text-uber-gray-400 hover:text-uber-red"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                title="Remove file"
               >
-                Remove
+                <XCircle size={18} />
               </button>
             </div>
           )}
@@ -198,19 +201,19 @@ export default function BatchUpload() {
           <button
             onClick={handleUpload}
             disabled={!file || loading}
-            className="w-full mt-4 flex items-center justify-center gap-2 bg-uber-black text-white
-              py-3 rounded-lg font-medium text-sm hover:bg-uber-gray-800 transition-colors
-              disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full mt-6 flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white
+              py-3.5 rounded-xl font-bold text-[14px] shadow-lg hover:from-indigo-400 hover:to-purple-500 transition-all transform hover:-translate-y-0.5
+              disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {loading ? (
               <>
-                <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                Processing…
+                <Loader2 className="animate-spin w-5 h-5" />
+                Processing Data…
               </>
             ) : (
               <>
-                <BarChart3 className="w-4 h-4" />
-                Run {mode === 'stress' ? 'Stress Detection' : 'Earnings Prediction'}
+                <BarChart3 className="w-5 h-5" />
+                Run {mode === 'stress' ? 'Stress Analysis' : 'Earnings Forecast'}
               </>
             )}
           </button>
@@ -230,18 +233,18 @@ export default function BatchUpload() {
 
       {/* Export buttons */}
       {result && (
-        <div className="flex gap-3">
+        <div className="flex gap-4">
           <button
             onClick={downloadResults}
-            className="flex items-center gap-2 px-4 py-2 border border-uber-gray-200 rounded-lg text-sm font-medium hover:border-uber-gray-400 transition"
+            className="flex items-center gap-2 px-6 py-3 bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-xl text-[14px] font-bold text-white hover:bg-slate-800/80 transition shadow-lg"
           >
-            <Download className="w-4 h-4" /> Export JSON
+            <Download className="w-5 h-5 text-indigo-400" /> Export JSON
           </button>
           <button
             onClick={downloadResultsCSV}
-            className="flex items-center gap-2 px-4 py-2 border border-uber-gray-200 rounded-lg text-sm font-medium hover:border-uber-gray-400 transition"
+            className="flex items-center gap-2 px-6 py-3 bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-xl text-[14px] font-bold text-white hover:bg-slate-800/80 transition shadow-lg"
           >
-            <Download className="w-4 h-4" /> Export CSV
+            <FileSpreadsheet className="w-5 h-5 text-emerald-400" /> Export CSV
           </button>
         </div>
       )}
@@ -265,35 +268,35 @@ function StressResults({ result, expandedRow, setExpandedRow }) {
   return (
     <>
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <SumCard label="Windows Processed" value={summary.total_windows} icon={FileSpreadsheet} color="text-uber-blue" />
-        <SumCard label="Avg Confidence" value={`${Math.round(summary.avg_confidence * 100)}%`} icon={Activity} color="text-uber-green" />
-        <SumCard label="High Severity" value={summary.severity_counts?.high || 0} icon={AlertTriangle} color="text-uber-red" />
-        <SumCard label="Notifications" value={summary.notifications_triggered} icon={Bell} color="text-uber-orange" />
-        <SumCard label="Stress Score" value={summary.stress_score} icon={Activity} color={summary.stress_score > 3 ? 'text-uber-red' : 'text-uber-green'} />
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-5">
+        <SumCard label="Windows Processed" value={summary.total_windows} icon={FileSpreadsheet} color="text-indigo-400" />
+        <SumCard label="Avg Confidence" value={`${Math.round(summary.avg_confidence * 100)}%`} icon={Activity} color="text-emerald-400" />
+        <SumCard label="High Severity" value={summary.severity_counts?.high || 0} icon={AlertTriangle} color="text-rose-400" />
+        <SumCard label="Notifications" value={summary.notifications_triggered} icon={Bell} color="text-amber-400" />
+        <SumCard label="Stress Score" value={summary.stress_score} icon={Activity} color={summary.stress_score > 3 ? 'text-rose-400' : 'text-emerald-400'} />
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl p-5 border border-uber-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-uber-gray-700 mb-4">Situation Distribution</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-xl">
+          <h3 className="text-[15px] font-bold text-white tracking-wide mb-6">Situation Distribution</h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
-              <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, value }) => `${name.replace(/_/g, ' ')} (${value})`}>
+              <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, value }) => `${name.replace(/_/g, ' ')} (${value})`} labelLine={{ stroke: '#64748b' }}>
                 {pieData.map((d, i) => <Cell key={i} fill={d.fill} />)}
               </Pie>
-              <Tooltip />
+              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 12, backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(255,255,255,0.1)', color: '#f8fafc', backdropFilter: 'blur(8px)' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <div className="bg-white rounded-xl p-5 border border-uber-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-uber-gray-700 mb-4">Severity Breakdown</h3>
+        <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-xl">
+          <h3 className="text-[15px] font-bold text-white tracking-wide mb-6">Severity Breakdown</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={severityData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEE" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#cbd5e1' }} />
+              <YAxis tick={{ fontSize: 12, fill: '#cbd5e1' }} />
+              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 12, backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(255,255,255,0.1)', color: '#f8fafc', backdropFilter: 'blur(8px)' }} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
               <Bar dataKey="value" name="Count" radius={[6, 6, 0, 0]}>
                 {severityData.map((d, i) => <Cell key={i} fill={d.fill} />)}
               </Bar>
@@ -303,21 +306,21 @@ function StressResults({ result, expandedRow, setExpandedRow }) {
       </div>
 
       {/* Results table */}
-      <div className="bg-white rounded-xl border border-uber-gray-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-uber-gray-100 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-uber-gray-700">Per-Window Results ({results.length})</h3>
+      <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden mt-8">
+        <div className="px-6 py-5 border-b border-white/10 bg-slate-800/50">
+          <h3 className="text-[15px] font-bold text-white tracking-wide">Per-Window Results ({results.length})</h3>
         </div>
-        <div className="max-h-[500px] overflow-y-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-uber-gray-50 sticky top-0">
+        <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
+          <table className="w-full text-[14px]">
+            <thead className="bg-slate-950/80 sticky top-0 backdrop-blur-md z-10 shadow-sm">
               <tr>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">#</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Trip</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Situation</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Severity</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Confidence</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Notify</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Details</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">#</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Trip</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Situation</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Severity</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Confidence</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Notify</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Details</th>
               </tr>
             </thead>
             <tbody>
@@ -335,61 +338,61 @@ function StressResults({ result, expandedRow, setExpandedRow }) {
 function StressRow({ r, i, expanded, onToggle }) {
   return (
     <>
-      <tr className={`border-b border-uber-gray-50 hover:bg-uber-gray-50/50 ${expanded ? 'bg-blue-50/30' : ''}`}>
-        <td className="px-4 py-3 text-uber-gray-400 font-mono text-xs">{r.row_index + 1}</td>
-        <td className="px-4 py-3 font-mono text-xs">{r.trip_id || r.timestamp || '-'}</td>
-        <td className="px-4 py-3">
-          <span className="flex items-center gap-1.5">
-            <span>{r.emoji}</span>
-            <span className="font-medium">{r.situation_name?.replace(/_/g, ' ')}</span>
+      <tr className={`border-b border-white/5 hover:bg-slate-800/50 transition-colors ${expanded ? 'bg-indigo-500/5' : ''}`}>
+        <td className="px-6 py-4 text-slate-500 font-mono text-[12px]">{r.row_index + 1}</td>
+        <td className="px-6 py-4 font-mono text-[12px] text-slate-300">{r.trip_id || r.timestamp || '-'}</td>
+        <td className="px-6 py-4">
+          <span className="flex items-center gap-2">
+            <span className="text-xl bg-black/20 w-8 h-8 rounded-lg flex items-center justify-center border border-white/5">{r.emoji}</span>
+            <span className="font-bold text-slate-200">{r.situation_name?.replace(/_/g, ' ')}</span>
           </span>
         </td>
-        <td className="px-4 py-3">
-          <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
-            r.severity === 'high' ? 'bg-red-100 text-red-700' :
-            r.severity === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-            'bg-green-100 text-green-700'
+        <td className="px-6 py-4">
+          <span className={`inline-block px-3 py-1 rounded-xl text-[11px] font-bold tracking-wider uppercase border ${
+            r.severity === 'high' ? 'bg-rose-500/20 text-rose-300 border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.2)]' :
+            r.severity === 'medium' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.2)]' :
+            'bg-emerald-500/20 text-emerald-300 border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
           }`}>
             {r.severity}
           </span>
         </td>
-        <td className="px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="w-16 h-1.5 bg-uber-gray-100 rounded-full overflow-hidden">
+        <td className="px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="w-20 h-2 bg-slate-800 rounded-full overflow-hidden shadow-inner">
               <div
-                className={`h-full rounded-full ${r.confidence >= 0.75 ? 'bg-uber-green' : r.confidence >= 0.5 ? 'bg-uber-yellow' : 'bg-uber-red'}`}
+                className={`h-full rounded-full ${r.confidence >= 0.75 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : r.confidence >= 0.5 ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]'}`}
                 style={{ width: `${Math.round(r.confidence * 100)}%` }}
               />
             </div>
-            <span className="font-mono text-xs">{Math.round(r.confidence * 100)}%</span>
+            <span className="font-mono text-[13px] text-white">{Math.round(r.confidence * 100)}%</span>
           </div>
         </td>
-        <td className="px-4 py-3">
-          {r.should_notify ? <Bell className="w-4 h-4 text-uber-orange" /> : <span className="text-uber-gray-300">—</span>}
+        <td className="px-6 py-4 text-center">
+          {r.should_notify ? <Bell className="w-5 h-5 text-amber-400 mx-auto drop-shadow-md" /> : <span className="text-slate-600">—</span>}
         </td>
-        <td className="px-4 py-3">
-          <button onClick={onToggle} className="p-1 rounded hover:bg-uber-gray-100 transition">
+        <td className="px-6 py-4">
+          <button onClick={onToggle} className="p-2 rounded-xl border border-white/5 bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white transition-all shadow-sm">
             {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
         </td>
       </tr>
       {expanded && (
         <tr>
-          <td colSpan={7} className="bg-uber-gray-50 px-6 py-4">
-            <div className="grid grid-cols-2 gap-6">
+          <td colSpan={7} className="bg-slate-950/60 p-0 border-b border-white/5">
+            <div className="px-8 py-6 grid grid-cols-2 gap-10">
               {/* Top features */}
               {r.top_features?.length > 0 && (
-                <div>
-                  <p className="text-xs text-uber-gray-500 font-semibold uppercase tracking-wider mb-2">Top Feature Deviations</p>
-                  <div className="space-y-2">
+                <div className="bg-slate-900/80 rounded-2xl p-5 border border-white/5 shadow-inner">
+                  <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-4 border-b border-white/5 pb-2">Top Feature Deviations</p>
+                  <div className="space-y-3">
                     {r.top_features.map((f, j) => (
-                      <div key={j} className="flex items-center gap-3">
-                        <span className="text-xs font-mono w-40 truncate">{f.feature}</span>
-                        <div className="flex-1 h-2 bg-uber-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full bg-uber-blue" style={{ width: `${Math.min(f.z_score * 15, 100)}%` }} />
+                      <div key={j} className="flex items-center gap-4">
+                        <span className="text-[13px] text-slate-300 font-mono w-40 truncate">{f.feature}</span>
+                        <div className="flex-1 h-2.5 bg-slate-800 rounded-full overflow-hidden shadow-inner">
+                          <div className="h-full rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]" style={{ width: `${Math.min(f.z_score * 15, 100)}%` }} />
                         </div>
-                        <span className="text-xs font-mono text-uber-gray-500 w-16 text-right">z={f.z_score}</span>
-                        <span className="text-xs font-mono text-uber-gray-400 w-16 text-right">val={f.value}</span>
+                        <span className="text-[12px] font-mono text-slate-500 w-16 text-right">z={f.z_score}</span>
+                        <span className="text-[12px] font-mono font-bold text-white w-16 text-right">{f.value}</span>
                       </div>
                     ))}
                   </div>
@@ -397,16 +400,16 @@ function StressRow({ r, i, expanded, onToggle }) {
               )}
               {/* All probabilities */}
               {r.all_probabilities && Object.keys(r.all_probabilities).length > 0 && (
-                <div>
-                  <p className="text-xs text-uber-gray-500 font-semibold uppercase tracking-wider mb-2">Class Probabilities</p>
-                  <div className="space-y-1.5">
+                <div className="bg-slate-900/80 rounded-2xl p-5 border border-white/5 shadow-inner">
+                  <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-4 border-b border-white/5 pb-2">Class Probabilities</p>
+                  <div className="space-y-2.5">
                     {Object.entries(r.all_probabilities).sort(([,a], [,b]) => b - a).map(([cls, prob]) => (
-                      <div key={cls} className="flex items-center gap-2">
-                        <span className="text-[10px] w-28 truncate">{cls.replace(/_/g, ' ')}</span>
-                        <div className="flex-1 h-1.5 bg-uber-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full" style={{ width: `${prob * 100}%`, backgroundColor: SITUATION_COLORS[cls] || '#AFAFAF' }} />
+                      <div key={cls} className="flex items-center gap-3">
+                        <span className="text-[11px] text-slate-300 w-32 truncate tracking-wide">{cls.replace(/_/g, ' ')}</span>
+                        <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden shadow-inner">
+                          <div className="h-full rounded-full shadow-lg" style={{ width: `${prob * 100}%`, backgroundColor: SITUATION_COLORS[cls] || '#AFAFAF', boxShadow: `0 0 8px ${SITUATION_COLORS[cls] || '#AFAFAF'}` }} />
                         </div>
-                        <span className="text-[10px] font-mono w-10 text-right">{(prob * 100).toFixed(1)}%</span>
+                        <span className="text-[12px] font-mono font-bold text-white w-14 text-right">{(prob * 100).toFixed(1)}%</span>
                       </div>
                     ))}
                   </div>
@@ -443,61 +446,61 @@ function EarningsResults({ result, expandedRow, setExpandedRow }) {
   return (
     <>
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <SumCard label="Entries Processed" value={summary.total_entries} icon={FileSpreadsheet} color="text-uber-blue" />
-        <SumCard label="Avg Predicted ₹/hr" value={`₹${summary.avg_predicted_velocity}`} icon={DollarSign} color="text-uber-green" />
-        <SumCard label="Best Velocity" value={`₹${summary.best_velocity}`} icon={CheckCircle} color="text-uber-green" />
-        <SumCard label="Worst Velocity" value={`₹${summary.worst_velocity}`} icon={XCircle} color="text-uber-red" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <SumCard label="Entries Processed" value={summary.total_entries} icon={FileSpreadsheet} color="text-indigo-400" />
+        <SumCard label="Avg Predicted ₹/hr" value={`₹${summary.avg_predicted_velocity}`} icon={DollarSign} color="text-emerald-400" />
+        <SumCard label="Best Velocity" value={`₹${summary.best_velocity}`} icon={CheckCircle} color="text-emerald-400" />
+        <SumCard label="Worst Velocity" value={`₹${summary.worst_velocity}`} icon={XCircle} color="text-rose-400" />
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl p-5 border border-uber-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-uber-gray-700 mb-4">Predicted vs Target Velocity</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-xl">
+          <h3 className="text-[15px] font-bold text-white tracking-wide mb-6">Predicted vs Target Velocity</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={velocityTrend} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEE" />
-              <XAxis dataKey="idx" tick={{ fontSize: 11 }} label={{ value: 'Entry #', position: 'insideBottom', offset: -3, fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `₹${v}`} />
-              <Tooltip formatter={(v) => [`₹${v}`, '']} />
-              <Legend verticalAlign="top" height={30} />
-              <Bar dataKey="predicted" name="Predicted" fill="#276EF1" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="target" name="Target" fill="#E2E2E2" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+              <XAxis dataKey="idx" tick={{ fontSize: 11, fill: '#cbd5e1' }} label={{ value: 'Entry #', position: 'insideBottom', offset: -3, fontSize: 10, fill: '#94a3b8' }} />
+              <YAxis tick={{ fontSize: 11, fill: '#cbd5e1' }} tickFormatter={v => `₹${v}`} />
+              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 12, backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(255,255,255,0.1)', color: '#f8fafc', backdropFilter: 'blur(8px)' }} cursor={{ fill: 'rgba(255,255,255,0.05)' }} formatter={(v) => [`₹${v}`, '']} />
+              <Legend verticalAlign="top" height={30} wrapperStyle={{ fontSize: '12px', color: '#cbd5e1' }} />
+              <Bar dataKey="predicted" name="Predicted" fill="#6366f1" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="target" name="Target" fill="#475569" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="bg-white rounded-xl p-5 border border-uber-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-uber-gray-700 mb-4">Forecast Status</h3>
+        <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-xl">
+          <h3 className="text-[15px] font-bold text-white tracking-wide mb-6">Forecast Status</h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie data={forecastData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}
-                label={({ name, value }) => `${name} (${value})`}
+                label={({ name, value }) => `${name} (${value})`} labelLine={{ stroke: '#64748b' }}
               >
                 {forecastData.map((d, i) => <Cell key={i} fill={d.fill} />)}
               </Pie>
-              <Tooltip />
+              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 12, backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(255,255,255,0.1)', color: '#f8fafc', backdropFilter: 'blur(8px)' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Results table */}
-      <div className="bg-white rounded-xl border border-uber-gray-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-uber-gray-100">
-          <h3 className="text-sm font-semibold text-uber-gray-700">Per-Entry Results ({results.length})</h3>
+      <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden mt-8">
+        <div className="px-6 py-5 border-b border-white/10 bg-slate-800/50">
+          <h3 className="text-[15px] font-bold text-white tracking-wide">Per-Entry Results ({results.length})</h3>
         </div>
-        <div className="max-h-[500px] overflow-y-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-uber-gray-50 sticky top-0">
+        <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
+          <table className="w-full text-[14px]">
+            <thead className="bg-slate-950/80 sticky top-0 backdrop-blur-md z-10 shadow-sm">
               <tr>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">#</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Driver</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Hour</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Predicted ₹/hr</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Target ₹/hr</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Status</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Progress</th>
-                <th className="text-left px-4 py-2 text-xs text-uber-gray-500 font-semibold">Details</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">#</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Driver</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Hour</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Predicted ₹/hr</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Target ₹/hr</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Status</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Progress</th>
+                <th className="text-left px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Details</th>
               </tr>
             </thead>
             <tbody>
@@ -514,47 +517,47 @@ function EarningsResults({ result, expandedRow, setExpandedRow }) {
 
 function EarningsRow({ r, i, expanded, onToggle }) {
   const statusColor = {
-    ahead: 'bg-green-100 text-green-700',
-    on_track: 'bg-blue-100 text-blue-700',
-    at_risk: 'bg-red-100 text-red-700',
+    ahead: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+    on_track: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
+    at_risk: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
   }
   return (
     <>
-      <tr className={`border-b border-uber-gray-50 hover:bg-uber-gray-50/50 ${expanded ? 'bg-blue-50/30' : ''}`}>
-        <td className="px-4 py-3 text-uber-gray-400 font-mono text-xs">{r.row_index + 1}</td>
-        <td className="px-4 py-3 font-mono text-xs">{r.driver_id || '-'}</td>
-        <td className="px-4 py-3 text-xs">{r.hour_of_day ?? '-'}</td>
-        <td className="px-4 py-3 font-semibold">₹{r.predicted_velocity}</td>
-        <td className="px-4 py-3 text-uber-gray-500">₹{r.target_velocity}</td>
-        <td className="px-4 py-3">
-          <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
-            statusColor[r.forecast_status] || 'bg-uber-gray-100 text-uber-gray-600'
+      <tr className={`border-b border-white/5 hover:bg-slate-800/50 transition-colors ${expanded ? 'bg-indigo-500/5' : ''}`}>
+        <td className="px-6 py-4 text-slate-500 font-mono text-[12px]">{r.row_index + 1}</td>
+        <td className="px-6 py-4 font-mono text-[12px] text-slate-300">{r.driver_id || '-'}</td>
+        <td className="px-6 py-4 text-[13px] text-slate-300">{r.hour_of_day ?? '-'}</td>
+        <td className="px-6 py-4 font-bold text-emerald-400">₹{r.predicted_velocity}</td>
+        <td className="px-6 py-4 font-bold text-slate-400">₹{r.target_velocity}</td>
+        <td className="px-6 py-4">
+          <span className={`inline-block px-3 py-1 rounded-xl text-[11px] font-bold tracking-wider uppercase border shadow-sm ${
+            statusColor[r.forecast_status] || 'bg-slate-800 text-slate-300'
           }`}>
             {r.forecast_status?.replace(/_/g, ' ')}
           </span>
         </td>
-        <td className="px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="w-16 h-1.5 bg-uber-gray-100 rounded-full overflow-hidden">
-              <div className="h-full rounded-full bg-uber-green" style={{ width: `${r.pct_target || 0}%` }} />
+        <td className="px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="w-20 h-2 bg-slate-800 rounded-full overflow-hidden shadow-inner">
+              <div className="h-full rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]" style={{ width: `${r.pct_target || 0}%` }} />
             </div>
-            <span className="font-mono text-xs">{r.pct_target}%</span>
+            <span className="font-mono text-[13px] text-white">{r.pct_target}%</span>
           </div>
         </td>
-        <td className="px-4 py-3">
-          <button onClick={onToggle} className="p-1 rounded hover:bg-uber-gray-100 transition">
+        <td className="px-6 py-4">
+          <button onClick={onToggle} className="p-2 rounded-xl border border-white/5 bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white transition-all shadow-sm">
             {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
         </td>
       </tr>
       {expanded && (
         <tr>
-          <td colSpan={8} className="bg-uber-gray-50 px-6 py-4">
-            <div className="grid grid-cols-4 gap-4 text-xs">
-              <div><span className="text-uber-gray-400">Cumulative Earnings</span><p className="font-semibold">₹{r.cumulative_earnings}</p></div>
-              <div><span className="text-uber-gray-400">Elapsed Hours</span><p className="font-semibold">{r.elapsed_hours}h</p></div>
-              <div><span className="text-uber-gray-400">Remaining</span><p className="font-semibold">₹{r.remaining_earnings}</p></div>
-              <div><span className="text-uber-gray-400">Hours to Target</span><p className="font-semibold">{r.hours_to_target ?? '—'}h</p></div>
+          <td colSpan={8} className="bg-slate-950/60 p-0 border-b border-white/5">
+            <div className="px-8 py-6 grid grid-cols-4 gap-6 text-[13px]">
+              <div className="bg-slate-900/80 p-4 rounded-2xl border border-white/5"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Cumulative Earnings</span><p className="font-bold text-white text-[16px]">₹{r.cumulative_earnings}</p></div>
+              <div className="bg-slate-900/80 p-4 rounded-2xl border border-white/5"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Elapsed Hours</span><p className="font-bold text-white text-[16px]">{r.elapsed_hours}h</p></div>
+              <div className="bg-slate-900/80 p-4 rounded-2xl border border-white/5"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Remaining</span><p className="font-bold text-white text-[16px]">₹{r.remaining_earnings}</p></div>
+              <div className="bg-slate-900/80 p-4 rounded-2xl border border-white/5"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Hours to Target</span><p className="font-bold text-white text-[16px]">{r.hours_to_target ?? '—'}h</p></div>
             </div>
           </td>
         </tr>
@@ -566,12 +569,12 @@ function EarningsRow({ r, i, expanded, onToggle }) {
 
 /* ── Shared summary card ────────────────────────────────── */
 
-function SumCard({ label, value, icon: Icon, color = 'text-uber-black' }) {
+function SumCard({ label, value, icon: Icon, color = 'text-white' }) {
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-uber-gray-100">
-      <Icon className={`w-5 h-5 ${color} mb-1.5`} />
-      <p className="text-xl font-bold">{value}</p>
-      <p className="text-[10px] text-uber-gray-400 mt-0.5">{label}</p>
+    <div className="bg-slate-900/60 backdrop-blur-xl rounded-2xl p-5 border border-white/5 shadow-xl hover:-translate-y-1 transition-transform group">
+      <Icon className={`w-6 h-6 ${color} mb-3 group-hover:scale-110 transition-transform`} />
+      <p className="text-2xl font-bold text-slate-100">{value}</p>
+      <p className="text-[11px] font-bold tracking-wider uppercase text-slate-500 mt-1">{label}</p>
     </div>
   )
 }

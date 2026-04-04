@@ -22,19 +22,19 @@ export default function SignalCharts({ signals, cursorTime }) {
   return (
     <div className="space-y-4">
       {charts.map(({ key, label, color, domain }) => (
-        <div key={key} className="bg-white rounded-xl p-4 shadow-sm border border-uber-gray-100">
-          <p className="text-xs font-semibold text-uber-gray-500 mb-2">{label}</p>
+        <div key={key} className="bg-slate-900/60 backdrop-blur-md rounded-2xl p-5 shadow-lg border border-white/5">
+          <p className="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-3">{label}</p>
           <ResponsiveContainer width="100%" height={120}>
             <LineChart data={data} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff15" />
               <XAxis
                 dataKey="timeLabel"
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 10, fill: '#64748b' }}
                 interval={Math.floor(data.length / 8)}
               />
-              <YAxis domain={domain} tick={{ fontSize: 10 }} width={35} />
+              <YAxis domain={domain} tick={{ fontSize: 10, fill: '#64748b' }} width={35} />
               <Tooltip
-                contentStyle={{ fontSize: 12, borderRadius: 8 }}
+                contentStyle={{ fontSize: 12, borderRadius: 12, backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(255,255,255,0.1)', color: '#f8fafc', backdropFilter: 'blur(8px)' }}
                 labelFormatter={(v) => `Time: ${v}`}
               />
               <Line

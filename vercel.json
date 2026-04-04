@@ -1,27 +1,11 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "routes": [
     {
-      "src": "backend/main.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "backend/main.py"
-    },
-    {
-      "source": "/((?!api/).*)",
-      "destination": "frontend/index.html"
-    }
-  ],
-  "env": {
-    "VERCEL_URL": "driveintel-alpha.vercel.app"
-  }
+  ]
 }
