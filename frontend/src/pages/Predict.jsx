@@ -3,6 +3,7 @@ import {
   Activity, Send, RotateCcw, AlertTriangle, CheckCircle,
   ChevronDown, ChevronUp, Zap, Info, Loader2,
 } from 'lucide-react'
+import RiskZonesPreviewMap from '../components/RiskZonesPreviewMap'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts'
@@ -103,19 +104,15 @@ export default function Predict() {
         </p>
       </div>
 
-      {/* High-Risk Route Placeholder */}
-      <div className="mb-6 bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-4 flex items-start gap-3">
-        <div className="flex-1">
-          <h3 className="font-semibold text-orange-900 flex items-center gap-2 mb-1">
-            🚨 High-Risk Route Detection (Coming Soon)
-          </h3>
-          <p className="text-sm text-orange-800">
-            Discover historically accident-prone road segments in your area and receive advance warnings before driving through high-risk zones.
+      {/* High-risk zones — demo map (illustrative overlays, not live incident data) */}
+      <div className="mb-6 overflow-hidden rounded-xl border border-orange-200 bg-gradient-to-r from-orange-50 to-red-50">
+        <div className="p-4 pb-3">
+          <h3 className="font-semibold text-orange-900 mb-1">High-risk route awareness (demo)</h3>
+          <p className="text-sm text-orange-800/90">
+            Illustrative zones around Bangalore — a future product could flag historically accident-prone segments before you drive them. Overlays below are demo data only.
           </p>
         </div>
-        <button className="px-4 py-2 rounded-lg bg-white text-orange-700 font-medium text-sm hover:bg-orange-50 transition-colors whitespace-nowrap">
-          Learn More
-        </button>
+        <RiskZonesPreviewMap />
       </div>
 
       {/* Mode toggle - Stress only */}

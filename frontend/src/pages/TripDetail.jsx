@@ -165,9 +165,14 @@ export default function TripDetail() {
         </div>
       </div>
 
-      {/* Map */}
+      <h3 className="text-sm font-semibold text-uber-gray-700 mb-2">Risk along route</h3>
       <div className="h-[400px] rounded-xl overflow-hidden shadow-sm border border-uber-gray-100">
-        <TripMap route={trip.route} events={trip.events} cursorIndex={cursorIndex} />
+        <TripMap
+          route={trip.route}
+          events={trip.events}
+          cursorIndex={cursorIndex}
+          durationSec={maxSec}
+        />
       </div>
 
       {/* Playback slider */}

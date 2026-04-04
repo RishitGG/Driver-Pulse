@@ -71,6 +71,7 @@
   <a href="#stress">Stress Detection</a>
   <a href="#earnings">Earnings Velocity</a>
   <a href="#execution">Execution Strategy</a>
+  <a href="#risk-maps">Risk Maps</a>
   <a href="#judge-experience">Judge Experience & Docker</a>
 </div></nav>
 
@@ -276,9 +277,32 @@
   </table></div>
 </section>
 
-<!-- ═══ 5. JUDGE EXPERIENCE & DOCKER ═══ -->
+<!-- ═══ 5. RISK MAPS & SPATIAL UX ═══ -->
+<section id="risk-maps">
+  <h2><span class="num">05</span> Risk Maps & Spatial UX</h2>
+  <p class="sub">How we show stress and “risk along route” without changing the trips list flow.</p>
+
+  <h3>Trip Detail — Risk along route</h3>
+  <p>
+    The <code>TripMap</code> component (Leaflet + OSM tiles) receives the trip <code>route</code>, <code>events</code> (with <code>offset_sec</code>, <code>severity</code>, <code>location</code>, <code>explain.summary</code>), and total duration in seconds.
+    The polyline is split into segments at event indices derived from time along the route: <strong>calm</strong> stretches use a lighter blue; segments ending at an event use <strong>low / medium / high</strong> colours (green, amber, red) and slightly thicker strokes for higher severity.
+    Event markers use larger, ring-styled dots for high severity. Popups escape user-facing text and show label, severity, confidence, and a short explainability line when present. A small corner legend decodes colours and the playback cursor.
+  </p>
+
+  <h3>Predict — Demo high-risk zones</h3>
+  <p>
+    <code>RiskZonesPreviewMap</code> shows a separate, static map centered on Bangalore with a few semi-transparent circles and popups labelled as <strong>demo / illustrative only</strong> — not live traffic or official crash data.
+    This previews a future “warn before entering risky segments” story without implying false precision.
+  </p>
+
+  <div class="callout orange">
+    <strong>Scope:</strong> The trips <em>list</em> page is unchanged; map work is isolated to Trip Detail and Predict.
+  </div>
+</section>
+
+<!-- ═══ 6. JUDGE EXPERIENCE & DOCKER ═══ -->
 <section id="judge-experience">
-  <h2><span class="num">05</span> Judge Experience & Docker</h2>
+  <h2><span class="num">06</span> Judge Experience & Docker</h2>
   <p class="sub">How we designed the repo and Docker setup so judges can run DrivePulse in a few minutes.</p>
 
   <h3>Zero-setup runtime</h3>

@@ -16,10 +16,10 @@ Real-time driver safety & behavior analytics platform for ride-hailing drivers. 
 ## Features
 
 - **Dashboard** — Daily trip overview, safety score, stress event timeline, behavior insights
-- **Trip Detail** — Map playback, sensor charts, stress event detection with explainability
+- **Trip Detail** — **Risk along route**: Leaflet map with severity-colored route segments (from event timestamps), legend, playback cursor, and rich popups (severity, confidence, explain summary); sensor charts and stress event explainability
 - **Trends** — Weekly/monthly driver behavior patterns, stress event analytics
 - **Safety Goals** — Set and track safety improvements (e.g., reduce high-stress events)
-- **Predict** — Enter sensor values → instant stress prediction *(analyst-facing)*
+- **Predict** — Enter sensor values → instant stress prediction *(analyst-facing)*; **demo high-risk zones map** (illustrative Leaflet circles over Bangalore — not live incident data)
 - **Batch Upload** — Upload CSV → run inference on multiple trips at once *(analyst-facing)*
 - **Explainability** — Per-event feature contributions, confidence badges
 - **Feedback** — Thumbs up/down on detected events for model improvement
@@ -50,7 +50,7 @@ DriveIntel/
 │   └── src/
 │       ├── pages/                 # 8 pages: Home, Dashboard, Trips, TripDetail,
 │       │                          #   Trends, Safety Goals, Predict, BatchUpload
-│       ├── components/            # 16 reusable components
+│       ├── components/            # Reusable UI + TripMap (risk-colored route), RiskZonesPreviewMap (demo zones)
 │       ├── api/client.js          # Centralised API client
 │       └── utils/sanityChecks.js  # Input validation helpers
 │
@@ -140,12 +140,27 @@ The frontend talks to the backend via `/api/*`, which is proxied by Nginx inside
 | ML | scikit-learn, NumPy, Pandas |
 | Deployment | Vercel (frontend), Render (backend) |
 
+### Hosted split deploy (Vercel + Render)
+
+**Option A — Vercel rewrites (simplest for the whole app):** proxy `/api/*` to your Render service so every relative `fetch('/api/...')` still works. Example `vercel.json` at the repo root or frontend root:
+
+```json
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://YOUR-RENDER-SERVICE.onrender.com/api/:path*" }
+  ]
+}
+```
+
+**Option B — `VITE_API_BASE`:** the shared client in [`frontend/src/api/client.js`](frontend/src/api/client.js) uses `import.meta.env.VITE_API_BASE || '/api'`. Set at build time on Vercel to your backend API prefix, e.g. `https://YOUR-RENDER-SERVICE.onrender.com/api`. Note: any **direct** `fetch('/api/...')` in pages (e.g. auth on Home, features on Predict) still needs rewrites unless you point those at the same base.
+
 ---
 
 ## Data Flow
 
 - **Trips & goals**: Manual entry or CSV import hit `/api/trips` or `/api/trips/import-csv`, which update an in-memory trips list. Goals (`/api/goals`) and dashboard (`/api/dashboard`) recompute current metrics, stress events, and safety scores from those trips.
 - **Batch stress inference**: Batch CSV uploads are processed by backend helpers that engineer features, call the local stress model, and return per-row predictions and summaries as JSON.
+- **Risk visualization**: Trip detail maps use each event’s `offset_sec` and trip duration to split the polyline into segments: calm stretches vs low/medium/high severity approaching each detected event. Markers reuse backend `location`, `severity`, and `explain.summary` for popups.
 
 ---
 
@@ -168,7 +183,7 @@ The frontend talks to the backend via `/api/*`, which is proxied by Nginx inside
 ## Future Roadmap (Prototype Phase)
 
 ### Coming Soon:
-- 🚨 **High-Risk Route Detection** — AI-powered analysis of historical accident data to identify dangerous road segments and warn drivers in advance.
+- 🚨 **Production high-risk routing** — The **Predict** page includes a **demo** map (illustrative zones only). A future release would connect real historical accident or incident datasets and live routing warnings.
 - 📊 **Real-time Driver Coaching** — In-trip feedback on driving behavior with immediate tips for improvement.
 - 🔔 **Smart Alerts** — Predictive notifications about risky traffic conditions ahead.
 - 🌍 **Multi-city Expansion** — Support for more cities beyond Mumbai, with localized behavior analytics.

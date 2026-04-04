@@ -65,6 +65,7 @@
   <a href="#diagram">Architecture Diagram</a>
   <a href="#explanation">Architecture Explanation</a>
   <a href="#deployment">Deployment & Docker</a>
+  <a href="#risk-viz">Risk Maps (Frontend)</a>
 </div></nav>
 
 <main class="w">
@@ -318,6 +319,30 @@
     Username: <code>judge@uber.com</code> · Password: <code>hackathon2026</code>.
   </div>
 
+</section>
+
+<!-- ═══ 4. RISK MAPS (FRONTEND) ═══ -->
+<section id="risk-viz">
+  <h2><span class="num">04</span> Risk Maps (Frontend)</h2>
+  <p class="sub">Spatial view of per-trip stress events and a separate demo for “area risk” storytelling.</p>
+
+  <h3>TripMap — segment colouring</h3>
+  <ul>
+    <li>Inputs: <code>route</code> (lat/lng polyline), <code>events</code> (with <code>offset_sec</code> and <code>severity</code>), <code>durationSec</code>, <code>cursorIndex</code> for playback.</li>
+    <li>Event time → index along the route; segment boundaries merge duplicate indices and pick the stronger severity. Calm segments render with reduced opacity; event-ending segments use green / amber / red.</li>
+    <li>Markers at <code>ev.location</code> with popups (escaped HTML) for label, severity, confidence %, and <code>explain.summary</code> when available.</li>
+  </ul>
+
+  <h3>RiskZonesPreviewMap — Predict page</h3>
+  <ul>
+    <li>Standalone Leaflet map with fixed demo circles (Bangalore). Popups state clearly that overlays are illustrative.</li>
+    <li>No backend dependency; complements the stress prediction form as a UX prototype for future real-world risk layers.</li>
+  </ul>
+
+  <h3>Hosted SPA note</h3>
+  <p>
+    For a frontend on Vercel (or similar) talking to a separate API host, the client uses <code>VITE_API_BASE</code> (full API prefix including <code>/api</code>) at build time; Docker and local dev keep the default relative <code>/api</code> behind Nginx or the Vite proxy.
+  </p>
 </section>
 
 </main>

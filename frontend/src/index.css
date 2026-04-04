@@ -20,3 +20,27 @@ body {
 
 /* Leaflet overrides */
 .leaflet-container { border-radius: 12px; }
+
+.trip-map-popup {
+  max-width: 260px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #374151;
+}
+.trip-map-popup strong {
+  font-weight: 600;
+  color: #111827;
+}
+.trip-map-popup-summary {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #4b5563;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 10px;
+}
+.leaflet-popup-content {
+  margin: 10px 12px;
+  min-width: 0;
+}

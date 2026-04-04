@@ -19,6 +19,8 @@ A chronological log of our problem-solving process and major iterations.
 
 **Mar 10:** Deployment and submission: added Dockerised deployment (FastAPI + React via Nginx, `docker-compose.yml` at repo root), verified end-to-end flows in containers, and documented judge login plus Docker run instructions in all README/docs before final submission.
 
+**Later iteration:** Risk-focused map UX — Trip Detail **Risk along route** map (`TripMap.jsx`) with severity-colored polylines from event `offset_sec`, in-map legend, escaped rich popups, and high-severity marker styling; **Predict** page **demo** high-risk zones (`RiskZonesPreviewMap.jsx`, illustrative Bangalore circles only). README and HTML docs updated to describe behaviour, `VITE_API_BASE` for Vercel, and roadmap wording (demo vs production routing).
+
 ---
 
 **Outcome:**
