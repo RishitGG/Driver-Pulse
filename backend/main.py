@@ -10,23 +10,21 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 
-# Absolute Imports for Agentic AI and Utilities
-from backend.agent import run_co_pilot
-from backend.utils.logging import log_info, log_warn
+from agent import run_co_pilot
+from utils.logging import log_info, log_warn
 
-# Standardized Absolute Imports for Data and Logic
-from backend.data.sample_data import (
+from data.sample_data import (
     get_trips, get_profile, get_goals, set_goal_target,
     build_dashboard, build_weekly_metrics, build_monthly_metrics,
     STRESS_TIPS, SITUATIONS,
     create_user_trip, add_trip,
 )
-from backend.data.batch_processor import (
+from data.batch_processor import (
     process_stress_csv, stress_csv_template,
     predict_stress_row,
 )
-from backend.data.trips_import import import_trips_csv, trips_csv_template
-from backend.data.users import (
+from data.trips_import import import_trips_csv, trips_csv_template
+from data.users import (
     login_user, register_user, get_user_profile, list_all_users,
 )
 
@@ -323,4 +321,5 @@ def stress_features():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+    # Use "main:app" when cwd is backend/ (matches Docker and flat imports)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

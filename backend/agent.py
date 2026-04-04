@@ -2,7 +2,7 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 # Add get_profile to your imports
-from backend.data.sample_data import (
+from data.sample_data import (
     get_trips, 
     get_goals, 
     get_profile, # <--- Added this
