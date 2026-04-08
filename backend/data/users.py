@@ -1,5 +1,5 @@
 """
-DrivePulse Backend — User authentication and driver profiles.
+DriveIntel Backend — User authentication and driver profiles.
 Manages login, registration, and driver data.
 """
 

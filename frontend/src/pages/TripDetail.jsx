@@ -86,8 +86,8 @@ export default function TripDetail() {
   if (!trip) {
     return (
       <div className="text-center py-12">
-        <p className="text-lg text-uber-gray-500">Trip not found</p>
-        <Link to="/trips" className="text-uber-blue text-sm mt-2 inline-block">Back to trips</Link>
+        <p className="text-lg text-slate-500">Trip not found</p>
+        <Link to="/trips" className="text-indigo-400 text-sm mt-2 inline-block hover:text-indigo-300">Back to trips</Link>
       </div>
     )
   }
@@ -100,32 +100,32 @@ export default function TripDetail() {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link to="/trips" className="p-2 rounded-lg hover:bg-uber-gray-100 transition">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Link to="/trips" className="p-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-700/80 border border-white/10 text-slate-300 hover:text-white transition-all shadow-sm">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-xl font-bold">Trip {trip.id}</h1>
-            <p className="text-sm text-uber-gray-500">
+            <h1 className="text-2xl font-bold text-white tracking-tight">Trip {trip.id.substring(0, 8)}...</h1>
+            <p className="text-[14px] text-slate-400 mt-0.5">
               {new Date(trip.start_time).toLocaleDateString()} &middot;{' '}
-              {new Date(trip.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} –{' '}
-              {new Date(trip.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              <span className="font-medium text-slate-300">{new Date(trip.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span> –{' '}
+              <span className="font-medium text-slate-300">{new Date(trip.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </p>
           </div>
         </div>
 
         {/* Export */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => handleExport('csv')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-uber-gray-200 text-sm hover:border-uber-gray-400 transition"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-slate-800/40 text-[13px] font-bold text-slate-300 hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-white transition-all shadow-sm"
           >
             <Download className="w-4 h-4" /> CSV
           </button>
           <button
             onClick={() => handleExport('json')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-uber-gray-200 text-sm hover:border-uber-gray-400 transition"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-slate-800/40 text-[13px] font-bold text-slate-300 hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-white transition-all shadow-sm"
           >
             <Download className="w-4 h-4" /> JSON
           </button>
@@ -133,41 +133,50 @@ export default function TripDetail() {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="bg-white rounded-xl p-4 text-center border border-uber-gray-100">
-          <Clock className="w-5 h-5 mx-auto text-uber-gray-400 mb-1" />
-          <p className="text-lg font-bold">{trip.duration_min} min</p>
-          <p className="text-[10px] text-uber-gray-400">Duration</p>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="bg-slate-800/40 backdrop-blur-md rounded-2xl p-5 text-center border border-white/5 shadow-lg hover:-translate-y-1 transition-transform cursor-default">
+          <Clock className="w-6 h-6 mx-auto text-slate-400 mb-2 drop-shadow-sm" />
+          <p className="text-xl font-bold text-slate-100">{trip.duration_min} min</p>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-slate-500 mt-1">Duration</p>
         </div>
-        <div className="bg-white rounded-xl p-4 text-center border border-uber-gray-100">
-          <MapPin className="w-5 h-5 mx-auto text-uber-gray-400 mb-1" />
-          <p className="text-lg font-bold">{trip.distance_km} km</p>
-          <p className="text-[10px] text-uber-gray-400">Distance</p>
+        <div className="bg-slate-800/40 backdrop-blur-md rounded-2xl p-5 text-center border border-white/5 shadow-lg hover:-translate-y-1 transition-transform cursor-default">
+          <MapPin className="w-6 h-6 mx-auto text-slate-400 mb-2 drop-shadow-sm" />
+          <p className="text-xl font-bold text-slate-100">{trip.distance_km} km</p>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-slate-500 mt-1">Distance</p>
         </div>
-        <div className="bg-white rounded-xl p-4 text-center border border-uber-gray-100">
-          <DollarSign className="w-5 h-5 mx-auto text-uber-green mb-1" />
-          <p className="text-lg font-bold">₹{trip.fare}</p>
-          <p className="text-[10px] text-uber-gray-400">
-            Fare {trip.surge_multiplier > 1 && `(${trip.surge_multiplier}× surge)`}
+        <div className="bg-slate-800/40 backdrop-blur-md rounded-2xl p-5 text-center border border-white/5 shadow-lg hover:-translate-y-1 transition-transform cursor-default">
+          <DollarSign className="w-6 h-6 mx-auto text-emerald-400 mb-2 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
+          <p className="text-xl font-bold text-slate-100">₹{trip.fare}</p>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-slate-500 mt-1">
+            Fare {trip.surge_multiplier > 1 && <span className="text-indigo-400">({trip.surge_multiplier}× surge)</span>}
           </p>
         </div>
-        <div className="bg-white rounded-xl p-4 text-center border border-uber-gray-100">
-          <Activity className="w-5 h-5 mx-auto text-uber-red mb-1" />
-          <p className={`text-lg font-bold ${
-            trip.stress_score > 6 ? 'text-uber-red' :
-            trip.stress_score > 3 ? 'text-uber-yellow' : 'text-uber-green'
+        <div className="bg-slate-800/40 backdrop-blur-md rounded-2xl p-5 text-center border border-white/5 shadow-lg hover:-translate-y-1 transition-transform cursor-default relative overflow-hidden group">
+          <div className="absolute inset-0 bg-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Activity className="w-6 h-6 mx-auto text-rose-400 mb-2 drop-shadow-[0_0_8px_rgba(251,113,133,0.5)] relative z-10" />
+          <p className={`text-xl font-bold relative z-10 ${
+            trip.stress_score > 6 ? 'text-rose-400' :
+            trip.stress_score > 3 ? 'text-amber-400' : 'text-emerald-400'
           }`}>{trip.stress_score}/10</p>
-          <p className="text-[10px] text-uber-gray-400">Stress Score</p>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-slate-500 mt-1 relative z-10">Stress Score</p>
         </div>
-        <div className="bg-white rounded-xl p-4 text-center border border-uber-gray-100">
-          <p className="text-lg font-bold">{trip.events_count}</p>
-          <p className="text-[10px] text-uber-gray-400">Events</p>
+        <div className="bg-slate-800/40 backdrop-blur-md rounded-2xl p-5 text-center border border-white/5 shadow-lg hover:-translate-y-1 transition-transform cursor-default">
+          <div className="w-6 h-6 mx-auto text-amber-400 mb-2 flex items-center justify-center font-black text-xl drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]">⚡</div>
+          <p className="text-xl font-bold text-slate-100">{trip.events_count}</p>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-slate-500 mt-1">Events</p>
         </div>
       </div>
 
-      {/* Map */}
-      <div className="h-[400px] rounded-xl overflow-hidden shadow-sm border border-uber-gray-100">
-        <TripMap route={trip.route} events={trip.events} cursorIndex={cursorIndex} />
+      <h3 className="text-[15px] font-bold text-slate-200 mb-3 flex items-center gap-2">
+        <MapPin className="w-5 h-5 text-indigo-400" /> Map Replay
+      </h3>
+      <div className="h-[450px] rounded-2xl overflow-hidden shadow-xl shadow-black/20 border border-white/10 z-0 relative">
+        <TripMap
+          route={trip.route}
+          events={trip.events}
+          cursorIndex={cursorIndex}
+          durationSec={maxSec}
+        />
       </div>
 
       {/* Playback slider */}
@@ -180,13 +189,14 @@ export default function TripDetail() {
       />
 
       {/* Signal charts + Events side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <h3 className="text-sm font-semibold text-uber-gray-700 mb-3">Sensor Signals</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
+        <div className="bg-slate-900/40 border border-white/5 p-6 rounded-3xl shadow-lg">
+          <h3 className="text-[15px] font-bold text-slate-200 mb-6 flex items-center gap-2"><Activity className="w-5 h-5 text-indigo-400" /> Sensor Telemetry</h3>
           <SignalCharts signals={trip.signals} cursorTime={currentSec} />
         </div>
-        <div>
-          <h3 className="text-sm font-semibold text-uber-gray-700 mb-3">
+        <div className="bg-slate-900/40 border border-white/5 p-6 rounded-3xl shadow-lg">
+          <h3 className="text-[15px] font-bold text-slate-200 mb-6 flex items-center gap-2">
+            <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs">⚡</span>
             Detected Events ({trip.events.length})
           </h3>
           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
@@ -206,7 +216,7 @@ export default function TripDetail() {
               />
             ))}
             {trip.events.length === 0 && (
-              <p className="text-sm text-uber-gray-400 text-center py-8">No events detected</p>
+              <p className="text-sm text-slate-500 text-center py-8">No events detected</p>
             )}
           </div>
         </div>

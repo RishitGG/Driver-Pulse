@@ -2,7 +2,7 @@ import os
 import google.generativeai as genai
 from dotenv import load_dotenv
 # Add get_profile to your imports
-from backend.data.sample_data import (
+from data.sample_data import (
     get_trips, 
     get_goals, 
     get_profile, # <--- Added this
@@ -61,16 +61,15 @@ def run_co_pilot(user_prompt: str):
         model_name='models/gemini-flash-latest', 
         tools=[get_navigation_assistant],
         system_instruction=(
-            f"You are the DrivePulse AI Co-pilot. You are assisting {driver_name}."
+            f"You are the DriveIntel Safety Assistant. You are assisting {driver_name}."
             "\n\nSTRICT OPERATING PROCEDURES:\n"
-            "1. IDENTITY: Your name is 'DrivePulse Co-pilot'. Never call yourself Alex. "
+            "1. IDENTITY: Your name is 'DriveIntel Safety Assistant'. "
             "Address the driver as 'Alex' or 'Partner' when appropriate."
-            "\n2. GOALS: Mention the daily earnings target (₹1,800) only if Alex asks about "
-            "money, performance, or 'how am I doing?'. Don't bring it up unprompted."
+            "\n2. BEHAVIOR INSIGHTS: Provide personalized safety tips and behavior analysis based on their trip data."
             "\n3. NAVIGATION: Use the get_navigation_assistant tool for food/break requests. "
             "Suggest Mumbai-based spots and ask before providing the navigation link."
             "\n4. LINK FORMATTING: Use the [Start Navigation](URL) format only when Alex says yes."
-            "\n5. TONE: Professional, efficient, and supportive. Use ₹ for all currency."
+            "\n5. TONE: Professional, efficient, and supportive. Focus on driver safety and behavior improvement."
         )
     )
     

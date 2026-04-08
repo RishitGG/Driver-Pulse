@@ -11,36 +11,36 @@ export default function TimelineSlider({ maxSec, currentSec, onChange, isPlaying
   }
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-uber-gray-100">
-      <div className="flex items-center gap-3">
+    <div className="bg-slate-900/60 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-white/5 mt-4">
+      <div className="flex items-center gap-4">
         <button
           onClick={() => onChange(Math.max(0, currentSec - 30))}
-          className="p-1.5 rounded-lg hover:bg-uber-gray-100 transition"
+          className="p-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition-all shadow-sm"
         >
-          <SkipBack className="w-4 h-4" />
+          <SkipBack className="w-5 h-5" />
         </button>
 
         <button
           onClick={onPlayPause}
-          className="p-2 rounded-full bg-uber-black text-white hover:bg-uber-gray-800 transition"
+          className="p-3 rounded-full bg-indigo-600 text-white hover:bg-indigo-500 transition-all shadow-lg active:scale-95"
         >
-          {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
         </button>
 
         <button
           onClick={() => onChange(Math.min(maxSec, currentSec + 30))}
-          className="p-1.5 rounded-lg hover:bg-uber-gray-100 transition"
+          className="p-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition-all shadow-sm"
         >
-          <SkipForward className="w-4 h-4" />
+          <SkipForward className="w-5 h-5" />
         </button>
 
-        <span className="text-xs font-mono text-uber-gray-500 w-10">{formatTime(currentSec)}</span>
+        <span className="text-[13px] font-mono font-bold text-slate-400 w-12 text-center">{formatTime(currentSec)}</span>
 
         {/* Slider */}
-        <div className="flex-1 relative h-6 flex items-center">
-          <div className="absolute inset-x-0 h-1.5 bg-uber-gray-100 rounded-full">
+        <div className="flex-1 relative h-6 flex items-center group">
+          <div className="absolute inset-x-0 h-2 bg-slate-800 rounded-full overflow-hidden shadow-inner">
             <div
-              className="h-full bg-uber-blue rounded-full transition-all"
+              className="h-full bg-indigo-500 rounded-full transition-all shadow-[0_0_8px_rgba(99,102,241,0.6)]"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -53,12 +53,12 @@ export default function TimelineSlider({ maxSec, currentSec, onChange, isPlaying
             className="absolute inset-x-0 w-full h-6 opacity-0 cursor-pointer"
           />
           <div
-            className="absolute w-4 h-4 bg-uber-blue rounded-full border-2 border-white shadow-md pointer-events-none transition-all"
+            className="absolute w-4 h-4 bg-indigo-400 rounded-full border border-indigo-200 shadow-[0_0_10px_rgba(99,102,241,0.8)] pointer-events-none transition-all group-hover:scale-125"
             style={{ left: `calc(${pct}% - 8px)` }}
           />
         </div>
 
-        <span className="text-xs font-mono text-uber-gray-500 w-10 text-right">{formatTime(maxSec)}</span>
+        <span className="text-[13px] font-mono font-bold text-slate-400 w-12 text-center">{formatTime(maxSec)}</span>
       </div>
     </div>
   )

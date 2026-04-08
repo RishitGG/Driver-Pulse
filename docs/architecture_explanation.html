@@ -3,68 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DrivePulse — System Architecture</title>
+  <title>DriverIntel — System Architecture</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    :root{--g:#06C167;--b:#276EF1;--r:#E11900;--o:#FF6937;--g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g500:#6b7280;--g700:#374151;--g800:#1f2937;--g900:#111827}
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Inter',sans-serif;background:var(--g50);color:var(--g800);line-height:1.7;-webkit-font-smoothing:antialiased}
+    :root {
+      --g: #10b981; --b: #6366f1; --r: #f43f5e; --o: #f59e0b;
+      --bg: #0f172a; --panel: rgba(30, 41, 59, 0.7); --border: rgba(255, 255, 255, 0.1);
+      --text: #cbd5e1; --text-muted: #94a3b8; --text-bright: #f8fafc;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; -webkit-font-smoothing:antialiased; }
 
-    .hero{background:linear-gradient(135deg,#000 0%,#1a1a2e 60%,#16213e 100%);color:#fff;padding:56px 0 40px;text-align:center}
-    .hero h1{font-size:2.4rem;font-weight:800;letter-spacing:-1px}.hero h1 span{color:var(--g)}
-    .hero p{color:#94a3b8;margin-top:6px;font-size:.95rem}
-    .hero .badge{display:inline-block;margin-top:14px;padding:5px 14px;background:rgba(6,193,103,.12);border:1px solid rgba(6,193,103,.25);border-radius:999px;font-size:.73rem;font-weight:600;color:var(--g);letter-spacing:.5px}
-    .team{display:flex;justify-content:center;gap:24px;margin-top:16px;font-size:.82rem;color:#cbd5e1}
+    .hero { background:linear-gradient(135deg, #020617 0%, #172554 60%, #0f172a 100%); padding:56px 0 40px; text-align:center; border-bottom: 1px solid var(--border); }
+    .hero h1 { font-size:2.4rem; font-weight:800; letter-spacing:-1px; color: var(--text-bright); }
+    .hero h1 span { color:var(--b); }
+    .hero p { color:var(--text-muted); margin-top:6px; font-size:1rem; }
+    .hero .badge { display:inline-block; margin-top:14px; padding:5px 14px; background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:999px; font-size:.73rem; font-weight:600; color:var(--b); letter-spacing:.5px; text-transform: uppercase; }
 
-    nav{background:#fff;border-bottom:1px solid var(--g200);position:sticky;top:0;z-index:99}
-    nav .inner{max-width:960px;margin:auto;display:flex;overflow-x:auto;scrollbar-width:none}
-    nav .inner::-webkit-scrollbar{display:none}
-    nav a{padding:12px 16px;font-size:.8rem;font-weight:600;color:var(--g500);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s}
-    nav a:hover{color:var(--g900);border-color:var(--g200)}
+    nav { background:rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:99; }
+    nav .inner { max-width:960px; margin:auto; display:flex; overflow-x:auto; scrollbar-width:none; justify-content: center; }
+    nav .inner::-webkit-scrollbar { display:none; }
+    nav a { padding:14px 20px; font-size:.85rem; font-weight:600; color:var(--text-muted); text-decoration:none; white-space:nowrap; border-bottom:2px solid transparent; transition:.2s; }
+    nav a:hover { color:var(--text-bright); border-color:var(--b); }
 
-    .w{max-width:960px;margin:auto;padding:0 20px}
-    section{padding:44px 0}section+section{border-top:1px solid var(--g200)}
-    h2{font-size:1.35rem;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}.num{color:var(--g);font-weight:800;margin-right:6px}
-    .sub{color:var(--g500);font-size:.88rem;margin-bottom:20px}
-    h3{font-size:1rem;font-weight:700;margin:20px 0 8px}
-    p{margin-bottom:10px;color:var(--g700);font-size:.9rem}
-    ul,ol{margin:0 0 10px 18px;color:var(--g700);font-size:.9rem}li{margin-bottom:4px}
-    strong{font-weight:600;color:var(--g800)}
-    code{background:var(--g100);padding:1px 5px;border-radius:3px;font-size:.82em;font-family:'SF Mono',monospace}
+    .w { max-width:960px; margin:auto; padding:0 20px; }
+    section { padding:44px 0; }
+    section + section { border-top:1px solid var(--border); }
+    
+    h2 { font-size:1.35rem; font-weight:700; margin-bottom:4px; letter-spacing:-.3px; color: var(--text-bright); }
+    .num { color:var(--b); font-weight:800; margin-right:6px; }
+    .sub { color:var(--text-muted); font-size:.88rem; margin-bottom:20px; }
+    
+    h3 { font-size:1.05rem; font-weight:700; margin:24px 0 10px; color: var(--text-bright); }
+    p { margin-bottom:12px; font-size:.9rem; }
+    ul, ol { margin:0 0 16px 18px; font-size:.9rem; }
+    li { margin-bottom:6px; }
+    strong { font-weight:600; color:var(--text-bright); }
+    code { background:rgba(255,255,255,0.05); border: 1px solid var(--border); padding:2px 6px; border-radius:4px; font-size:.82em; font-family:'SF Mono',monospace; color: #38bdf8; }
 
-    .callout{border-left:3px solid var(--g);background:rgba(6,193,103,.04);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;font-size:.86rem}
-    .callout.blue{border-color:var(--b);background:rgba(39,110,241,.03)}
-    .callout.orange{border-color:var(--o);background:rgba(255,105,55,.03)}
+    .callout { border-left:3px solid var(--g); background:rgba(16,185,129,.05); padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0; font-size:.88rem; backdrop-filter: blur(8px); }
+    .callout.blue { border-color:var(--b); background:rgba(99,102,241,.05); }
+    .callout.orange { border-color:var(--o); background:rgba(245,158,11,.05); }
 
-    .diagram-wrap{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:28px 20px;margin:20px 0;overflow-x:auto}
-    .diagram-wrap svg{display:block;margin:auto}
-    .diagram-hint{text-align:center;color:var(--g500);font-size:.75rem;margin-top:10px;font-style:italic}
+    .diagram-wrap { background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:28px 20px; margin:24px 0; overflow-x:auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .diagram-wrap svg { display:block; margin:auto; }
+    .diagram-hint { text-align:center; color:var(--text-muted); font-size:.75rem; margin-top:12px; font-style:italic; }
 
-    .tbl{overflow-x:auto;border:1px solid var(--g200);border-radius:10px;margin:14px 0}
-    table{width:100%;border-collapse:collapse;font-size:.84rem}
-    th{text-align:left;padding:9px 13px;background:var(--g100);font-weight:600;color:var(--g700);white-space:nowrap}
-    td{padding:9px 13px;border-top:1px solid var(--g100);color:var(--g700)}
+    .tbl { overflow-x:auto; border:1px solid var(--border); border-radius:10px; margin:16px 0; background: var(--panel); }
+    table { width:100%; border-collapse:collapse; font-size:.84rem; }
+    th { text-align:left; padding:12px 16px; background:rgba(255,255,255,0.03); font-weight:600; color:var(--text-bright); white-space:nowrap; border-bottom: 2px solid var(--border); }
+    td { padding:12px 16px; border-top:1px solid var(--border); color:var(--text); }
 
-    @media(max-width:640px){.hero h1{font-size:1.7rem}section{padding:28px 0}}
+    @media(max-width:640px) { .hero h1 { font-size:1.7rem; } section { padding:28px 0; } }
 
-    footer{background:var(--g900);color:var(--g500);text-align:center;padding:24px;font-size:.76rem}
-    footer strong{color:#fff}
+    footer { background:var(--bg); color:var(--text-muted); text-align:center; padding:32px 24px; font-size:.8rem; border-top: 1px solid var(--border); }
+    footer strong { color:var(--text-bright); }
   </style>
 </head>
 <body>
 
 <!-- ══ HERO ══ -->
 <div class="hero">
-  <h1>🚗 Drive<span>Pulse</span></h1>
-  <p>System Architecture</p>
-  <div class="badge">UBER SHE++ HACKATHON 2026</div>
-  <div class="team"><span>Merin</span><span>Rishit</span><span>Lavisha</span></div>
+  <h1>🚗 Driver<span>Intel</span></h1>
+  <p>System Architecture & Platform Design</p>
+  <div class="badge">Driver Safety Analytics Platform</div>
 </div>
 
 <nav><div class="inner">
   <a href="#diagram">Architecture Diagram</a>
   <a href="#explanation">Architecture Explanation</a>
   <a href="#deployment">Deployment & Docker</a>
+  <a href="#risk-viz">Risk Maps & UI Features</a>
 </div></nav>
 
 <main class="w">
@@ -72,157 +81,154 @@
 <!-- ═══ 1. ARCHITECTURE DIAGRAM ═══ -->
 <section id="diagram">
   <h2><span class="num">01</span> Architecture Diagram</h2>
-  <p class="sub">End-to-end data flow: sensors → on-device processing → server → driver insights → feedback loop.</p>
+  <p class="sub">End-to-end data flow: sensors → edge processing → server API → AI Copilot → driver insights.</p>
 
   <div class="diagram-wrap">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 620" width="920" height="620" font-family="Inter, sans-serif">
 
       <!-- ── Background lanes ── -->
-      <rect x="0" y="0" width="920" height="620" rx="12" fill="#f9fafb"/>
+      <rect x="0" y="0" width="920" height="620" rx="12" fill="#0f172a"/>
       <!-- On-Device lane -->
-      <rect x="10" y="50" width="440" height="560" rx="10" fill="#eef7f0" stroke="#06C167" stroke-width="1.5" stroke-dasharray="6,3" opacity=".5"/>
-      <text x="30" y="78" font-size="11" font-weight="700" fill="#06C167" letter-spacing=".5">ON-DEVICE (EDGE)</text>
+      <rect x="10" y="50" width="440" height="560" rx="10" fill="rgba(16,185,129,0.05)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,3" opacity=".8"/>
+      <text x="30" y="78" font-size="11" font-weight="700" fill="#10b981" letter-spacing=".5">ON-DEVICE (EDGE)</text>
       <!-- Server lane -->
-      <rect x="470" y="50" width="440" height="410" rx="10" fill="#eef0f7" stroke="#276EF1" stroke-width="1.5" stroke-dasharray="6,3" opacity=".5"/>
-      <text x="490" y="78" font-size="11" font-weight="700" fill="#276EF1" letter-spacing=".5">OFF-DEVICE (SERVER)</text>
+      <rect x="470" y="50" width="440" height="410" rx="10" fill="rgba(99,102,241,0.05)" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="6,3" opacity=".8"/>
+      <text x="490" y="78" font-size="11" font-weight="700" fill="#6366f1" letter-spacing=".5">OFF-DEVICE (SERVER API)</text>
       <!-- Feedback lane -->
-      <rect x="470" y="478" width="440" height="132" rx="10" fill="#fef6ee" stroke="#FF6937" stroke-width="1.5" stroke-dasharray="6,3" opacity=".5"/>
-      <text x="490" y="506" font-size="11" font-weight="700" fill="#FF6937" letter-spacing=".5">FEEDBACK LOOP</text>
+      <rect x="470" y="478" width="440" height="132" rx="10" fill="rgba(245,158,11,0.05)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3" opacity=".8"/>
+      <text x="490" y="506" font-size="11" font-weight="700" fill="#f59e0b" letter-spacing=".5">FEEDBACK & AI ASSISTANT</text>
 
       <!-- ── RAW DATA SOURCES ── -->
-      <rect x="40" y="100" width="160" height="44" rx="8" fill="#111827"/>
-      <text x="120" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">📱 Accelerometer</text>
+      <rect x="40" y="100" width="160" height="44" rx="8" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+      <text x="120" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#f8fafc">📱 Accelerometer</text>
       <text x="120" y="134" text-anchor="middle" font-size="9" fill="#94a3b8">10 Hz x/y/z motion</text>
 
-      <rect x="40" y="160" width="160" height="44" rx="8" fill="#111827"/>
-      <text x="120" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">🎤 Microphone</text>
+      <rect x="40" y="160" width="160" height="44" rx="8" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+      <text x="120" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="#f8fafc">🎤 Microphone</text>
       <text x="120" y="194" text-anchor="middle" font-size="9" fill="#94a3b8">dB envelope only</text>
 
-      <rect x="40" y="220" width="160" height="44" rx="8" fill="#111827"/>
-      <text x="120" y="240" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">📍 GPS + Speed</text>
-      <text x="120" y="254" text-anchor="middle" font-size="9" fill="#94a3b8">km/h, lat/lng</text>
+      <rect x="40" y="220" width="160" height="44" rx="8" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+      <text x="120" y="240" text-anchor="middle" font-size="11" font-weight="700" fill="#f8fafc">📍 GPS Location</text>
+      <text x="120" y="254" text-anchor="middle" font-size="9" fill="#94a3b8">lat/lng / speed</text>
 
-      <rect x="40" y="280" width="160" height="44" rx="8" fill="#111827"/>
-      <text x="120" y="300" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">💰 Trip Earnings</text>
-      <text x="120" y="314" text-anchor="middle" font-size="9" fill="#94a3b8">₹ per trip, hours</text>
+      <rect x="40" y="280" width="160" height="44" rx="8" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+      <text x="120" y="300" text-anchor="middle" font-size="11" font-weight="700" fill="#f8fafc">⏱️ Gyroscope</text>
+      <text x="120" y="314" text-anchor="middle" font-size="9" fill="#94a3b8">Rotation forces</text>
 
       <!-- ── ARROWS: sources → HAL ── -->
-      <line x1="200" y1="122" x2="260" y2="200" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
-      <line x1="200" y1="182" x2="260" y2="200" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
-      <line x1="200" y1="242" x2="260" y2="240" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="200" y1="122" x2="260" y2="200" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="200" y1="182" x2="260" y2="200" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="200" y1="242" x2="260" y2="240" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
       <!-- ── HAL (on-device) ── -->
-      <rect x="265" y="170" width="165" height="60" rx="10" fill="#06C167"/>
-      <text x="347" y="195" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">HAL Calibration</text>
-      <text x="347" y="210" text-anchor="middle" font-size="9" fill="#d1fae5">Device normalisation</text>
-      <text x="347" y="222" text-anchor="middle" font-size="9" fill="#d1fae5">AGC + road baseline</text>
+      <rect x="265" y="170" width="165" height="60" rx="10" fill="#10b981"/>
+      <text x="347" y="195" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Hardware Abstraction</text>
+      <text x="347" y="210" text-anchor="middle" font-size="9" fill="#ecfdf5">Device normalisation</text>
+      <text x="347" y="222" text-anchor="middle" font-size="9" fill="#ecfdf5">Signal processing</text>
 
       <!-- ── ARROW: HAL → Feature Extraction ── -->
-      <line x1="347" y1="230" x2="347" y2="268" stroke="#06C167" stroke-width="2" marker-end="url(#arrowG)"/>
+      <line x1="347" y1="230" x2="347" y2="268" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
 
       <!-- ── Feature Extraction (on-device) ── -->
-      <rect x="255" y="270" width="185" height="60" rx="10" fill="#06C167"/>
+      <rect x="255" y="270" width="185" height="60" rx="10" fill="#10b981"/>
       <text x="347" y="294" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Feature Extraction</text>
-      <text x="347" y="308" text-anchor="middle" font-size="9" fill="#d1fae5">30s windows, Z-score norm</text>
-      <text x="347" y="320" text-anchor="middle" font-size="9" fill="#d1fae5">~12 stress / 14 earnings feats</text>
-
-      <!-- ── ARROW: earnings data → Feature Extraction ── -->
-      <line x1="200" y1="302" x2="255" y2="302" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="347" y="308" text-anchor="middle" font-size="9" fill="#ecfdf5">30s sliding windows</text>
+      <text x="347" y="320" text-anchor="middle" font-size="9" fill="#ecfdf5">Statistical XAI factors</text>
 
       <!-- ── ARROW: Features → Local Inference ── -->
-      <line x1="347" y1="330" x2="347" y2="368" stroke="#06C167" stroke-width="2" marker-end="url(#arrowG)"/>
+      <line x1="347" y1="330" x2="347" y2="368" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
 
       <!-- ── Local Inference (on-device) ── -->
-      <rect x="245" y="370" width="195" height="60" rx="10" fill="#06C167"/>
+      <rect x="245" y="370" width="195" height="60" rx="10" fill="#10b981"/>
       <text x="342" y="394" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Local ML Inference</text>
-      <text x="342" y="408" text-anchor="middle" font-size="9" fill="#d1fae5">RF Classifier (stress) · &lt;1ms</text>
-      <text x="342" y="420" text-anchor="middle" font-size="9" fill="#d1fae5">RF Regressor (earnings)</text>
+      <text x="342" y="408" text-anchor="middle" font-size="9" fill="#ecfdf5">RF Classifier (stress) · &lt;1ms</text>
+      <text x="342" y="420" text-anchor="middle" font-size="9" fill="#ecfdf5">Fallback Rules applied</text>
 
       <!-- ── ARROW: Local Inference → API ── -->
-      <path d="M440,400 L480,400" stroke="#276EF1" stroke-width="2" marker-end="url(#arrowB)"/>
-      <text x="455" y="390" font-size="8" fill="#6b7280" text-anchor="middle">REST</text>
+      <path d="M440,400 L480,400" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowB)"/>
+      <text x="460" y="390" font-size="8" fill="#94a3b8" text-anchor="middle">REST</text>
 
       <!-- ── ARROW: Local Inference → Driver alerts (on device) ── -->
-      <line x1="342" y1="430" x2="342" y2="470" stroke="#06C167" stroke-width="2" marker-end="url(#arrowG)"/>
+      <line x1="342" y1="430" x2="342" y2="470" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
 
       <!-- ── Driver Alerts (on-device) ── -->
-      <rect x="255" y="472" width="175" height="52" rx="10" fill="#111827"/>
-      <text x="342" y="496" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">🔔 Driver Alerts</text>
-      <text x="342" y="510" text-anchor="middle" font-size="9" fill="#94a3b8">Real-time, on-device</text>
+      <rect x="255" y="472" width="175" height="52" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+      <text x="342" y="496" text-anchor="middle" font-size="11" font-weight="700" fill="#f8fafc">🔔 Driver Alerts</text>
+      <text x="342" y="510" text-anchor="middle" font-size="9" fill="#94a3b8">Real-time coaching</text>
 
       <!-- ── Driver Dashboard (on-device) ── -->
-      <rect x="255" y="540" width="175" height="52" rx="10" fill="#111827"/>
-      <text x="342" y="563" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">📊 Driver Dashboard</text>
-      <text x="342" y="577" text-anchor="middle" font-size="9" fill="#94a3b8">Glanceable UI</text>
-      <line x1="342" y1="524" x2="342" y2="540" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <rect x="255" y="540" width="175" height="52" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+      <text x="342" y="563" text-anchor="middle" font-size="11" font-weight="700" fill="#f8fafc">📊 Driver App (React)</text>
+      <text x="342" y="577" text-anchor="middle" font-size="9" fill="#94a3b8">Glassmorphic UI</text>
+      <line x1="342" y1="524" x2="342" y2="540" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
       <!-- ═══ SERVER SIDE ═══ -->
 
       <!-- ── FastAPI Backend ── -->
-      <rect x="490" y="100" width="190" height="56" rx="10" fill="#276EF1"/>
+      <rect x="490" y="100" width="190" height="56" rx="10" fill="#6366f1"/>
       <text x="585" y="124" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">FastAPI Backend</text>
-      <text x="585" y="138" text-anchor="middle" font-size="9" fill="#bfdbfe">25 REST endpoints</text>
-      <text x="585" y="150" text-anchor="middle" font-size="9" fill="#bfdbfe">Auth, CORS, validation</text>
+      <text x="585" y="138" text-anchor="middle" font-size="9" fill="#e0e7ff">Core REST API</text>
+      <text x="585" y="150" text-anchor="middle" font-size="9" fill="#e0e7ff">XAI interpretation</text>
 
       <!-- ── Data Store ── -->
-      <rect x="710" y="100" width="170" height="56" rx="10" fill="#374151"/>
-      <text x="795" y="124" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Data Store</text>
-      <text x="795" y="138" text-anchor="middle" font-size="9" fill="#d1d5db">In-memory (MVP)</text>
-      <text x="795" y="150" text-anchor="middle" font-size="9" fill="#d1d5db">Trips, goals, events</text>
-      <line x1="680" y1="128" x2="710" y2="128" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <rect x="710" y="100" width="170" height="56" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+      <text x="795" y="124" text-anchor="middle" font-size="11" font-weight="700" fill="#f8fafc">Data Store</text>
+      <text x="795" y="138" text-anchor="middle" font-size="9" fill="#94a3b8">Trips, events</text>
+      <text x="795" y="150" text-anchor="middle" font-size="9" fill="#94a3b8">Goals, user profiles</text>
+      <line x1="680" y1="128" x2="710" y2="128" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
       <!-- ── Batch Processor ── -->
-      <rect x="490" y="185" width="190" height="56" rx="10" fill="#276EF1"/>
+      <rect x="490" y="185" width="190" height="56" rx="10" fill="#6366f1"/>
       <text x="585" y="208" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Batch Processor</text>
-      <text x="585" y="222" text-anchor="middle" font-size="9" fill="#bfdbfe">CSV upload → inference</text>
-      <text x="585" y="234" text-anchor="middle" font-size="9" fill="#bfdbfe">Stress + Earnings models</text>
-      <line x1="585" y1="156" x2="585" y2="185" stroke="#276EF1" stroke-width="1.5" marker-end="url(#arrowB)"/>
+      <text x="585" y="222" text-anchor="middle" font-size="9" fill="#e0e7ff">CSV upload → inference</text>
+      <text x="585" y="234" text-anchor="middle" font-size="9" fill="#e0e7ff">Analyst stress reporting</text>
+      <line x1="585" y1="156" x2="585" y2="185" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrowB)"/>
 
       <!-- ── Model Files ── -->
-      <rect x="710" y="185" width="170" height="56" rx="10" fill="#374151"/>
-      <text x="795" y="208" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Model Artifacts</text>
-      <text x="795" y="222" text-anchor="middle" font-size="9" fill="#d1d5db">rf_model.pkl (×2)</text>
-      <text x="795" y="234" text-anchor="middle" font-size="9" fill="#d1d5db">baselines, contracts</text>
-      <line x1="680" y1="213" x2="710" y2="213" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <rect x="710" y="185" width="170" height="56" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.1)"/>
+      <text x="795" y="208" text-anchor="middle" font-size="11" font-weight="700" fill="#f8fafc">Model Artifacts</text>
+      <text x="795" y="222" text-anchor="middle" font-size="9" fill="#94a3b8">rf_model.pkl</text>
+      <text x="795" y="234" text-anchor="middle" font-size="9" fill="#94a3b8">Safety baselines</text>
+      <line x1="680" y1="213" x2="710" y2="213" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
 
       <!-- ── Aggregation & Metrics ── -->
-      <rect x="490" y="270" width="190" height="56" rx="10" fill="#276EF1"/>
+      <rect x="490" y="270" width="190" height="56" rx="10" fill="#6366f1"/>
       <text x="585" y="294" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Aggregation Engine</text>
-      <text x="585" y="308" text-anchor="middle" font-size="9" fill="#bfdbfe">Dashboard summaries</text>
-      <text x="585" y="320" text-anchor="middle" font-size="9" fill="#bfdbfe">Trends, goal tracking</text>
-      <line x1="585" y1="241" x2="585" y2="270" stroke="#276EF1" stroke-width="1.5" marker-end="url(#arrowB)"/>
+      <text x="585" y="308" text-anchor="middle" font-size="9" fill="#e0e7ff">Dashboard summaries</text>
+      <text x="585" y="320" text-anchor="middle" font-size="9" fill="#e0e7ff">Driver trends metrics</text>
+      <line x1="585" y1="241" x2="585" y2="270" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrowB)"/>
 
-      <!-- ── React Frontend ── -->
-      <rect x="490" y="370" width="190" height="56" rx="10" fill="#276EF1"/>
-      <text x="585" y="394" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Driver Web App (React)</text>
-      <text x="585" y="408" text-anchor="middle" font-size="9" fill="#bfdbfe">8 pages, 16 components</text>
-      <text x="585" y="420" text-anchor="middle" font-size="9" fill="#bfdbfe">Maps, charts, modals</text>
-      <line x1="585" y1="326" x2="585" y2="370" stroke="#276EF1" stroke-width="1.5" marker-end="url(#arrowB)"/>
+      <!-- ── React Frontend (Served) ── -->
+      <rect x="490" y="370" width="190" height="56" rx="10" fill="#6366f1"/>
+      <text x="585" y="394" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Vite / React Hosting</text>
+      <text x="585" y="408" text-anchor="middle" font-size="9" fill="#e0e7ff">React 18 SPA</text>
+      <text x="585" y="420" text-anchor="middle" font-size="9" fill="#e0e7ff">Tailwind CSS compilation</text>
+      <line x1="585" y1="326" x2="585" y2="370" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrowB)"/>
 
       <!-- ═══ FEEDBACK LOOP ═══ -->
 
-      <!-- ── Feedback Collection ── -->
-      <rect x="490" y="524" width="190" height="52" rx="10" fill="#FF6937"/>
-      <text x="585" y="547" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">👍👎 Feedback</text>
-      <text x="585" y="561" text-anchor="middle" font-size="9" fill="#fed7aa">Collected per event</text>
-      <line x1="585" y1="426" x2="585" y2="524" stroke="#FF6937" stroke-width="1.5" marker-end="url(#arrowO)"/>
+      <!-- ── Feedback & Agent ── -->
+      <rect x="490" y="524" width="190" height="52" rx="10" fill="#f59e0b"/>
+      <text x="585" y="547" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">🤖 AI Safety Agent</text>
+      <text x="585" y="561" text-anchor="middle" font-size="9" fill="#fef3c7">Gemini LLM Integration</text>
+      <line x1="585" y1="426" x2="585" y2="524" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowO)"/>
 
-      <!-- ── Future: Retrain ── -->
-      <rect x="710" y="524" width="170" height="52" rx="10" fill="#374151" stroke="#FF6937" stroke-width="1.5" stroke-dasharray="5,3"/>
-      <text x="795" y="547" text-anchor="middle" font-size="11" font-weight="600" fill="#FF6937">🔄 Retrain Loop</text>
-      <text x="795" y="561" text-anchor="middle" font-size="9" fill="#9ca3af">Future: feedback → model</text>
-      <line x1="680" y1="550" x2="710" y2="550" stroke="#FF6937" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowO)"/>
+      <!-- ── Retrain ── -->
+      <rect x="710" y="524" width="170" height="52" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="795" y="547" text-anchor="middle" font-size="11" font-weight="600" fill="#f59e0b">🔄 Human Feedback</text>
+      <text x="795" y="561" text-anchor="middle" font-size="9" fill="#94a3b8">Thumbs up/down tracking</text>
+      <line x1="680" y1="550" x2="710" y2="550" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowO)"/>
 
       <!-- ── Arrow markers ── -->
       <defs>
-        <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#9ca3af"/></marker>
-        <marker id="arrowG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#06C167"/></marker>
-        <marker id="arrowB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#276EF1"/></marker>
-        <marker id="arrowO" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#FF6937"/></marker>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#475569"/></marker>
+        <marker id="arrowG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#10b981"/></marker>
+        <marker id="arrowB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#6366f1"/></marker>
+        <marker id="arrowO" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker>
       </defs>
 
       <!-- ── Title ── -->
-      <text x="460" y="30" text-anchor="middle" font-size="14" font-weight="800" fill="#111827">DrivePulse — End-to-End Data Flow</text>
+      <text x="460" y="30" text-anchor="middle" font-size="14" font-weight="800" fill="#f8fafc">DriverIntel — End-to-End Data Flow</text>
 
     </svg>
     <p class="diagram-hint">Right-click → "Save image as" or screenshot this diagram to export as PNG.</p>
@@ -231,97 +237,99 @@
 
 <!-- ═══ 2. ARCHITECTURE EXPLANATION ═══ -->
 <section id="explanation">
-  <h2><span class="num">02</span> Architecture Explanation</h2>
-  <p class="sub">Design decisions and engineering trade-offs.</p>
+  <h2><span class="num">02</span> Architecture & Engineering Design</h2>
+  <p class="sub">Design decisions and system infrastructure.</p>
+
+  <h3>Responsive UI & Glassmorphism Design</h3>
+  <ul>
+    <li><strong>Premium Aesthetics:</strong> Built entirely with a deeply dark, frosted glassmorphism interface heavily reliant on <code>backdrop-blur-xl</code> utilities.</li>
+    <li><strong>Performant Renderings:</strong> Built using Vite and React 18 for massive speed gains during compilation. State management handled cleanly to avoid chart re-renders.</li>
+    <li><strong>Accessible UI:</strong> High-contrast tokens created in CSS ensure data visualisations are distinct for night-driving without causing fatigue.</li>
+  </ul>
 
   <h3>Real-Time vs. Post-Trip Processing</h3>
   <ul>
-    <li><strong>Stress detection → real-time, on-device.</strong> RF classifier runs per 30s window in &lt;1ms. Driver gets alerts instantly, no network needed.</li>
-    <li><strong>Earnings prediction → on-device per trip.</strong> Velocity forecasting runs locally after each trip completes.</li>
-    <li><strong>Aggregation → server-side.</strong> Dashboard summaries, trends, and goal tracking are computed on the server where full trip history is available.</li>
-    <li><strong>Why this split?</strong> A driver in danger can't wait for a network round-trip. Safety alerts must work in tunnels and dead zones.</li>
+    <li><strong>Stress detection → real-time edge processing.</strong> Random Forest classifier runs per 30s window in &lt;1ms. Driver gets alerts directly without needing continuous API polling.</li>
+    <li><strong>Aggregation → Backend server.</strong> Detailed map popups, AI XAI outputs (explainable AI summaries), and history metrics load off device.</li>
+    <li><strong>Why this split?</strong> A driver in a dangerous zone cannot rely on cellular reliability. Safety telemetry logic processes locally, while reporting requires sync.</li>
   </ul>
 
-  <h3>Connectivity & Resilience</h3>
+  <h3>AI Co-Pilot & XAI Feedback</h3>
   <ul>
-    <li><strong>Both ML models run locally</strong> — no network required for predictions.</li>
-    <li><strong>Queued sync</strong> — trip data and feedback stored locally, synced when connectivity returns.</li>
-    <li><strong>Rule-based fallback</strong> — if model files are missing, threshold rules (motion &gt;3.5g + audio &gt;80 dB → CONFLICT) keep the app functional.</li>
-    <li><strong>SPA frontend</strong> — once loaded, all navigation works offline; only API data calls need network.</li>
+    <li><strong>Explainable AI integrations</strong> — The backend automatically generates XAI "Top Features" for every identified event using feature importance arrays.</li>
+    <li><strong>Integrated LLM</strong> — A Gemini-backed AI Safety Assistant takes event parameters and constructs human-readable, educational summaries of the incidents instantly.</li>
+    <li><strong>Data Minimisation:</strong> The LLM handles only parsed data parameters (speeds, forces, time). Audio or geo-exact details are stripped pre-prompting for absolute privacy.</li>
   </ul>
 
   <h3>Battery & Resource Management</h3>
   <ul>
-    <li><strong>Lightweight RF models</strong> — no GPU, &lt;1ms inference, ~12 stress features (not hundreds).</li>
-    <li><strong>10 Hz sampling</strong> — sufficient for brakes/road events; 10× less data than high-frequency approaches.</li>
-    <li><strong>30s windows</strong> — model runs ~2×/min, not continuously.</li>
-    <li><strong>dB envelope only</strong> — loudness levels, not raw audio waveforms. No FFT/spectrogram cost.</li>
-    <li><strong>EMA drift correction</strong> — simple update every 10 min, not a full recalibration.</li>
-  </ul>
-
-  <h3>Privacy & Data Minimisation</h3>
-  <ul>
-    <li><strong>No raw audio</strong> — mic input reduced to dB aggregates on-device. No recordings leave the phone.</li>
-    <li><strong>No raw sensor logs</strong> — accelerometer data consumed in 30s windows, converted to statistical features, then discarded.</li>
-    <li><strong>All audio classification on-device</strong> — server never receives audio data.</li>
-    <li><strong>Minimal PII</strong> — username + city + experience level. No phone number, no payment data.</li>
-    <li><strong>Feedback is opt-in</strong> — only event ID + boolean. No free-text harvested.</li>
+    <li><strong>Lightweight RF models</strong> — no GPU required, minimal RAM footprint, ~12 extracted hardware features instead of deep learning arrays.</li>
+    <li><strong>30s sliding windows</strong> — Telemetry model only recalculates locally a few times a minute, minimizing continuous drain.</li>
+    <li><strong>dB envelope only</strong> — For privacy and size, mic data is reduced to local Db scales. Driver voice clips are definitively never transmitted.</li>
   </ul>
 
   <h3>Key Trade-offs</h3>
   <div class="tbl"><table>
     <tr><th>Decision</th><th>Gained</th><th>Gave Up</th></tr>
-    <tr><td>On-device inference</td><td>Zero-latency alerts, offline support</td><td>Can't use large models or cross-driver patterns</td></tr>
-    <tr><td>RandomForest over DL</td><td>Lightweight, interpretable, CPU-only</td><td>Lower accuracy on complex temporal patterns</td></tr>
-    <tr><td>dB envelope over raw audio</td><td>Privacy, low CPU, no storage</td><td>No speech-to-text or fine-grained analysis</td></tr>
-    <tr><td>In-memory store over DB</td><td>Zero setup for judges</td><td>No persistence across restarts</td></tr>
-    <tr><td>Feedback collected, not looped</td><td>Simpler system</td><td>Model doesn't self-improve (yet)</td></tr>
+    <tr><td>On-device inference</td><td>Zero-latency alerts, offline support</td><td>Can't use massive parameters or cross-fleet correlations instantaneously</td></tr>
+    <tr><td>RandomForest over DL</td><td>Lightweight, interpretable, CPU-only</td><td>Lower accuracy on complex multi-temporal event chains</td></tr>
+    <tr><td>dB envelope over raw audio</td><td>Privacy, low CPU, zero cloud bandwidth</td><td>No immediate natural language incident classification from audio</td></tr>
+    <tr><td>In-memory store (MVP)</td><td>Zero setup friction for deployments</td><td>No multi-node or persistent stability without Postgres update</td></tr>
   </table></div>
 
 </section>
 
 <!-- ═══ 3. DEPLOYMENT & DOCKER ═══ -->
 <section id="deployment">
-  <h2><span class="num">03</span> Deployment & Docker</h2>
-  <p class="sub">How a judge runs the full system in minutes.</p>
+  <h2><span class="num">03</span> Deployment Architecture</h2>
+  <p class="sub">How to deploy or test the architecture.</p>
 
   <div class="callout blue">
-    <strong>Hackathon requirement:</strong> Include a working Dockerfile and <code>docker-compose.yml</code>
-    so a judge can run the entire stack with a single command. DrivePulse ships two services
-    (FastAPI backend + React frontend) wired together behind Nginx.
+    <strong>Infrastructure Note:</strong> DriverIntel consists of two split services: FastAPI Python Backend + Node/React Vite Frontend. They communicate natively over REST endpoints.
   </div>
 
   <h3>Containers</h3>
   <ul>
-    <li><strong>Backend container:</strong> Python 3.11 + FastAPI. Runs <code>uvicorn main:app</code> inside the <code>backend/</code> folder so imports like <code>from utils...</code> and <code>from data...</code> match local dev. Exposes <code>8000</code> with all <code>/api/*</code> routes.</li>
-    <li><strong>Frontend container:</strong> Builds the React SPA with Node + Vite, then serves the static <code>dist/</code> bundle via Nginx on port <code>80</code>. Nginx proxies any request to <code>/api/</code> to the backend service.</li>
-    <li><strong>Compose orchestration:</strong> <code>docker-compose.yml</code> in the repo root builds both images, creates a shared network, and publishes:
-      <ul>
-        <li><code>http://localhost:5173</code> → frontend (Nginx)</li>
-        <li><code>http://localhost:8000</code> → backend (FastAPI, e.g. <code>/api/health</code>)</li>
-      </ul>
-    </li>
+    <li><strong>Backend container:</strong> Python 3.11 + FastAPI. Runs <code>uvicorn main:app</code> inside the <code>backend/</code> folder to execute our ML + REST models. Exposes port <code>8000</code>.</li>
+    <li><strong>Frontend container:</strong> Builds the React SPA with Node + Vite, compiles Tailwind definitions, and serves the static <code>dist/</code> bundle via a lightweight internal proxy router.</li>
+    <li><strong>Single Orchestration:</strong> Complete configuration exists in <code>docker-compose.yml</code>. Running <code>docker compose up --build</code> constructs the necessary network bridges locally for the frontend to hit <code>/api</code> properly.</li>
   </ul>
 
-  <h3>Judge Runbook</h3>
+  <h3>Testing Runbook</h3>
   <ol>
-    <li><strong>Prerequisite:</strong> Install Docker Desktop and ensure it is running.</li>
-    <li><strong>Clone repo:</strong> <code>git clone ... && cd Driver-Pulse</code></li>
-    <li><strong>One command:</strong>
-      <code>docker compose up --build</code> from the repo root (<code>Driver-Pulse/</code>).</li>
-    <li><strong>Open app:</strong> visit <code>http://localhost:5173</code> in the browser
-      (no manual dependency installation required).</li>
+    <li><strong>Prerequisite:</strong> Start Docker Desktop.</li>
+    <li><strong>Launch locally:</strong> <code>git clone ... && cd Driver-Pulse</code> (or your repository folder).</li>
+    <li><strong>Spin up execution:</strong> <code>docker compose up --build</code>.</li>
+    <li><strong>Validate app:</strong> Open <code>http://localhost:5173</code> in the browser to interact via demo telemetry accounts.</li>
   </ol>
 
   <div class="callout">
-    <strong>Judge credentials:</strong> we provide a pre-populated demo account.<br/>
-    Username: <code>judge@uber.com</code> · Password: <code>hackathon2026</code>.
+    <strong>Demo Credentials:</strong> We provide structured demo telemetry data via sample accounts.<br/>
+    Username: <code>demo@driveintel.com</code> · Password: <code>demo2026</code>.
   </div>
 
 </section>
 
+<!-- ═══ 4. RISK MAPS & UI FEATURES ═══ -->
+<section id="risk-viz">
+  <h2><span class="num">04</span> Risk Maps & Visualisations</h2>
+  <p class="sub">Visual layout functionality of complex geo-spatial components.</p>
+
+  <h3>Dynamic Trip Map Segmenting</h3>
+  <ul>
+    <li>The core <code>TripMap.jsx</code> component takes real coordinate polyline segments and calculates spatial risk.</li>
+    <li><strong>Coloring Logic:</strong> Calm baseline data outputs partially transparent routes. If an event timestamp triggers near a location chunk, the segment opacity scales up and colors (Amber/Green/Red) directly depending on event severity.</li>
+    <li><strong>Rich Modals:</strong> Clicking event pins queries the React context layout for AI Assistant XAI explanations and model parameters without page routing.</li>
+  </ul>
+
+  <h3>Risk Zones Prediction Map</h3>
+  <ul>
+    <li>Standalone Leaflet engine using mock overlay heat-circles to present future-state infrastructure of geographical "hazard clusters" identified by the application.</li>
+  </ul>
+</section>
+
 </main>
 
-<footer><strong>DrivePulse</strong> — Uber She++ Hackathon 2026 · Merin · Rishit · Lavisha</footer>
+<footer><strong>DriverIntel</strong> — Advanced Driver Safety Platform</footer>
 </body>
 </html>

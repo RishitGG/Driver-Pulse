@@ -1,0 +1,12 @@
+{
+  "name": "driver-pulse",
+  "version": "1.0.0",
+  "description": "Driver Safety Analytics Platform",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm install && npm run build",
+    "preview": "cd frontend && npm run preview"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

@@ -1,5 +1,5 @@
 """
-run.py  —  DrivePulse Stress Detection
+run.py  —  DriveIntel Stress Detection
 Single entry point. Run from the project root directory.
 
 Usage:
@@ -81,7 +81,7 @@ def step_demo():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="DrivePulse Stress Detection")
+    parser = argparse.ArgumentParser(description="DriveIntel Stress Detection")
     parser.add_argument("--generate",  action="store_true", help="Generate synthetic data only")
     parser.add_argument("--calibrate", action="store_true", help="Run HAL calibration demo only")
     parser.add_argument("--train",     action="store_true", help="Train model only")
@@ -101,7 +101,7 @@ def main():
     else:
         # Full pipeline
         print("=" * 50)
-        print("DrivePulse — Full Pipeline")
+        print("DriveIntel — Full Pipeline")
         print("=" * 50)
         step_generate()
         step_calibrate()

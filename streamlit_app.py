@@ -1,7 +1,7 @@
 """
-DrivePulse Hackathon — Streamlit Demo
+DriveIntel Prototype — Streamlit Demo
 
-Combines stress detection + earnings prediction in one interface.
+Driver behavior analysis and stress detection interface.
 """
 
 import streamlit as st
@@ -12,8 +12,8 @@ import json
 from pathlib import Path
 
 st.set_page_config(
-    page_title="DrivePulse",
-    page_icon="🚗",
+    page_title="DriveIntel",
+    page_icon="🛣️",
     layout="wide"
 )
 
@@ -22,11 +22,11 @@ st.set_page_config(
 @st.cache_resource
 def load_models():
     """Load both ML models once at startup."""
-    stress_model = joblib.load("drivepulse_stress_model/model/rf_model.pkl")
-    stress_mean = np.load("drivepulse_stress_model/model/baseline_mean.npy")
-    stress_std = np.load("drivepulse_stress_model/model/baseline_std.npy")
+    stress_model = joblib.load("driveintel_stress_model/model/rf_model.pkl")
+    stress_mean = np.load("driveintel_stress_model/model/baseline_mean.npy")
+    stress_std = np.load("driveintel_stress_model/model/baseline_std.npy")
     
-    with open("drivepulse_stress_model/model/feature_contract.json") as f:
+    with open("driveintel_stress_model/model/feature_contract.json") as f:
         feature_contract = json.load(f)
     
     earnings_model = joblib.load("earnings/earnings/model/rf_model.pkl")
@@ -44,17 +44,17 @@ try:
     st.session_state.models_loaded = True
 except Exception as e:
     st.error(f"❌ Failed to load models: {e}")
-    st.info("Make sure to run the training scripts first:\n```bash\ncd drivepulse_stress_model && python run.py\ncd earnings/earnings && python run.py\n```")
+    st.info("Make sure to run the training scripts first:\n```bash\ncd driveintel_stress_model && python run.py\n```")
     st.stop()
 
 # ── Header ────────────────────────────────────────────────
 
-st.title("🚗 DrivePulse Hackathon")
-st.markdown("**Stress Detection + Earnings Forecasting for Drivers**")
+st.title("�️ DriveIntel Prototype")
+st.markdown("**Driver Safety Detection & Behavior Analytics**")
 
 # ── Tabs ──────────────────────────────────────────────────
 
-tab1, tab2, tab3 = st.tabs(["Stress Detection", "Earnings Forecast", "About"])
+tab1, tab3 = st.tabs(["Stress Detection", "About DriveIntel"])
 
 # ════════════════════════════════════════════════════════════
 # TAB 1: STRESS DETECTION
@@ -218,130 +218,20 @@ with tab1:
         st.bar_chart(prob_df.set_index('Situation')['Probability'])
 
 
-# ════════════════════════════════════════════════════════════
-# TAB 2: EARNINGS FORECAST
-# ════════════════════════════════════════════════════════════
-
-with tab2:
-    st.header("💰 Earnings Forecast")
-    st.markdown("Predict driver earning velocity and goal completion.")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.subheader("Current Status")
-        elapsed_hours = st.number_input("Elapsed Hours", 0.0, 12.0, 3.5, 0.1)
-        current_velocity = st.number_input("Current Velocity (₹/hr)", 0, 600, 180, 10)
-        velocity_delta = st.number_input("Velocity Change", -100, 100, 12, 5)
-        trips_completed = st.number_input("Trips Completed", 0, 50, 7)
-    
-    with col2:
-        st.subheader("Context")
-        trip_rate = st.number_input("Trip Rate (trips/hr)", 0.0, 10.0, 2.0, 0.1)
-        hour_of_day = st.slider("Hour of Day", 0, 23, 14)
-        is_morning_rush = st.checkbox("Morning Rush (7-9 AM)?")
-        is_lunch_rush = st.checkbox("Lunch Rush (12-2 PM)?")
-    
-    with col3:
-        st.subheader("Historical Data")
-        velocity_last_1 = st.number_input("Velocity 1 Period Ago", 0, 600, 175, 10)
-        velocity_last_2 = st.number_input("Velocity 2 Periods Ago", 0, 600, 168, 10)
-        velocity_last_3 = st.number_input("Velocity 3 Periods Ago", 0, 600, 155, 10)
-        rolling_velocity_3 = st.number_input("3-Period Rolling Avg", 0, 600, 172, 10)
-        rolling_velocity_5 = st.number_input("5-Period Rolling Avg", 0, 600, 170, 10)
-    
-    goal_pressure = st.number_input("Goal Pressure (₹/hr)", -100, 200, 30, 10)
-    
-    # ── Predict ──────────────────────────────────────────
-    
-    if st.button("🔮 Predict Earnings", key="earnings_btn", use_container_width=True):
-        # Build feature vector
-        features_df = pd.DataFrame({
-            'elapsed_hours': [elapsed_hours],
-            'current_velocity': [current_velocity],
-            'velocity_delta': [velocity_delta],
-            'trips_completed': [trips_completed],
-            'trip_rate': [trip_rate],
-            'hour_of_day': [hour_of_day],
-            'is_morning_rush': [int(is_morning_rush)],
-            'is_lunch_rush': [int(is_lunch_rush)],
-            'velocity_last_1': [velocity_last_1],
-            'velocity_last_2': [velocity_last_2],
-            'velocity_last_3': [velocity_last_3],
-            'rolling_velocity_3': [rolling_velocity_3],
-            'rolling_velocity_5': [rolling_velocity_5],
-            'goal_pressure': [goal_pressure],
-        })
-        
-        # Predict
-        predicted_velocity = float(models['earnings_model'].predict(features_df)[0])
-        
-        # Calculate goal metrics
-        cumulative_earnings = current_velocity * elapsed_hours
-        target_earnings = 1200  # hardcoded for demo, could be input
-        remaining_earnings = max(0, target_earnings - cumulative_earnings)
-        remaining_hours = remaining_earnings / predicted_velocity if predicted_velocity > 0 else 0
-        
-        # Determine status
-        required_velocity = target_earnings / (8 - elapsed_hours) if elapsed_hours < 8 else 999
-        if predicted_velocity >= required_velocity:
-            status = "AHEAD"
-            emoji = "🟢"
-        elif predicted_velocity >= required_velocity * 0.9:
-            status = "ON TRACK"
-            emoji = "🟡"
-        else:
-            status = "AT RISK"
-            emoji = "🔴"
-        
-        goal_prob = min(100, int((predicted_velocity / required_velocity) * 100)) if required_velocity > 0 else 100
-        
-        # Display results
-        st.markdown("---")
-        
-        result_col1, result_col2, result_col3 = st.columns(3)
-        
-        with result_col1:
-            st.metric("Current Velocity", f"₹{current_velocity}/hr", f"{velocity_delta:+d}")
-        
-        with result_col2:
-            st.metric("Predicted Velocity", f"₹{predicted_velocity:.0f}/hr", f"{predicted_velocity - current_velocity:+.0f}")
-        
-        with result_col3:
-            st.metric("Status", f"{emoji} {status}", f"{goal_prob}% to goal")
-        
-        st.markdown("---")
-        
-        col_left, col_right = st.columns(2)
-        
-        with col_left:
-            st.subheader("Goal Progress")
-            st.metric("Current Earnings", f"₹{cumulative_earnings:.0f}")
-            st.metric("Remaining", f"₹{remaining_earnings:.0f} / ₹{target_earnings}")
-            st.metric("Progress", f"{(cumulative_earnings/target_earnings)*100:.1f}%")
-        
-        with col_right:
-            st.subheader("Time to Goal")
-            st.metric("Est. Hours to Complete", f"{remaining_hours:.1f} hrs")
-            st.metric("Required Velocity", f"₹{required_velocity:.0f}/hr")
-            st.metric("Goal Probability", f"{goal_prob}%")
-        
-        # Progress bar
-        st.progress(min(1.0, cumulative_earnings / target_earnings), text=f"{(cumulative_earnings/target_earnings)*100:.0f}% Complete")
 
 
 # ════════════════════════════════════════════════════════════
-# TAB 3: ABOUT
+# TAB 2: ABOUT
 # ════════════════════════════════════════════════════════════
 
 with tab3:
-    st.header("About DrivePulse")
+    st.header("About DriveIntel")
     
     st.markdown("""
     ### 🎯 Mission
-    DrivePulse predicts driver stress and earnings in real-time, enabling:
+    DriveIntel analyzes driver behavior and detects stress situations in real-time, enabling:
     - **Safety:** Detect escalating conflicts before they happen
-    - **Economics:** Forecast goal completion and earnings velocity
+    - **Insights:** Understand your driving patterns and behavior trends
     - **Privacy:** All computation on-device, no audio recording
     
     ### 🧠 Models

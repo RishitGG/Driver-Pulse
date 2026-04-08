@@ -1,6 +1,6 @@
 """
-DrivePulse Backend — FastAPI application.
-Serves trip data, events, metrics, goals, and stress tips.
+DriveIntel Backend — FastAPI application.
+Serves trip data, events, metrics, goals, and safety tips.
 """
 
 from fastapi import FastAPI, HTTPException, Query, UploadFile, File
@@ -10,36 +10,33 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 
-# Absolute Imports for Agentic AI and Utilities
-from backend.agent import run_co_pilot
-from backend.utils.logging import log_info, log_warn
+from agent import run_co_pilot
+from utils.logging import log_info, log_warn
 
-# Standardized Absolute Imports for Data and Logic
-from backend.data.sample_data import (
+from data.sample_data import (
     get_trips, get_profile, get_goals, set_goal_target,
     build_dashboard, build_weekly_metrics, build_monthly_metrics,
     STRESS_TIPS, SITUATIONS,
     create_user_trip, add_trip,
 )
-from backend.data.batch_processor import (
-    process_stress_csv, process_earnings_csv,
-    stress_csv_template, earnings_csv_template,
-    predict_stress_row, predict_earnings_row,
+from data.batch_processor import (
+    process_stress_csv, stress_csv_template,
+    predict_stress_row,
 )
-from backend.data.trips_import import import_trips_csv, trips_csv_template
-from backend.data.users import (
+from data.trips_import import import_trips_csv, trips_csv_template
+from data.users import (
     login_user, register_user, get_user_profile, list_all_users,
 )
 
 # ── App Initialization ──────────────────────────────────────────────────
 
-app = FastAPI(title="DrivePulse API", version="1.0.0")
+app = FastAPI(title="DriveIntel API", version="1.0.0")
 
 # Allow frontend origins for development and production
 allowed_origins = [
     "http://localhost:5173",
     "http://localhost:3000",
-    "https://driver-pulse-gamma.vercel.app",
+    "https://driveintel-alpha.vercel.app",
     "https://*.vercel.app",
 ]
 
@@ -289,13 +286,6 @@ def predict_stress(payload: dict):
     except Exception as e:
         raise HTTPException(400, str(e))
 
-@app.post("/api/predict/earnings")
-def predict_earnings(payload: dict):
-    try:
-        return predict_earnings_row(payload)
-    except Exception as e:
-        raise HTTPException(400, str(e))
-
 # ── Routes: Batch & Features ──────────────────────────────────────────────
 
 @app.post("/api/batch/stress")
@@ -329,13 +319,7 @@ def stress_features():
         {"name": "audio_db_max", "label": "Audio dB Max", "default": 65.0, "group": "Audio"},
     ]}
 
-@app.get("/api/features/earnings")
-def earnings_features():
-    return {"features": [
-        {"name": "avg_earnings_per_hour", "label": "Avg Earnings/hr (₹)", "default": 250.0, "group": "Earnings"},
-        {"name": "target_earnings", "label": "Target Earnings (₹)", "default": 2000.0, "group": "Earnings"},
-    ]}
-
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+    # Use "main:app" when cwd is backend/ (matches Docker and flat imports)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

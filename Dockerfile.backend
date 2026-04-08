@@ -6,18 +6,18 @@ WORKDIR /app
 COPY requirements.txt .
 COPY backend/requirements.txt backend/requirements.txt
 COPY earnings/earnings/requirements.txt earnings/earnings/requirements.txt
-COPY drivepulse_stress_model/requirements.txt drivepulse_stress_model/requirements.txt
+COPY driveintel_stress_model/requirements.txt driveintel_stress_model/requirements.txt
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir -r backend/requirements.txt \
     && pip install --no-cache-dir -r earnings/earnings/requirements.txt \
-    && pip install --no-cache-dir -r drivepulse_stress_model/requirements.txt
+    && pip install --no-cache-dir -r driveintel_stress_model/requirements.txt
 
 # Copy source code
 COPY backend/ backend/
 COPY earnings/ earnings/
-COPY drivepulse_stress_model/ drivepulse_stress_model/
+COPY driveintel_stress_model/ driveintel_stress_model/
 
 ENV PYTHONUNBUFFERED=1
 

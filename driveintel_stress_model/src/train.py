@@ -202,7 +202,7 @@ def export(clf, cal, mean, std):
 
 def run():
     print("=" * 60)
-    print("DrivePulse — Stress Detection Training")
+    print("DriveIntel — Stress Detection Training")
     print("=" * 60 + "\n")
 
     X, y           = load_data()

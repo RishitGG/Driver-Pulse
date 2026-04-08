@@ -3,75 +3,90 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DrivePulse — Design Document</title>
+  <title>DriverIntel — Design Document</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    :root{--g:#06C167;--b:#276EF1;--r:#E11900;--o:#FF6937;--g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g500:#6b7280;--g700:#374151;--g800:#1f2937;--g900:#111827}
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Inter',sans-serif;background:var(--g50);color:var(--g800);line-height:1.7;-webkit-font-smoothing:antialiased}
+    :root {
+      --g: #10b981; --b: #6366f1; --r: #f43f5e; --o: #f59e0b;
+      --bg: #0f172a; --panel: rgba(30, 41, 59, 0.7); --border: rgba(255, 255, 255, 0.1);
+      --text: #cbd5e1; --text-muted: #94a3b8; --text-bright: #f8fafc;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; -webkit-font-smoothing:antialiased; }
 
-    .hero{background:linear-gradient(135deg,#000 0%,#1a1a2e 60%,#16213e 100%);color:#fff;padding:56px 0 40px;text-align:center}
-    .hero h1{font-size:2.4rem;font-weight:800;letter-spacing:-1px}.hero h1 span{color:var(--g)}
-    .hero p{color:#94a3b8;margin-top:6px;font-size:.95rem}
-    .hero .badge{display:inline-block;margin-top:14px;padding:5px 14px;background:rgba(6,193,103,.12);border:1px solid rgba(6,193,103,.25);border-radius:999px;font-size:.73rem;font-weight:600;color:var(--g);letter-spacing:.5px}
-    .team{display:flex;justify-content:center;gap:24px;margin-top:16px;font-size:.82rem;color:#cbd5e1}
+    .hero { background:linear-gradient(135deg, #020617 0%, #172554 60%, #0f172a 100%); padding:56px 0 40px; text-align:center; border-bottom: 1px solid var(--border); }
+    .hero h1 { font-size:2.4rem; font-weight:800; letter-spacing:-1px; color: var(--text-bright); }
+    .hero h1 span { color:var(--b); }
+    .hero p { color:var(--text-muted); margin-top:6px; font-size:1rem; }
+    .hero .badge { display:inline-block; margin-top:14px; padding:5px 14px; background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:999px; font-size:.73rem; font-weight:600; color:var(--b); letter-spacing:.5px; text-transform: uppercase; }
 
-    nav{background:#fff;border-bottom:1px solid var(--g200);position:sticky;top:0;z-index:99}
-    nav .inner{max-width:820px;margin:auto;display:flex;overflow-x:auto;scrollbar-width:none}
-    nav .inner::-webkit-scrollbar{display:none}
-    nav a{padding:12px 16px;font-size:.8rem;font-weight:600;color:var(--g500);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s}
-    nav a:hover{color:var(--g900);border-color:var(--g200)}
+    nav { background:rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:99; }
+    nav .inner { max-width:820px; margin:auto; display:flex; overflow-x:auto; scrollbar-width:none; justify-content: center; }
+    nav .inner::-webkit-scrollbar { display:none; }
+    nav a { padding:14px 20px; font-size:.85rem; font-weight:600; color:var(--text-muted); text-decoration:none; white-space:nowrap; border-bottom:2px solid transparent; transition:.2s; }
+    nav a:hover { color:var(--text-bright); border-color:var(--b); }
 
-    .w{max-width:820px;margin:auto;padding:0 20px}
-    section{padding:44px 0}section+section{border-top:1px solid var(--g200)}
-    h2{font-size:1.35rem;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}.num{color:var(--g);font-weight:800;margin-right:6px}
-    .sub{color:var(--g500);font-size:.88rem;margin-bottom:20px}
-    h3{font-size:1rem;font-weight:700;margin:20px 0 8px}
-    p{margin-bottom:10px;color:var(--g700);font-size:.9rem}
-    ul,ol{margin:0 0 10px 18px;color:var(--g700);font-size:.9rem}li{margin-bottom:4px}
-    strong{font-weight:600;color:var(--g800)}
-    code{background:var(--g100);padding:1px 5px;border-radius:3px;font-size:.82em;font-family:'SF Mono',monospace}
+    .w { max-width:820px; margin:auto; padding:0 20px; }
+    section { padding:44px 0; }
+    section + section { border-top:1px solid var(--border); }
+    
+    h2 { font-size:1.35rem; font-weight:700; margin-bottom:4px; letter-spacing:-.3px; color: var(--text-bright); }
+    .num { color:var(--b); font-weight:800; margin-right:6px; }
+    .sub { color:var(--text-muted); font-size:.88rem; margin-bottom:20px; }
+    
+    h3 { font-size:1.05rem; font-weight:700; margin:24px 0 10px; color: var(--text-bright); }
+    p { margin-bottom:12px; font-size:.9rem; }
+    ul, ol { margin:0 0 16px 18px; font-size:.9rem; }
+    li { margin-bottom:6px; }
+    strong { font-weight:600; color:var(--text-bright); }
+    code { background:rgba(255,255,255,0.05); border: 1px solid var(--border); padding:2px 6px; border-radius:4px; font-size:.82em; font-family:'SF Mono',monospace; color: #38bdf8; }
 
-    .callout{border-left:3px solid var(--g);background:rgba(6,193,103,.04);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;font-size:.86rem}
-    .callout.blue{border-color:var(--b);background:rgba(39,110,241,.03)}
-    .callout.orange{border-color:var(--o);background:rgba(255,105,55,.03)}
+    .callout { border-left:3px solid var(--g); background:rgba(16,185,129,.05); padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0; font-size:.88rem; backdrop-filter: blur(8px); }
+    .callout.blue { border-color:var(--b); background:rgba(99,102,241,.05); }
+    .callout.orange { border-color:var(--o); background:rgba(245,158,11,.05); }
 
-    .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0}
-    @media(max-width:640px){.cols{grid-template-columns:1fr}.hero h1{font-size:1.7rem}section{padding:28px 0}}
+    .cols { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:14px 0; }
+    @media(max-width:640px) { .cols { grid-template-columns:1fr; } .hero h1 { font-size:1.7rem; } section { padding:28px 0; } }
 
-    .tbl{overflow-x:auto;border:1px solid var(--g200);border-radius:10px;margin:14px 0}
-    table{width:100%;border-collapse:collapse;font-size:.84rem}
-    th{text-align:left;padding:9px 13px;background:var(--g100);font-weight:600;color:var(--g700);white-space:nowrap}
-    td{padding:9px 13px;border-top:1px solid var(--g100);color:var(--g700)}
+    .tbl { overflow-x:auto; border:1px solid var(--border); border-radius:10px; margin:16px 0; background: var(--panel); }
+    table { width:100%; border-collapse:collapse; font-size:.84rem; }
+    th { text-align:left; padding:12px 16px; background:rgba(255,255,255,0.03); font-weight:600; color:var(--text-bright); white-space:nowrap; border-bottom: 2px solid var(--border); }
+    td { padding:12px 16px; border-top:1px solid var(--border); color:var(--text); }
 
-    .flow{background:#fff;border:1px solid var(--g200);border-radius:10px;padding:20px;margin:14px 0;overflow-x:auto}
-    .fr{display:flex;align-items:center;justify-content:center;gap:0;min-width:500px}
-    .fb{padding:10px 14px;border-radius:8px;font-size:.76rem;font-weight:600;text-align:center;white-space:nowrap;min-width:90px;line-height:1.3}
-    .fb small{display:block;font-weight:400;font-size:.68rem;opacity:.8;margin-top:1px}
-    .fb.bk{background:#000;color:#fff}.fb.bl{background:var(--b);color:#fff}.fb.gn{background:var(--g);color:#fff}
-    .fb.or{background:var(--o);color:#fff}.fb.rd{background:var(--r);color:#fff}.fb.gy{background:var(--g200);color:var(--g700)}
-    .fa{color:var(--g500);font-size:1.1rem;padding:0 5px;flex-shrink:0}
+    .flow { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:20px; margin:14px 0; overflow-x:auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .fr { display:flex; align-items:center; justify-content:center; gap:0; min-width:500px; }
+    .fb { padding:10px 14px; border-radius:8px; font-size:.76rem; font-weight:600; text-align:center; white-space:nowrap; min-width:90px; line-height:1.3; }
+    .fb small { display:block; font-weight:400; font-size:.68rem; opacity:.8; margin-top:1px; }
+    .fb.bk { background:#1e293b; color:#f8fafc; border: 1px solid rgba(255,255,255,0.1); }
+    .fb.bl { background:var(--b); color:#fff; }
+    .fb.gn { background:var(--g); color:#fff; }
+    .fb.or { background:var(--o); color:#fff; }
+    .fb.rd { background:var(--r); color:#fff; }
+    .fb.gy { background:rgba(255,255,255,0.05); color:var(--text-bright); border: 1px solid var(--border); }
+    .fa { color:var(--text-muted); font-size:1.1rem; padding:0 5px; flex-shrink:0; }
 
-    footer{background:var(--g900);color:var(--g500);text-align:center;padding:24px;font-size:.76rem}
-    footer strong{color:#fff}
+    .arch-img { max-width: 100%; height: auto; border-radius: 12px; margin: 20px 0; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: block; }
+
+    footer { background:var(--bg); color:var(--text-muted); text-align:center; padding:32px 24px; font-size:.8rem; border-top: 1px solid var(--border); }
+    footer strong { color:var(--text-bright); }
   </style>
 </head>
 <body>
 
 <!-- ══ HERO ══ -->
 <div class="hero">
-  <h1>🚗 Drive<span>Pulse</span></h1>
+  <h1>🚗 Driver<span>Intel</span></h1>
   <p>Design Document</p>
-  <div class="badge">UBER SHE++ HACKATHON 2026</div>
-  <div class="team"><span>Merin</span><span>Rishit</span><span>Lavisha</span></div>
+  <div class="badge">Advanced Driver Analytics</div>
 </div>
 
 <nav><div class="inner">
   <a href="#vision">Product Vision</a>
+  <a href="#architecture">Architecture</a>
   <a href="#stress">Stress Detection</a>
-  <a href="#earnings">Earnings Velocity</a>
+  <a href="#earnings">Goals Forecaster</a>
   <a href="#execution">Execution Strategy</a>
-  <a href="#judge-experience">Judge Experience & Docker</a>
+  <a href="#deployment">Deployment & Docker</a>
 </div></nav>
 
 <main class="w">
@@ -83,44 +98,47 @@
 
   <h3>User Persona</h3>
   <p>
-    <strong>Full-time ride-hailing driver in an Indian metro city</strong> (Bangalore in our demo).
-    Drives 8–10 hours daily. Cares about two things: <strong>staying safe</strong> on chaotic roads and
-    <strong>hitting a daily earnings target</strong>. Not tech-savvy — needs information delivered at a glance,
-    not buried in charts.
+    <strong>Full-time ride-hailing driver in a major metro city.</strong> Drives 8–10 hours daily. Cares about two things: <strong>staying safe</strong> on chaotic roads and
+    <strong>hitting daily performance goals</strong>. Not deeply tech-savvy — needs information delivered at a glance,
+    not buried in heavy statistics.
   </p>
 
   <h3>Core Value Proposition</h3>
   <p>
-    DrivePulse transforms raw trip signals — accelerometer, speed, audio dB — into two actionable insights:
+    DriverIntel transforms raw trip signals — accelerometer, spatial GPS, audio dB — into highly actionable insights:
   </p>
   <ol>
-    <li><strong>Safety alerts</strong> — Detects dangerous situations (hard braking + loud cabin, escalating conflicts) in real-time and tells the driver <em>why</em> each event was flagged.</li>
-    <li><strong>Earnings forecasting</strong> — Predicts earnings velocity (₹/hr), shows whether the driver is on track to hit their daily target, and estimates time-to-goal.</li>
+    <li><strong>Safety & Coaching alerts</strong> — Detects potentially dangerous situations via Multi-factor ML (hard braking, rough maneuvering, loud cabin) and provides instant explainable tips via AI.</li>
+    <li><strong>Predictive Pathing</strong> — Forecasts performance and guides towards goals efficiently with dynamic visual risk mapping.</li>
   </ol>
 
   <h3>The "Glanceable" Test</h3>
   <p>
-    A driver can't read a dense dashboard while navigating traffic. Every screen in DrivePulse is designed to pass the <strong>2-second glance test</strong>:
+    A driver can't read a dense dashboard while navigating traffic. Every screen in DriverIntel is designed to pass the <strong>2-second glance test</strong>:
   </p>
   <ul>
-    <li><strong>Dashboard</strong> — 5 large summary cards at the top. Green/yellow/red colour coding. No mental math needed.</li>
-    <li><strong>Today Timeline</strong> — Horizontal hour blocks colour-coded by stress. One glance = "how has my day been?"</li>
-    <li><strong>Earnings Progress</strong> — Single progress bar with current ₹/hr vs required ₹/hr. Status: 🟢 ahead / 🟡 on_track / 🔴 at_risk.</li>
-    <li><strong>Event Cards</strong> — Emoji + one-line message + confidence badge. No jargon. "🚨 Hard brake + loud cabin at the same time."</li>
-    <li><strong>Stress Tips</strong> — Dismissible amber cards with actionable advice. Not data — actions.</li>
+    <li><strong>High-Contrast Aesthetics</strong> — Specifically built to be dark, frosted, and low glare for night driving without eyestrain.</li>
+    <li><strong>Dashboard</strong> — Clean, focused summary cards utilizing primary color signaling.</li>
+    <li><strong>Timeline Tracking</strong> — Visual hourly blocks indicating stress loads at a glance.</li>
   </ul>
-
-  <div class="callout">
-    <strong>Design principle:</strong> The driver should never have to interpret raw numbers.
-    Every metric is translated into a status (ahead / on_track / at_risk), a colour (green / yellow / red),
-    or a plain-language message. Detailed signal charts and explainability modals exist for the
-    Trip Detail page — but they're opt-in, not the default view.
-  </div>
 </section>
 
-<!-- ═══ 2. STRESS DETECTION ALGORITHM ═══ -->
+<!-- ═══ 2. ARCHITECTURE ═══ -->
+<section id="architecture">
+  <h2><span class="num">02</span> Overall Architecture</h2>
+  <p class="sub">End-to-End Data Flow from Edge to Cloud Insights</p>
+
+  <!-- This references the screenshot you just took -->
+  <img src="architecture_image.png" alt="DriverIntel Data Flow Diagram" class="arch-img" />
+
+  <p>
+    The system is split into two massive segments. <strong>Edge processing</strong> runs live data locally to guarantee zero latency and complete offline persistence for immediate danger alerts. <strong>Server API routing</strong> manages batch processing overhead and syncs AI interactions where robust NLP computation is requested.
+  </p>
+</section>
+
+<!-- ═══ 3. STRESS DETECTION ALGORITHM ═══ -->
 <section id="stress">
-  <h2><span class="num">02</span> Stress Detection Algorithm</h2>
+  <h2><span class="num">03</span> Stress Detection ML Algorithm</h2>
   <p class="sub">Lightweight signal processing, sensor fusion, and false-positive reduction.</p>
 
   <h3>Pipeline</h3>
@@ -129,193 +147,78 @@
     <div class="fb bk">HAL<small>Device Norm</small></div><div class="fa">→</div>
     <div class="fb bl">30s Window<small>~12 features</small></div><div class="fa">→</div>
     <div class="fb or">Z-Score<small>Baseline μ/σ</small></div><div class="fa">→</div>
-    <div class="fb gn">RF Classify<small>→ 7 classes</small></div><div class="fa">→</div>
-    <div class="fb rd">Platt Cal<small>→ true prob</small></div>
+    <div class="fb gn">RF Classify<small>→ 7 events</small></div><div class="fa">→</div>
+    <div class="fb rd">Edge Alert<small>→ driver</small></div>
   </div></div>
 
   <h3>Cleaning Noisy Motion Data (HAL)</h3>
-  <p>Phone sensors are noisy and device-dependent. Our <strong>Hardware Abstraction Layer</strong> runs a two-phase calibration:</p>
+  <p>Phone sensors are noisy and device-dependent. Our <strong>Hardware Abstraction Layer</strong> runs calibration:</p>
   <ul>
-    <li><strong>Phase 1 — Audio baseline:</strong> 30s stationary recording. Uses 10th-percentile dB as ambient floor, computes mic gain correction (target 52 dB). Normalises mic sensitivity across phone models.</li>
-    <li><strong>Phase 2 — Road baseline:</strong> First 2 min of driving at &gt;20 km/h. Detects gravity axis, computes accelerometer scale factor, and measures road vibration baseline. Subtracts road noise from real events.</li>
-    <li><strong>Drift correction:</strong> EMA update (α=0.15) every 10 min adjusts audio floor and vibration baseline.</li>
-  </ul>
-  <p>After HAL, accelerometer output = <strong>net motion above road vibration</strong>, audio = <strong>net cabin noise above ambient</strong>. Device-agnostic.</p>
-
-  <h3>Interpreting Audio Intensity</h3>
-  <p>Audio features are <strong>acoustic aggregates only</strong> — no raw audio stored (privacy by design). Key features per 30s window:</p>
-  <ul>
-    <li><code>audio_db_mean / p90</code> — overall cabin loudness</li>
-    <li><code>sustained_max</code> — duration of sustained loud episodes</li>
-    <li><code>cadence_var</code> — speech-like cadence variation (arguments = irregular cadence; music = steady)</li>
-    <li><code>audio_leads_motion</code> — did audio spike before a hard brake? (escalation signal)</li>
-  </ul>
-  <p>The insight: <strong>arguments have irregular cadence + sustained loudness</strong>, while music has regular cadence + steady levels. These two features alone separate ARGUMENT from MUSIC_OR_CALL well.</p>
-
-  <h3>Multi-Sensor Fusion</h3>
-  <p>Dangerous situations are rarely single-sensor. The key fusion features:</p>
-  <ul>
-    <li><code>both_elevated</code> — motion AND audio above threshold simultaneously → strongest CONFLICT predictor.</li>
-    <li><code>audio_leads_motion</code> — audio spikes &gt;5s before hard brake → ESCALATING (argument → panic brake).</li>
-    <li><code>audio_only</code> — high audio, no motion anomaly → ARGUMENT_ONLY or MUSIC_OR_CALL, not a road event.</li>
+    <li><strong>Audio baseline:</strong> Stationary recording establishes ambient noise floor. Normalises mic sensitivity across models.</li>
+    <li><strong>Road baseline:</strong> Driving &gt;20 km/h detects gravity axes and measures standard road vibration. Subtracts ordinary driving noise from events.</li>
   </ul>
 
-  <h3>Reducing False Positives</h3>
-  <ol>
-    <li><strong>Platt calibration:</strong> Sigmoid recalibration so 85% confidence ≈ 85% true probability. Alerts only on HIGH (≥75%).</li>
-    <li><strong>Confidence gating:</strong> If top-class confidence &lt;50%, system defaults to NORMAL — no alert.</li>
-    <li><strong>Class weighting:</strong> CONFLICT and ESCALATING weighted 3× during training (favour recall on dangerous events); Platt step corrects the resulting overconfidence.</li>
-    <li><strong>Rule-based fallback:</strong> If model files are missing, simple thresholds (motion &gt;3.5g + audio &gt;80 dB → CONFLICT) ensure the app never crashes.</li>
-  </ol>
+  <h3>Data Privacy</h3>
+  <p>Audio features are <strong>acoustic statistical aggregates only</strong> — no raw voice audio stored or transmitted to the backend (privacy by design). The backend parses numeric severity parameters alone.</p>
 
-  <h3>Output</h3>
-  <p>Per 30s window: situation class (7 classes), calibrated confidence (HIGH / MEDIUM / LOW), top feature deviations (for explainability), safety flag, &lt;1ms inference on CPU.</p>
+  <h3>Output & Explainability</h3>
+  <p>Engine spits out confidence intervals. When events occur, feature weights are analyzed to determine the exact cause (e.g. "You were braking too heavily") which drives the <strong>AI Safety Copilot</strong>.</p>
 </section>
 
-<!-- ═══ 3. EARNINGS VELOCITY ALGORITHM ═══ -->
+<!-- ═══ 4. GOALS FORECASTER ═══ -->
 <section id="earnings">
-  <h2><span class="num">03</span> Earnings Velocity Algorithm</h2>
-  <p class="sub">Current speed, forecasting, and cold-start handling.</p>
-
-  <h3>Pipeline</h3>
-  <div class="flow"><div class="fr">
-    <div class="fb gy">Driver State<small>trips, hours, ₹</small></div><div class="fa">→</div>
-    <div class="fb bl">Feature Eng<small>14 features</small></div><div class="fa">→</div>
-    <div class="fb rd">RF Regress<small>300 trees</small></div><div class="fa">→</div>
-    <div class="fb gn">₹/hr + Status<small>+ probability</small></div>
-  </div></div>
-
-  <h3>Current Earnings Speed</h3>
-  <p><strong>Earnings velocity</strong> = cumulative earnings ÷ elapsed hours (₹/hr). <strong>Required velocity</strong> = remaining earnings ÷ remaining hours. The gap between the two gives an instant "am I on track?" signal.</p>
-
-  <h3>Feature Engineering (14 features)</h3>
-  <div class="tbl"><table>
-    <tr><th>Group</th><th>Features</th><th>Why</th></tr>
-    <tr><td>Current</td><td><code>current_velocity</code>, <code>elapsed_hours</code>, <code>trips_completed</code>, <code>trip_rate</code></td><td>How is the driver doing right now?</td></tr>
-    <tr><td>Context</td><td><code>hour_of_day</code>, <code>is_morning/lunch/evening_rush</code></td><td>Demand varies by time of day</td></tr>
-    <tr><td>History</td><td><code>velocity_last_1/2/3</code>, <code>rolling_velocity_3/5</code></td><td>Recent trend (momentum)</td></tr>
-    <tr><td>Goal</td><td><code>goal_pressure</code> (target − current velocity)</td><td>How urgently driver needs to speed up</td></tr>
-  </table></div>
-
-  <h3>Forecasting</h3>
-  <p>RF regressor predicts <strong>next-period velocity</strong>. From that we derive:</p>
-  <ul>
-    <li><strong>Forecast status:</strong> predicted &gt; required → <em>ahead</em> · |diff| &lt; ₹20 → <em>on_track</em> · else <em>at_risk</em></li>
-    <li><strong>Goal probability:</strong> <code>clamp(1 − |predicted − required| / required, 0, 1)</code></li>
-    <li><strong>Time to goal:</strong> remaining earnings ÷ predicted velocity</li>
-  </ul>
-
-  <h3>Handling Cold Start</h3>
-  <p>First 15 min of a shift — no velocity lags, unstable trip rate, no rolling averages.</p>
-  <ul>
-    <li><strong>Backfill:</strong> Missing lags set to current velocity (conservative — assumes no trend until proven).</li>
-    <li><strong>Rolling windows:</strong> Use whatever data points are available, then backfill remaining NaN.</li>
-    <li><strong>Goal pressure as anchor:</strong> Even with zero history, the model knows target vs current velocity — a strong directional signal from reading one.</li>
-    <li><strong>Static profile features:</strong> <code>avg_earnings_per_hour</code>, <code>experience_months</code>, <code>rating</code> are available from registration and provide baseline expectations.</li>
-  </ul>
-
-  <div class="callout orange">
-    <strong>Edge case:</strong> A driver with a ₹5,000 target and 2 hours left sees <code>required = ₹2,500/hr</code> — clearly unreachable.
-    The model predicts honestly; the dashboard shows 🔴 at_risk. We don't hide bad news.
-  </div>
+  <h2><span class="num">04</span> Driver Safety Goals Forecaster</h2>
+  <p class="sub">Forecasting event tracking and goal resolution.</p>
+  
+  <p>Users establish custom performance goals directly targeting weak habits identified by the AI. Trend line analysis determines if the driver is successfully migrating their driving habits towards the stated objective (e.g. fewer deep acceleration events). The ML trends calculate rolling regression to map success probability.</p>
 </section>
 
-<!-- ═══ 4. EXECUTION STRATEGY ═══ -->
+<!-- ═══ 5. EXECUTION STRATEGY ═══ -->
 <section id="execution">
-  <h2><span class="num">04</span> Execution Strategy</h2>
-  <p class="sub">MVP scope, phased build, and the cut line.</p>
+  <h2><span class="num">05</span> Execution Strategy</h2>
+  <p class="sub">MVP scope and development milestones.</p>
 
-  <h3>MVP Scope</h3>
-  <div class="tbl"><table>
-    <tr><th>Layer</th><th>What's included</th></tr>
-    <tr><td><strong>ML — Stress</strong></td><td>Lightweight RF classifier, ~12 key features, 7 classes, Platt calibration, HAL, rule-based fallback</td></tr>
-    <tr><td><strong>ML — Earnings</strong></td><td>RF regressor, 14 features, velocity prediction, 5 derived goal metrics</td></tr>
-    <tr><td><strong>Backend</strong></td><td>FastAPI (25 endpoints), in-memory store, batch processor, CSV import, auth</td></tr>
-    <tr><td><strong>Frontend</strong></td><td>React SPA (8 pages, 16 components), maps, charts, explainability modals</td></tr>
-    <tr><td><strong>Judge tools</strong></td><td>Predict page (single-row testing), Batch Upload (CSV inference + charts)</td></tr>
-  </table></div>
-
-  <h3>Phased Build</h3>
-  <ol>
-    <li><strong>Data & Models</strong> — Feature engineering, train both RF models, validate with cross-validation.</li>
-    <li><strong>Backend API</strong> — FastAPI with core endpoints, in-memory data store, batch inference.</li>
-    <li><strong>Frontend Core</strong> — Dashboard, Trips, Trip Detail with map + charts, auth flow.</li>
-    <li><strong>Polish & Judge Tools</strong> — Predict, Batch Upload, explainability, Trends, Goals.</li>
-    <li><strong>Docs & Deploy</strong> — Design doc, architecture diagram, README, deployment.</li>
-  </ol>
-
-  <h3>The Cut Line</h3>
+  <h3>Tech Stack Core</h3>
   <div class="cols">
     <div>
-      <p><strong>What we cut:</strong></p>
+      <p><strong>Frontend (Local Web/App)</strong></p>
       <ul>
-        <li>Real-time phone sensor streaming (simulated with synthetic data)</li>
-        <li>Persistent database (in-memory = zero-setup for judges)</li>
-        <li>Push notifications / WebSockets</li>
-        <li>Model retraining from feedback</li>
-        <li>Payment integration / real fare calculation</li>
+        <li>React 18 & Vite</li>
+        <li>Tailwind CSS (Glassmorphic implementation)</li>
+        <li>Recharts (Dashboard components)</li>
+        <li>Leaflet API (Risk Mapping)</li>
       </ul>
     </div>
     <div>
-      <p><strong>Why:</strong></p>
+      <p><strong>Backend (Cloud Sync API)</strong></p>
       <ul>
-        <li>Each adds setup complexity without demonstrating core algorithm thinking</li>
-        <li>Architecture supports a DB — we just don't require one to run</li>
-        <li>Feedback collection is built; retraining is a production concern</li>
-        <li>Time focused on <strong>model quality + explainability + UX</strong></li>
+        <li>Python 3.11 & FastAPI</li>
+        <li>Gemini LLM Toolkit</li>
+        <li>Random Forest Inference CLI</li>
+        <li>Batch processing hooks</li>
       </ul>
     </div>
   </div>
-
-  <h3>Key Trade-offs</h3>
-  <div class="tbl"><table>
-    <tr><th>Choice</th><th>Gained</th><th>Gave Up</th></tr>
-    <tr><td>RandomForest over deep learning</td><td>Lightweight, interpretable, CPU-only, &lt;1ms inference</td><td>Potentially lower accuracy on complex patterns</td></tr>
-    <tr><td>In-memory store over DB</td><td>Zero setup, instant startup</td><td>No persistence across restarts</td></tr>
-    <tr><td>Synthetic sensor data</td><td>Full control over class balance</td><td>May not generalise to real sensors</td></tr>
-  </table></div>
 </section>
 
-<!-- ═══ 5. JUDGE EXPERIENCE & DOCKER ═══ -->
-<section id="judge-experience">
-  <h2><span class="num">05</span> Judge Experience & Docker</h2>
-  <p class="sub">How we designed the repo and Docker setup so judges can run DrivePulse in a few minutes.</p>
+<!-- ═══ 6. DEPLOYMENT & DOCKER ═══ -->
+<section id="deployment">
+  <h2><span class="num">06</span> Deployment & Docker Setup</h2>
+  <p class="sub">Zero-setup runtime orchestration.</p>
 
-  <h3>Zero-setup runtime</h3>
-  <p>To avoid asking judges to install Python, Node, or ML libraries locally, we ship a fully containerised stack:</p>
-  <ul>
-    <li><strong>Backend:</strong> <code>Dockerfile.backend</code> builds a Python 3.11 image, installs all ML and FastAPI dependencies from the repo's <code>requirements.txt</code> files, and starts <code>uvicorn main:app</code> from <code>backend/</code>.</li>
-    <li><strong>Frontend:</strong> <code>Dockerfile.frontend</code> builds the React + Vite SPA, then serves it via Nginx, which also proxies <code>/api/*</code> to the backend service.</li>
-    <li><strong>Compose:</strong> <code>docker-compose.yml</code> at the root orchestrates both services and exposes:
-      <ul>
-        <li><code>http://localhost:5173</code> → Nginx + React SPA</li>
-        <li><code>http://localhost:8000/api/health</code> → backend health check</li>
-      </ul>
-    </li>
-  </ul>
-
-  <h3>Judge run instructions</h3>
-  <p>We repeat the exact steps (as required by the hackathon) in the root <code>README.md</code> and docs:</p>
+  <p>The entire platform operates via containerised stacks to run concurrently without complex dependency resolution.</p>
+  
   <ol>
-    <li>Install Docker Desktop and ensure it is running.</li>
-    <li><code>git clone ... && cd Driver-Pulse</code></li>
-    <li>From the repo root run: <code>docker compose up --build</code></li>
-    <li>Visit <code>http://localhost:5173</code> to use the app; optional backend health at <code>http://localhost:8000/api/health</code>.</li>
+    <li>Install Docker Desktop.</li>
+    <li><code>git clone</code> the repository.</li>
+    <li>From root run: <code>docker compose up --build</code></li>
+    <li>Navigate to <code>http://localhost:5173</code> to explore the live DriverIntel dashboard.</li>
   </ol>
 
-  <div class="callout blue">
-    <strong>Judge login:</strong> we provide a pre-configured demo account so judges land in a realistic dashboard immediately.<br/>
-    Username: <code>judge@uber.com</code> · Password: <code>hackathon2026</code>.
-  </div>
-
-  <div class="callout">
-    This approach satisfies the hackathon's Docker criterion: a working Dockerfile and <code>docker-compose.yml</code>
-    at the repo root, with a single <code>docker compose up --build</code> command to start the entire application.
-  </div>
 </section>
 
 </main>
 
-<footer><strong>DrivePulse</strong> — Uber She++ Hackathon 2026 · Merin · Rishit · Lavisha</footer>
+<footer><strong>DriverIntel</strong> — Advanced Driver Safety Platform</footer>
 </body>
 </html>
